@@ -109,5 +109,3 @@ RUN sed -i 's/\r$//g' /src/entrypoint.prod.sh \
     && chmod +x /src/entrypoint.prod.sh
 
 ENTRYPOINT ["/src/entrypoint.prod.sh"]
-
-EXPOSE 8000
