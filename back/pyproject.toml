@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "uQuizz back"
+version = "0.1.0"
+description = ""
+authors = ["sachabinder <sacha.binder@eeves.enpc.fr>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "4.1.2"
+
+[tool.poetry.dev-dependencies]

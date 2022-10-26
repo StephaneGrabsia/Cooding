@@ -1,0 +1,38 @@
+version: "3.6"
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - /database:/var/lib/postgresql/data
+      - ./backups:/backups
+  back:
+    build:
+      context: back
+      dockerfile: Dockerfile
+      target: development
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./back:/src
+      - ./backups:/backups
+    ports:
+      - "$BACK_PORT:8000"
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      DB_HOST: $DB_HOST
+      DB_PORT: $DB_PORT
+      DB_NAME: $DB_NAME
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      DEBUG: $DEBUG
+      DOMAIN_NAME: $DOMAIN_NAME
+volumes:
+  bundles:
+    driver: local

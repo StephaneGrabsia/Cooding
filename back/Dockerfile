@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # `python-base` sets up all our shared environment variables
-FROM python:3.10.8-bullseye as python-base
+FROM python:3.9-bullseye as python-base
 
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -48,7 +48,7 @@ RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poet
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
-COPY poetry.lock pyproject.toml ./
+COPY pyproject.toml ./
 
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --no-dev
@@ -109,3 +109,5 @@ RUN sed -i 's/\r$//g' /src/entrypoint.prod.sh \
     && chmod +x /src/entrypoint.prod.sh
 
 ENTRYPOINT ["/src/entrypoint.prod.sh"]
+
+EXPOSE 8000
