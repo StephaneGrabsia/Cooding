@@ -58,7 +58,9 @@ To execute migrations, you shoud run (automaticly done at container starting) :
 python manage.py migrate
 ```
 
-  
+## Add a Python dependancy
+To manage dependancy on the backend, we are using [poetry](https://python-poetry.org/). To add a Python module, you should add it on [pyproject file](/back/pyproject.toml) and then re-build the back Docker container.
+
 
 ## Environment
 
