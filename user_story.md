@@ -11,11 +11,11 @@ To do that, we are giving description of tasks and we address to each a mark of 
 | ------------- |:--------------------| :-----:|
 | Professor 👨‍🏫    | Login (email + pswd) |       |
 | Professor 👨‍🏫    | Create classroom     |       |
-| Professor 👨‍🏫   | Lunch classroom      |       |
+| Professor 👨‍🏫   | Launch classroom      |       |
 | Professor 👨‍🏫    | Stop classroom       |       |
 | Professor 👨‍🏫    | Delete classroom     |       |
 | Professor 👨‍🏫    | Create exercise      |       |
-| Professor 👨‍🏫    | Lunch exercise       |       |
+| Professor 👨‍🏫    | Launch exercise       |       |
 | Professor 👨‍🏫    | Stop exercise        |       |
 | Professor 👨‍🏫    | Give correction      |       |
 | Professor 👨‍🏫    | See online student   |       |
