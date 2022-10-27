@@ -29,7 +29,7 @@ You can now access the app (on port 8000 which can be change in [env file](.env)
 You can access to the PostgreSQL database shell (in the assigned docker container) by running :
 
 ```bash
-docker exec -it $(docker ps -f 'name=db' --format '{{.ID}}') psql -U upont
+docker exec -it $(docker ps -f 'name=db' --format '{{.ID}}') psql -U uquizz
 ```
 
 ## Operate on the back-end
