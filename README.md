@@ -22,7 +22,16 @@ docker-compose up -d
 
 You can now access the app (on port 8000 which can be change in [env file](.env)) by `localhost:8000`.
 
-  
+---
+
+⚠️ If you have an error when trying to up such like 
+```bash
+db_1    | running bootstrap script ... 2022-10-28 09:09:46.894 UTC [83] FATAL:  data directory "/var/lib/postgresql/data" has wrong ownership
+db_1    | 2022-10-28 09:09:46.894 UTC [83] HINT:  The server must be started by the user that owns the data directory.
+db_1    | child process exited with exit code 1
+db_1    | initdb: removing contents of data directory "/var/lib/postgresql/data" uquizz_db_1 exited with code 1
+```
+you might have permission issues when mounting the folder to the docker containers. **We suggest you to clone the project into a drive, which is formatted in a native Linux filesystem.**
 
 ## Access to database
 
