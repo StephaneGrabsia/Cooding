@@ -75,8 +75,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./entrypoint.dev.sh .
-RUN sed -i 's/\r$//g' /src/entrypoint.dev.sh \
-    && chmod +x /src/entrypoint.dev.sh
+RUN chmod +x /src/entrypoint.dev.sh
 
 ENTRYPOINT ["/src/entrypoint.dev.sh"]
 
@@ -105,7 +104,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./entrypoint.dev.sh .
-RUN sed -i 's/\r$//g' /src/entrypoint.prod.sh \
-    && chmod +x /src/entrypoint.prod.sh
+RUN chmod +x /src/entrypoint.prod.sh
 
 ENTRYPOINT ["/src/entrypoint.prod.sh"]
