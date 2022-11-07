@@ -1,4 +1,10 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
+// import './styles/style.css'
+import './styles/style.scss'
 
-const template = React.createElement('h1', null, 'uQuizz dd front setup');
+const App = () => {
+    return <h1>Hello from react and sass</h1>
+}
+
+ReactDOM.render(<App />, document.getElementById("root"))
