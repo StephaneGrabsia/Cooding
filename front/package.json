@@ -1,6 +1,6 @@
 {
   "name": "uquizz",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "TDLOG project : building of a web app in order to make python formations and code learning great again !",
   "main": "index.js",
   "scripts": {

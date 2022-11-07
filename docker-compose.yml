@@ -43,5 +43,6 @@ services:
     volumes:
       - ./front/src:/app/src:rw
       - ./front/public:/app/public:rw
+      - ./front/package.json:/app/package.json:rw
     depends_on:
       - back

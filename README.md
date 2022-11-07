@@ -3,7 +3,7 @@
 TDLOG project : building of a web app in order to make python formations and code learning great again !
 
 * Back-end framework : django + REST API
-* Front-end framework : ReactJS
+* Front-end framework : ReactJS + Sass
 * Database : PostgreSQL
 
   
@@ -20,7 +20,11 @@ To run the app on local machine you should run :
 docker-compose up -d
 ```
 
-You can now access the app (on port 8000 which can be change in [env file](.env)) by `localhost:8000`.
+PLEASE WAIT STARTING OF THE FRONT, it shoud take few minutes.
+
+You can now access the app (on port 8000 for the back and 8080 for the front which can be change in [env file](.env)) by :
+* [localhost:8000](localhost:8000) for the back
+* [localhost:8080](localhost:8080) for the front
 
   
 
@@ -59,8 +63,31 @@ python manage.py migrate
 ```
 
 ## Add a Python dependancy
+
 To manage dependancy on the backend, we are using [poetry](https://python-poetry.org/). To add a Python module, you should add it on [pyproject file](/back/pyproject.toml) and then re-build the back Docker container.
 
+## Operate on the front-end
+
+You can access the front-end docker container by running :
+
+```bash
+docker-compose exec front /bin/sh
+```
+
+To start/restart the webpack dev server, run on the container :
+```bash
+/usr/local/bin/npm run dev
+```
+
+## Add a Node dependancy
+
+To manage dependancy on the backend, we are using [npmJS](https://www.npmjs.com/). To add a Node module, you should add it on [package.json](/front/package.json) and then re-build the back Docker container.
+
+You can also execute in the front-end container :
+```bash
+/usr/local/bin/npm install [your-package-name] -D
+```
+Then, the [package.json](/front/package.json) will be automatically update.
 
 ## Environment
 
@@ -71,7 +98,8 @@ To manage dependancy on the backend, we are using [poetry](https://python-poetry
 | DB_USER | User of the DB | uquizz |
 | DB_NAME | Name of the DB | uquizz |
 | DB_PASSWORD | Password of the DB | uquizz |
-| BACK_PORT | External port back access | 8000 |
+| BACK_PORT | External back port access | 8000 |
+| BACK_PORT | External front port access | 8080 |
 | SECRET_KEY | Django secret key | ChangeThatPlease |
 | DEBUG | Debug mode execution | True |
 | DOMAIN_NAME | Domaine name use in production. Requests from other domain will be rejected. | uquizz.enpc.org |
