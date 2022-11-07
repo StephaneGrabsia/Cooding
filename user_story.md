@@ -9,7 +9,7 @@ To do that, we are giving description of tasks and we address to each a mark of 
 * Priority 4 : An optional feature   🚩
 
 | User type     | Action description   | Priority |
-| ------------- |:--------------------| :-----:|
+| ------------- |:---------------------| :-------:|
 | Professor 👨‍🏫    | Login (email + pswd) |   🚩    |
 | Professor 👨‍🏫    | Create classroom     |   🚩    |
 | Professor 👨‍🏫   | Launch classroom      |   🚩    |
@@ -20,11 +20,11 @@ To do that, we are giving description of tasks and we address to each a mark of 
 | Professor 👨‍🏫    | Stop exercise        |   🚩🚩    |
 | Professor 👨‍🏫    | Give correction      |   🚩🚩    |
 | Professor 👨‍🏫    | See online students  |   🚩🚩    |
-| Professor 👨‍🏫    | See student results  |   🚩🚩    |
-| Professor 👨‍🏫    | See stats on errors  |   🚩    |
+| Professor 👨‍🏫    | See student results  |   🚩🚩🚩    |
+| Professor 👨‍🏫    | See stats on errors  |   🚩🚩    |
 | Professor 👨‍🏫    | Display a code linked<br>to an error |   🚩    |
 | Professor 👨‍🏫    | Display leaderboard  |   🚩🚩🚩    |
-| Student 👨‍🎓       | Login (user_name + room_id)    |   🚩🚩    |
+| Student 👨‍🎓       | Login (user_name + room_id)    |   🚩🚩🚩    |
 | Student 👨‍🎓      | Quit a classroom     |   🚩    |
 | Student 👨‍🎓      | Rejoin a classroom <br> when there deco |   🚩    |
 | Student 👨‍🎓      | See exercise subject |   🚩🚩🚩🚩    |
