@@ -33,6 +33,15 @@ services:
       DB_PASSWORD: $DB_PASSWORD
       DEBUG: $DEBUG
       DOMAIN_NAME: $DOMAIN_NAME
-volumes:
-  bundles:
-    driver: local
+  front:
+    build:
+      context: front
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "$FRONT_PORT:8080"
+    volumes:
+      - ./front/src:/app/src:rw
+      - ./front/public:/app/public:rw
+    depends_on:
+      - back
