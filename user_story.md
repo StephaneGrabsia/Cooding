@@ -9,30 +9,30 @@ To do that, we are giving description of tasks and we address to each a mark of 
 
 | User type     | Action description   | Priority |
 | ------------- |:--------------------| :-----:|
-| Professor 👨‍🏫    | Login (email + pswd) |       |
-| Professor 👨‍🏫    | Create classroom     |       |
-| Professor 👨‍🏫   | Lunch classroom      |       |
-| Professor 👨‍🏫    | Stop classroom       |       |
-| Professor 👨‍🏫    | Delete classroom     |       |
-| Professor 👨‍🏫    | Create exercise      |       |
-| Professor 👨‍🏫    | Lunch exercise       |       |
-| Professor 👨‍🏫    | Stop exercise        |       |
-| Professor 👨‍🏫    | Give correction      |       |
-| Professor 👨‍🏫    | See online student   |       |
-| Professor 👨‍🏫    | See student result   |       |
-| Professor 👨‍🏫    | See stats on errors  |       |
-| Professor 👨‍🏫    | Display a code linked<br>to an error |       |
-| Professor 👨‍🏫    | Display leaderboard  |       |
-| Student 👨‍🎓       | Login (user_name + room_id)    |       |
-| Student 👨‍🎓      | Quit a classroom     |       |
-| Student 👨‍🎓      | Rejoin a classroom <br> when there deco |       |
-| Student 👨‍🎓      | See exercise subject |       |
-| Student 👨‍🎓      | Code an exercise solution |       |
-| Student 👨‍🎓      | Run a solution      |       |
-| Student 👨‍🎓      | Submit a solution   |       |
-| Student 👨‍🎓      | See code output/errors   |       |
-| Student 👨‍🎓      | See exo correction  |       |
-| Student 👨‍🎓      | See his rank  |       |
+| Professor 👨‍🏫    | Login (email + pswd) |   🚩    |
+| Professor 👨‍🏫    | Create classroom     |   🚩    |
+| Professor 👨‍🏫   | Launch classroom      |   🚩    |
+| Professor 👨‍🏫    | Stop classroom       |   🚩    |
+| Professor 👨‍🏫    | Delete classroom     |   🚩    |
+| Professor 👨‍🏫    | Create exercise      |   🚩🚩    |
+| Professor 👨‍🏫    | Launch exercise      |   🚩🚩    |
+| Professor 👨‍🏫    | Stop exercise        |   🚩🚩    |
+| Professor 👨‍🏫    | Give correction      |   🚩🚩    |
+| Professor 👨‍🏫    | See online student   |   🚩🚩    |
+| Professor 👨‍🏫    | See student result   |   🚩🚩🚩    |
+| Professor 👨‍🏫    | See stats on errors  |   🚩    |
+| Professor 👨‍🏫    | Display a code linked<br>to an error |   🚩    |
+| Professor 👨‍🏫    | Display leaderboard  |   🚩🚩🚩    |
+| Student 👨‍🎓       | Login (user_name + room_id)    |   🚩    |
+| Student 👨‍🎓      | Quit a classroom     |   🚩    |
+| Student 👨‍🎓      | Rejoin a classroom <br> when there deco |   🚩    |
+| Student 👨‍🎓      | See exercise subject |   🚩🚩🚩    |
+| Student 👨‍🎓      | Code an exercise solution |   🚩🚩🚩    |
+| Student 👨‍🎓      | Run a solution      |   🚩🚩🚩    |
+| Student 👨‍🎓      | Submit a solution   |   🚩🚩🚩    |
+| Student 👨‍🎓      | See code output/errors   |   🚩🚩🚩    |
+| Student 👨‍🎓      | See exo correction  |   🚩🚩🚩    |
+| Student 👨‍🎓      | See his rank  |   🚩🚩🚩    |
 
 
 
