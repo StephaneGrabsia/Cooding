@@ -104,7 +104,9 @@ RUN apt-get update \
     iputils-ping=3:20210202-1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./entrypoint.prod.sh /src
-RUN chmod +x /src/entrypoint.prod.sh
+COPY ./entrypoint.prod.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.prod.sh
+RUN sed -i 's/\r$//g' /usr/local/bin/entrypoint.prod.sh \
+    && chmod +x /usr/local/bin/entrypoint.prod.sh
 
-ENTRYPOINT ["/src/entrypoint.prod.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.prod.sh"]

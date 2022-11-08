@@ -99,7 +99,7 @@ Then, the [package.json](/front/package.json) will be automatically update.
 | DB_NAME | Name of the DB | uquizz |
 | DB_PASSWORD | Password of the DB | uquizz |
 | BACK_PORT | External back port access | 8000 |
-| BACK_PORT | External front port access | 8080 |
+| FRONT_PORT | External front port access | 8080 |
 | SECRET_KEY | Django secret key | ChangeThatPlease |
 | DEBUG | Debug mode execution | True |
 | DOMAIN_NAME | Domaine name use in production. Requests from other domain will be rejected. | uquizz.enpc.org |
