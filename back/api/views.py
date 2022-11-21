@@ -4,4 +4,12 @@ from django.http import JsonResponse
 # Create your views here.
 
 def getRoutes(request):
-    return JsonResponse('Our API', safe=False)
+    routes = [
+        {
+            'Endpoint' : '/notes/',
+            'method': 'GET',
+            'body': None,
+            'description': 'Returns an array of notes'
+        },
+    ]
+    return JsonResponse(routes, safe=False)
