@@ -4,9 +4,8 @@ jobs:
   test_project:
     runs-on: ubuntu-latest # operating system your code will run on
     steps:
+      - run: docker-compose.yml
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: pip install flake8
-      - run: actions/checkout@origin
-      - run: docker-compose.yml
       - run: flake8 . # run flake8 test
