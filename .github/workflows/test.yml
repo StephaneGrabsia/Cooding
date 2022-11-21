@@ -7,6 +7,6 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: isbang/compose-action@v1.4.1
         with:
-          compose-file: "../../docker-compose.yml"
+          compose-file: "docker-compose.yml"
       - run: pip install flake8
       - run: flake8 . # run flake8 test
