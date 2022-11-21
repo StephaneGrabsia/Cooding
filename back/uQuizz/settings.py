@@ -56,6 +56,9 @@ CORE_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
+    "rest_framework",
+    "api.apps.ApiConfig",
+
 ]
 
 THIRD_PARTY_APPS = []
