@@ -10,7 +10,5 @@ jobs:
         run: docker-compose build
       - name: Start containers
         run: docker-compose up -d
-      - name: Back-end docker
-        run: docker-compose exec back /bin/bash
-      - name: Launch test
-        run: python manage.py test
+      - name: Launch tests
+        run: docker-compose exec -T back python manage.py test
