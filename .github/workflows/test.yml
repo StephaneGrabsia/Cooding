@@ -1,0 +1,17 @@
+name: TEST DJANGOOOO
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+jobs:
+  test-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build containers
+        run: docker-compose build
+      - name: Start containers
+        run: docker-compose up -d
+      - name: Launch test
+        run: python manage.py test
