@@ -1,4 +1,4 @@
-name: TEST DJANGOOOO
+name: TEST DJANGO
 on:
   [pull_request, push]
 jobs:
