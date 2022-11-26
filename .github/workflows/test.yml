@@ -1,4 +1,4 @@
-name: TEST DJANGO
+name: TEST DJANGOOOO
 on:
   pull_request:
   push:
