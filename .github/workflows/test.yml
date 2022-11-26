@@ -1,9 +1,6 @@
 name: TEST DJANGOOOO
 on:
-  pull_request:
-  push:
-    branches:
-      - master
+  [pull_request, push]
 jobs:
   test-dev:
     runs-on: ubuntu-latest
