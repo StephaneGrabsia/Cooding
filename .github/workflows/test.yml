@@ -1,13 +1,15 @@
-name: test_Django
-on: [pull_request, push] # activates the workflow when there is a push or pull request in the repo
+name: TEST DJANGO
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 jobs:
-  test_project:
-    runs-on: ubuntu-latest # operating system your code will run on
+  test-dev:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
       - name: Build containers
         run: docker-compose build
       - name: Start containers
         run: docker-compose up -d
-      - run: pip install flake8
-      - run: flake8 . # run flake8 test
