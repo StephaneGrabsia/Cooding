@@ -61,7 +61,9 @@ CORE_APPS = [
 
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "corsheaders",
+]
 
 PROJECT_APPS = []
 
@@ -70,11 +72,13 @@ INSTALLED_APPS = CORE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    
 ]
 
 ROOT_URLCONF = "uQuizz.urls"
@@ -97,6 +101,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "uQuizz.wsgi.application"
 
+#CORS Headers$
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8080/",
+# ]
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
