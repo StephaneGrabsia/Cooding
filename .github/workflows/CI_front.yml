@@ -12,7 +12,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ${{ env.working-directory }}
+        working-directory: ${{ env.working_directory }}
     
     steps:
       - name: Checkout to the repository
