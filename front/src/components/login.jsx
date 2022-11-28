@@ -10,12 +10,19 @@ import {
     Typography
 } from '@mui/material';
 
+import { StyledEngineProvider, CssVarsProvider } from '@mui/joy/styles';
+import { Tabs, TabList, Tab } from '@mui/joy';
+import ListItemDecorator from '@mui/joy/ListItemDecorator';
+
+import Logo from '../assets/logo.svg'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChalkboardTeacher, faGraduationCap } from '@fortawesome/free-solid-svg-icons'
 
 const Login = () => {
     const paperStyle = {
         padding: 20,
-        height: '70vh',
-        minHeight: 470,
+        height: '80vh',
+        minHeight: 550,
         width: 450,
         margin: "10vh auto"
     }
@@ -25,6 +32,8 @@ const Login = () => {
     return (
         <Grid>
             <Paper elevation={10} style={paperStyle}>
+                <img src={Logo} alt="Logo Cooding" />
+                <HomeTabs />
                 <Grid align="center">
                     <h1>Connexion</h1>
                 </Grid>
@@ -63,6 +72,32 @@ const Login = () => {
                 </Grid>
             </Paper>
         </Grid>
+    )
+}
+
+const HomeTabs = () => {
+    const iconSize = "lg"
+    return (
+        <StyledEngineProvider injectFirst>
+            <CssVarsProvider>
+                <Tabs aria-label="Icon tabs" defaultValue={0} sx={{ borderRadius: 'lg' }}>
+                    <TabList>
+                        <Tab orientation="vertical">
+                            <ListItemDecorator>
+                                <FontAwesomeIcon icon={faGraduationCap} size={iconSize} />
+                            </ListItemDecorator>
+                            Elève
+                        </Tab>
+                        <Tab orientation="vertical">
+                            <ListItemDecorator>
+                                <FontAwesomeIcon icon={faChalkboardTeacher} size={iconSize} />
+                            </ListItemDecorator>
+                            Professeur
+                        </Tab>
+                    </TabList>
+                </Tabs >
+            </CssVarsProvider>
+        </StyledEngineProvider>
     )
 }
 
