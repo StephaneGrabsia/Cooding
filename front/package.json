@@ -37,7 +37,8 @@
     "style-loader": "^3.3.1",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.11.1",
+    "jest": "^8.5.1"
   },
   "dependencies": {
     "eslint-config-prettier": "^8.5.0",
