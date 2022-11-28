@@ -7,6 +7,12 @@ jobs:
   build:
     # Defines the type of runner the job runs on
     runs-on: ubuntu-latest
+    env:
+      working_directory: ./front
+    
+    defaults:
+      run:
+        working-directory: ${{ env.working-directory }}
     
     steps:
       - name: Checkout to the repository
@@ -35,10 +41,6 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
        
-      - name: Build containers
-        run: docker-compose build
-      - name: Start containers
-        run: docker-compose up -d
         
       - name: Install package dependencies
         run: npm install
