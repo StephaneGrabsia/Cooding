@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           # Reads the node version from the .nvmrc file itself 
-          node-version-file: '.nvmrc'
+          node-version: v18.12.0
           # The node version can be hard-coded 
           # node-version: 14
         
