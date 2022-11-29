@@ -35,7 +35,7 @@ const Login = () => {
                 <img src={Logo} alt="Logo Cooding" />
                 <HomeTabs />
                 <Grid align="center">
-                    <h1>Connexion</h1>
+                    <h2>Connexion</h2>
                 </Grid>
                 <Grid>
                     <TextField
