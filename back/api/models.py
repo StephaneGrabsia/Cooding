@@ -1,4 +1,5 @@
 from django.db import models
+import os
 
 # Create your models here.
 
@@ -21,6 +22,20 @@ class Exercise(models.Model):
     solution = models.CharField(null=True, max_length = 255)
     test_input = models.CharField(null=True, max_length = 255)
     correct_output = models.CharField(null=True, max_length = 255)
+
+    def test_solution(self):
+        with open('test_file.py', 'w') as f:
+            f.write(self.solution + "\n")
+            f.write("test_input "+ self.test_input + "\n")
+            f.write("correct_output =" + self.correct_output + "\n")
+            f.write("output, test = True, 0\n")
+            f.write("while(test< len(test_input) and output):\n")
+            f.write("   if f(test) != correct_output[test]:\n")
+            f.write("       output = False\n")
+            f.write("   test += 1\n")
+            f.write("print(output)")
+        return os.system("python3 test_file.py")
+
 
     def __str__(self) -> str:
         return self.subject
