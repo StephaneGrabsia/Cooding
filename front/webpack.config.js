@@ -4,7 +4,7 @@ module.exports = {
     devtool: 'eval-source-map',
     mode: 'development',
     entry: {
-        index: './src/index.js',
+        app: './src/app.js',
     },
     resolve: {
         modules: [__dirname, 'node_modules'],

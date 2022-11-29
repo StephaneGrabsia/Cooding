@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-//import './styles/style.scss'
+import SignInOutContainer from "./containers";
 
-import Login from './components/login'
+//import './styles/style.scss'
 
 
 const App = () => {
     return (
         <div className="app">
-            <Login />
+            <SignInOutContainer/>
         </div>
     )
 }
