@@ -37,8 +37,8 @@ def getRoutes(request):
 
 @api_view(['GET'])
 def getMembers(request):
-    members = Member.objects.all()
-    serializer = MemberSerializer(members, many=True)
+    member = Member.objects.all()
+    serializer = MemberSerializer(member, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
