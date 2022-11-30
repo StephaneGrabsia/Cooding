@@ -1,5 +1,6 @@
 from django.db import models
 import os
+import subprocess
 
 # Create your models here.
 
@@ -24,24 +25,23 @@ class Exercise(models.Model):
     test_input = models.CharField(null=True, max_length = 255)
     correct_output = models.TextField(null=True)
 
-    def test_solution(self):
+    def run(self):
         with open('test_file.py', 'w') as f:
             f.write(self.solution + "\n")
             f.write("test_input = "+ self.test_input + "\n")
-            f.write("correct_output = " + self.correct_output + "\n")
-            f.write("output, test = True, 0\n")
-            f.write("while(test< len(test_input) and output):\n")
-            f.write("   if f(test) != correct_output[test]:\n")
-            f.write("       output = False\n")
-            f.write("   test += 1\n")
+            f.write("output, test = [], 0\n")
+            f.write("for input in test_input:\n")
+            f.write("   output.append(f(input))\n")
             f.write("print(output)")
         os.system("python3 test_file.py > answer.txt")
         with open("answer.txt", 'r') as out:
             test_output = out.read()
         os.remove("test_file.py")
         os.remove("answer.txt")
-        return test_output == "True\n"
+        return test_output
 
+    def check_sol(self, test_output):
+        return test_output == self.correct_output+"\n"
 
     def __str__(self) -> str:
         return self.statement
