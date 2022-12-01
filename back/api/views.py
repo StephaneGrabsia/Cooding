@@ -2,9 +2,11 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from .models import Member, User
+from .models import Member
+from .models import User
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import MemberSerializer, UserSerializer
+from .serializers import MemberSerializer
+from .serializers import UserSerializer
 import jwt, datetime
 # Create your views here.
 
