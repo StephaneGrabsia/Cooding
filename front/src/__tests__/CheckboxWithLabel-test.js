@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 it('CheckboxWithLabel change le texte après click', () => {
   const {queryByLabelText, getByLabelText} = render(
-      <CheckboxWithLabel labelOn="On" labelOff="Off" />,
+      <CheckboxWithLabel labelOn= 'On' labelOff='Off' />,
   );
 
   expect(queryByLabelText(/off/i)).toBeTruthy();
