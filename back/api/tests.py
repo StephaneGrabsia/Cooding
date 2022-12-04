@@ -3,13 +3,21 @@ from api.models import *
 import os
 
 # Create your tests here.
-class MemberTestCase(TestCase):
-    def setUp(self):
-        Member.objects.create(username='Sullivan')
+# class StudentTestCase(TestCase):
+#     def setUp(self):
+#         Student.objects.create(username='Sullivan')
 
-    def test_assert_username(self):
-        sullivan = Member.objects.get(username="Sullivan")
-        self.assertEqual(str(sullivan), "Sullivan")
+#     def test_assert_username(self):
+#         sullivan = Student.objects.get(username="Sullivan")
+#         self.assertEqual(str(sullivan), "Sullivan")
+
+# class TeacherTestCase(TestCase):
+#     def setUp(self):
+#         Teacher.objects.create(username='Sullivan')
+
+#     def test_assert_username(self):
+#         sullivan = Teacher.objects.get(username="Sullivan")
+#         self.assertEqual(str(sullivan), "Sullivan")
 
 class ExerciseTestCase(TestCase):
     def setUp(self):

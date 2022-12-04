@@ -1,16 +1,14 @@
 from django.db import models
+from dataclasses import dataclass
 import os
 import subprocess
 
 # Create your models here.
-
-"""Lina s'occupe de l'authentification et des classes Student et Teacher
-ici Member peut être un Student ou un Teacher"""
-
-class Member(models.Model):
-    username = models.CharField(null=True, blank=True, max_length = 255)
-    updated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
+@dataclass
+class Student:
+    username: models.CharField(null=True, blank=True, max_length = 255)
+    updated: models.DateTimeField(auto_now=True)
+    created: models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return self.username[0:50]
@@ -25,24 +23,6 @@ class Exercise(models.Model):
     test_input = models.CharField(null=True, max_length = 255)
     correct_output = models.TextField(null=True)
 
-    def run(self):
-        with open('test_file.py', 'w') as f:
-            f.write(self.solution + "\n")
-            f.write("test_input = "+ self.test_input + "\n")
-            f.write("output, test = [], 0\n")
-            f.write("for input in test_input:\n")
-            f.write("   output.append(f(input))\n")
-            f.write("print(output)")
-        os.system("python3 test_file.py > answer.txt")
-        with open("answer.txt", 'r') as out:
-            test_output = out.read()
-        os.remove("test_file.py")
-        os.remove("answer.txt")
-        return test_output
-
-    def check_sol(self, test_output):
-        return test_output == self.correct_output+"\n"
-
     def __str__(self) -> str:
         return self.statement
 
@@ -51,12 +31,21 @@ class Classroom(models.Model):
     A class is created by a teacher and joined by several students. 
     It also consists of several exercises."""
     room_id = models.IntegerField(null=True, default=None)
-    teacher = models.ForeignKey(Member, on_delete=models.PROTECT, default=None, related_name="teacher_admin")
-    students = models.ForeignKey(Member, on_delete=models.CASCADE, default=[], related_name="students_on_classroom")
+    students = models.ForeignKey(Student, on_delete=models.CASCADE, default=[], related_name="students_on_classroom")
     subjects = models.ForeignKey(Exercise, on_delete=models.PROTECT, default=[], related_name="subjects_of_classroom")
 
     def __str__(self) -> str:
         return self.room_id
+
+@dataclass
+class Teacher:
+    username: models.CharField(null=True, blank=True, max_length = 255)
+    updated: models.DateTimeField(auto_now=True)
+    created: models.DateTimeField(auto_now_add=True)
+    classroom: models.ForeignKey(Classroom, on_delete=models.CASCADE, default=[], related_name="teacher_s_classroom")
+
+    def __str__(self) -> str:
+        return self.username[0:50]
 
 
 class Solution(models.Model):
@@ -66,7 +55,7 @@ class Solution(models.Model):
     exercise = models.OneToOneField(Exercise, on_delete=models.PROTECT, default=None, related_name="exercise_done")
     source = models.TextField(null=True)
     output = models.TextField(null=True)
-    student = models.OneToOneField(Member, on_delete=models.PROTECT, default=None, related_name="student_submit")
+    student = models.OneToOneField(Student, on_delete=models.PROTECT, default=None, related_name="student_submit")
 
     def __str__(self) -> str:
         return self.source
