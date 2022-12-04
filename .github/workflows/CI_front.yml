@@ -51,7 +51,7 @@ jobs:
       
       # Run test cases and this could ensure minimum coverage as well if set
       - name: Execute test cases
-        run: npm run test
+        run: npm run test --passWithNoTests
         
       - name: Create test build
         run: npm run build
