@@ -1,6 +1,6 @@
 import React from 'react';
 import {cleanup, fireEvent, render} from '@testing-library/react';
-import CheckboxWithLabel from '../CheckboxWithLabel';
+import CheckboxWithLabel from '../components/CheckboxWithLabel';
 
 
 // Démonte et nettoie le DOM après que le test soit terminé.
