@@ -10,9 +10,11 @@ class MemberSerializer(ModelSerializer):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'username', 'password','is_student', 'is_teacher']
         extra_kwargs = {
-            'password' : {'write_only': True}
+            'password' : {'write_only': True},
+            'is_student':{'read_only': True},
+            'is_teacher':{'read_only': True}
         }
 
     def create(self, validated_data):

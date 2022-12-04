@@ -78,8 +78,11 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        username = request.data['name']
-        passsword = request.data['password']
+        username = request.data['username']
+        password = request.data['password']
+        is_teacher = request.data['is_teacher']
+        is_student = request.data['is_student']
+
 
         user = User.objects.filter(username=username).first()
 
@@ -91,32 +94,42 @@ class LoginView(APIView):
 
         payload = {
             'id' : user.id,
-            'exp': datetime.datetime.utcnow() + datetimetimedelta(minutes=2)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90),
+            'iat': datetime.datetime.utcnow()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
         
         response = Response()
 
         response.set_cookie(key='jwt', value=token, httponly=True)
         
-        response.data({
+        response.data = {
             'jwt': token
-        })
-        return reponse
+        }
+        return response
 
 class UserView(APIView):
     def get(self, request):
         token = request.COOKIES.get('jwt')
         if not token:
             raise AuthenticationFailed('Unauthentication')
+        
         try:
-            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
 
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthentication')
 
-        user = User.objects.filter(id=payload['id'].first())
+        user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        response.data = {
+            "message": "success"
+        }
+        return response
