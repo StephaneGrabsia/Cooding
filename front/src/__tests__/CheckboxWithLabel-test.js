@@ -1,4 +1,4 @@
-import React from 'react';
+/* eslint-disable react/react-in-jsx-scope */
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import CheckboxWithLabel from '../components/CheckboxWithLabel';
 
