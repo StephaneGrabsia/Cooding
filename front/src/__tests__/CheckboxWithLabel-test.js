@@ -1,4 +1,4 @@
-/* eslint-disable react/react-in-jsx-scope */
+import React from 'react';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import CheckboxWithLabel from '../components/CheckboxWithLabel';
 
@@ -9,6 +9,9 @@ afterEach(cleanup);
 it('CheckboxWithLabel change le texte après click', () => {
   const {queryByLabelText, getByLabelText} = render(
       <CheckboxWithLabel labelOn= 'On' labelOff='Off' />,
+      {
+        container: document.body.appendChild(div),
+      },
   );
 
   expect(queryByLabelText(/off/i)).toBeTruthy();
