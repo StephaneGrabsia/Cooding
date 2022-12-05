@@ -1,17 +1,28 @@
 from django.db import models
-from dataclasses import dataclass
 import os
-import subprocess
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-@dataclass
-class Student:
-    username: models.CharField(null=True, blank=True, max_length = 255)
-    updated: models.DateTimeField(auto_now=True)
-    created: models.DateTimeField(auto_now_add=True)
+class User(AbstractUser):
+    username = models.CharField(null=True, blank=True, max_length = 255, unique=True)
+    password = models.CharField(null=True, blank=True, max_length = 255)
 
-    def __str__(self) -> str:
-        return self.username[0:50]
+    REQUIRED_FIELD = []
+
+
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+class Teacher(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+
+    def __str__(self):
+        return self.user.username
+
 
 class Exercise(models.Model):
     """ Exercise composed of the statement (in markdown) and the solution 
@@ -36,16 +47,6 @@ class Classroom(models.Model):
 
     def __str__(self) -> str:
         return self.room_id
-
-@dataclass
-class Teacher:
-    username: models.CharField(null=True, blank=True, max_length = 255)
-    updated: models.DateTimeField(auto_now=True)
-    created: models.DateTimeField(auto_now_add=True)
-    classroom: models.ForeignKey(Classroom, on_delete=models.CASCADE, default=[], related_name="teacher_s_classroom")
-
-    def __str__(self) -> str:
-        return self.username[0:50]
 
 
 class Solution(models.Model):
