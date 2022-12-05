@@ -2,10 +2,8 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from .models import Member
 from .models import User
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import MemberSerializer
 from .serializers import UserSerializer
 import jwt, datetime
 # Create your views here.
@@ -14,60 +12,28 @@ import jwt, datetime
 def getRoutes(request):
     routes = [
         {
-            'Endpoint' : '/members/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns an array of members'
+            'Endpoint' : '/register/',
+            'method': 'POST',
+            'description': 'To register'
         },
         {
-            'Endpoint' : '/members/id/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns a member'
+            'Endpoint' : '/login/',
+            'method': 'POST',
+            'description': 'To login'
         },      
         {
-            'Endpoint' : '/members/id/update/',
-            'method': 'PUT',
-            'body': {'body': ""},
-            'description': 'Creates an existing member with data sent in post request'
+            'Endpoint' : '/user/',
+            'method': 'GET',
+            'description': 'get users'
         },    
         {
-            'Endpoint' : '/members/id/delete/',
-            'method': 'DELETE',
-            'body': None,
-            'description': 'Deletes an existing member'
+            'Endpoint' : '/logout/',
+            'method': 'POST',
+            'description': 'To logout'
         },
     ]
     return Response(routes)
 
-@api_view(['GET'])
-def getMembers(request):
-    members = Member.objects.all()
-    serializer = MemberSerializer(members, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def getMember(request, pk):
-    members = Member.objects.get(id=pk)
-    serializer = MemberSerializer(members, many=False)
-    return Response(serializer.data)
-
-@api_view(['PUT'])
-def updateMember(request, pk):
-    data = request.data
-    member = Member.objects.get(id=pk)
-    serializer = MemberSerializer(instance=member, data=data)
-
-    if serializer.is_valid():
-        serializer.save()
-
-    return Response(serializer.data)
-
-@api_view(['DELETE'])
-def deleteMember(request, pk):
-    member = Member.objects.get(id=pk)
-    member.delete()
-    return Response('Note was deleted')
 
 class RegisterView(APIView):
     def post(self, request):
