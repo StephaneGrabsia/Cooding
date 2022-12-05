@@ -10,15 +10,27 @@ class User(AbstractUser):
     REQUIRED_FIELD = []
 
 
-class Student(models.Model):
+class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
     def __str__(self):
         return self.user.username
 
 
-class Teacher(models.Model):
+class Classroom(models.Model):
+    """ A classroom is identified by its primary key (room_id). 
+    A class is created by a teacher and joined by several students. 
+    It also consists of several exercises."""
+    room_id = models.IntegerField(null=True, default=None)
+    teacher = models.ForeignKey(Teacher, on_delete=models.PROTECT, default=[], related_name="teacher_of_the_classroom")
+
+    def __str__(self) -> str:
+        return self.room_id
+
+
+class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, default=[], related_name="students_on_classroom")
 
     def __str__(self):
         return self.user.username
@@ -33,20 +45,10 @@ class Exercise(models.Model):
     solution = models.TextField(null=True)
     test_input = models.CharField(null=True, max_length = 255)
     correct_output = models.TextField(null=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.PROTECT, default=[], related_name="subjects_of_classroom")
 
     def __str__(self) -> str:
         return self.statement
-
-class Classroom(models.Model):
-    """ A classroom is identified by its primary key (room_id). 
-    A class is created by a teacher and joined by several students. 
-    It also consists of several exercises."""
-    room_id = models.IntegerField(null=True, default=None)
-    students = models.ForeignKey(Student, on_delete=models.CASCADE, default=[], related_name="students_on_classroom")
-    subjects = models.ForeignKey(Exercise, on_delete=models.PROTECT, default=[], related_name="subjects_of_classroom")
-
-    def __str__(self) -> str:
-        return self.room_id
 
 
 class Solution(models.Model):
