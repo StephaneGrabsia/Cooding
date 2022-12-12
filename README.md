@@ -121,3 +121,15 @@ Command to run to generate a secret django key (you should get django installed)
 ```bash
 python3 -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
 ```
+
+## Front Linting
+
+If you want to test the linting of your file before pushing it on the repo, you can install the eslint extension in VS Code, or just use the following lines if you have previously installed npm and the eslint dependency:
+```bash
+npm run lint 
+```
+and if you think the errors can be corrected directly by the linter without problem:
+
+```bash
+npm run lint:fix
+```
