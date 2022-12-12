@@ -37,7 +37,7 @@ const SignUp = () => {
             <Paper elevation={10} style={paperStyle}>
                 <Grid align='center'>
                     <h2 style={headerStyle}>Créer un compte</h2>
-                    <Typography variant='caption'>Replir ce formulaire pour créer votre compte professeur !</Typography>
+                    <Typography variant='caption'>Remplir ce formulaire pour créer votre compte professeur !</Typography>
                 </Grid>
                 <Grid>
                     <form>

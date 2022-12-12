@@ -61,7 +61,6 @@ const SignInOutContainer = () => {
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="disabled tabs example"
           centered
         >
           <Tab icon={<FontAwesomeIcon icon={faGraduationCap} />} iconPosition="start" label="Etudiants" />

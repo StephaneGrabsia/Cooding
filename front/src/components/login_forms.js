@@ -18,10 +18,11 @@ const paperStyle = {
     margin: "0"
 }
 
+const buttonStyle = {
+    margin: "8px 0"
+}
+
 export const StudentLogin = () => {
-    const buttonStyle = {
-        margin: "8px 0"
-    }
     return (
         <Grid>
             <Paper elevation={0} style={paperStyle}>
@@ -45,15 +46,6 @@ export const StudentLogin = () => {
                         fullWidth
                         style={buttonStyle}
                     />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                name="checkedB"
-                                color="primary"
-                            />
-                        }
-                        label="Se souvenir de moi"
-                    />
                     <Button type="submit" color="primary" variant="contained" fullWidth style={buttonStyle}>Rejoindre</Button>
                     <Typography style={buttonStyle}> Vous avez&ensp;
                         <Link href="#">
@@ -67,9 +59,6 @@ export const StudentLogin = () => {
 }
 
 export const TeacherLogin = () => {
-    const buttonStyle = {
-        margin: "8px 0"
-    }
     return (
         <Grid>
             <Paper elevation={0} style={paperStyle}>
@@ -93,15 +82,6 @@ export const TeacherLogin = () => {
                         type="password"
                         fullWidth
                         style={buttonStyle}
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                name="checkedB"
-                                color="primary"
-                            />
-                        }
-                        label="Se souvenir de moi"
                     />
                     <Button type="submit" color="primary" variant="contained" fullWidth style={buttonStyle}>Rejoindre</Button>
                     <Link href="#">
