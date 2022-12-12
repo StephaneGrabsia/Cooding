@@ -45,8 +45,6 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data['username']
         password = request.data['password']
-        is_teacher = request.data['is_teacher']
-        is_student = request.data['is_student']
 
 
         user = User.objects.filter(username=username).first()
