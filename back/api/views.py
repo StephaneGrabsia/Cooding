@@ -46,11 +46,10 @@ class TeacherRegisterView(APIView):
         user = UserSerializer(data=request.data)
         user.is_valid(raise_exception=True)
         user.save()
-        user_id = User.objects.get(username=user.data['username']).id
-        serializer = TeacherSerializer(data={'user':user_id})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        teacher_serializer = TeacherSerializer(data={'user':user.data['id']})
+        teacher_serializer.is_valid(raise_exception=True)
+        teacher_serializer.save()
+        return Response(teacher_serializer.data)
 
 class LoginView(APIView):
     def post(self, request):
@@ -88,18 +87,16 @@ class TeacherLoginView(APIView):
         username = request.data['username']
         password = request.data['password']
 
-
-        user = User.objects.get(username=username)
-        teacher = Teacher.objects.get(user=user.id)
+        teacher = Teacher.objects.get(user__username=username)
 
         if teacher is None:
             raise AuthenticationFailed('User not found')
         
-        if not user.check_password(password):
+        if not teacher.user.check_password(password):
             raise AuthenticationFailed('Incorrect password')
 
         payload = {
-            'id' : user.id,
+            'id' : teacher.user.id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90),
             'iat': datetime.datetime.utcnow()
         }
@@ -143,8 +140,7 @@ class TeacherView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthentication')
         
-        user = User.objects.get(pk=payload['id'])
-        teacher = Teacher.objects.get(user=user)
+        teacher = Teacher.objects.get(user__id=payload['id'])
         serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
