@@ -7,6 +7,23 @@ from rest_framework.exceptions import AuthenticationFailed
 from .serializers import *
 import jwt, datetime
 # Create your views here.
+def authenticated(function):
+    def wrapper(self, request, *args):
+        token = request.COOKIES.get('jwt')
+        if not token:
+            raise AuthenticationFailed('Unauthentication')
+        
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthentication')
+
+        args = (payload['id'],)
+
+        return function(self, request, *args)
+        
+    return wrapper
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -113,34 +130,16 @@ class TeacherLoginView(APIView):
         return response
 
 class UserView(APIView):
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthentication')
-        
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthentication')
-
-        user = User.objects.filter(id=payload['id']).first()
+    @authenticated
+    def get(self, request, auth_id):
+        user = User.objects.get(id=auth_id)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
 class TeacherView(APIView):
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthentication')
-        
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthentication')
-        
-        teacher = Teacher.objects.get(user__id=payload['id'])
+    @authenticated
+    def get(self, request, auth_id):
+        teacher = Teacher.objects.get(user__id=auth_id)
         serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
