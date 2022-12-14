@@ -6,8 +6,11 @@ from .models import *
 from rest_framework.exceptions import AuthenticationFailed
 from .serializers import *
 import jwt, datetime
+from functools import wraps 
+
 # Create your views here.
 def authenticated(function):
+    @wraps(function)
     def wrapper(self, request, *args):
         token = request.COOKIES.get('jwt')
         if not token:
@@ -19,9 +22,7 @@ def authenticated(function):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthentication')
 
-        args = (payload['id'],)
-
-        return function(self, request, *args)
+        return function(self, request, payload['id'])
         
     return wrapper
 
