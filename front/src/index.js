@@ -10,13 +10,13 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     tertianary: {
-      light: '#1698F9',
+      light: '#ADE6FF',
       main: '#1698F9',
-      dark: '#1698F9',
+      dark: '#1670F9',
       contrastText: '#fff',
     },
     secondary: {
-      light: '#FAB208',
+      light: '#FFD290',
       main: '#F9A429',
       dark: '#D78E32',
       contrastText: '#fff',
@@ -32,10 +32,13 @@ const theme = createTheme({
 
 
 const App = () => {
+  const exercice = {
+    content: '# Exercice 1',
+  };
   return (
     <div className="app">
       <ThemeProvider theme={theme}>
-        <StudentPage/>
+        <StudentPage exercice={exercice}/>
       </ThemeProvider>
     </div>);
 };
