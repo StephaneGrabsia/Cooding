@@ -11,7 +11,8 @@ from functools import wraps
 # Create your views here.
 def authenticated(function):
     @wraps(function)
-    def wrapper(self, request, *args):
+    def wrapper(*args, **kwargs):
+        request = args[1]
         token = request.COOKIES.get('jwt')
         if not token:
             raise AuthenticationFailed('Unauthentication')
@@ -22,7 +23,7 @@ def authenticated(function):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthentication')
 
-        return function(self, request, payload['id'])
+        return function(*args, payload['id'], **kwargs)
         
     return wrapper
 
