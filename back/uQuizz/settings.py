@@ -33,6 +33,7 @@ if DEBUG:
         "localhost",
         "127.0.0.1",
         "back",
+        "testserver"
     ]
 else:
     ALLOWED_HOSTS = [env("DOMAIN_NAME", default="uquizz.enpc.org")]

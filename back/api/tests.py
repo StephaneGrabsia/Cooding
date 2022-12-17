@@ -1,8 +1,40 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from api.models import *
-import os
+from api.views import *
 
 # Create your tests here.
+class TeacherTestCase(TestCase):
+    def setUp(self):
+        User.objects.create(username="admin", password="root")
+        Teacher.objects.create(user=User.objects.get(username="admin"))
+
+    def test_database_Teacher(self):
+        teacher = Teacher.objects.get(user__username="admin")
+        self.assertIsInstance(teacher, Teacher)
+        self.assertEqual(str(teacher), "admin")
+    
+    def test_api_Teacher(self):
+        c = Client()
+        response = c.post("/teacher/register/", {'username':'sully', 'password':'root'})
+        self.assertEqual(response.status_code, 200)
+
+
+class StudentTestCase(TestCase):
+    def setUp(self):
+        User.objects.create(username="student", password="root")
+        User.objects.create(username="admin", password="root")
+        Teacher.objects.create(user=User.objects.get(username="admin"))
+        Classroom.objects.create(room_id=666, teacher=Teacher.objects.get(user__username="admin"))
+        Student.objects.create(
+            user=User.objects.get(username="student"),
+            classroom=Classroom.objects.get(room_id=666)
+        )
+ 
+    def test_database_Teacher(self):
+        student = Student.objects.get(user__username="student")
+        self.assertIsInstance(student, Student)
+        self.assertEqual(str(student), "student")
+
 # class StudentTestCase(TestCase):
 #     def setUp(self):
 #         Student.objects.create(username='Sullivan')
