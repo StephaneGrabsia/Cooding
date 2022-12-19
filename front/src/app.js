@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-// import './styles/style.css'
-import './styles/style.scss';
-import StudentPage from './containers/studentPage';
-
+import {createRoot} from 'react-dom/client';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
+import SignInOutContainer from './containers';
+// import StudentPage from './containers/studentPage';
+
+import './styles/style.scss';
 
 const theme = createTheme({
   palette: {
@@ -30,14 +30,16 @@ const theme = createTheme({
   },
 });
 
-
 const App = () => {
   return (
-    <div className="app">
+    <div>
+      <SignInOutContainer />
       <ThemeProvider theme={theme}>
-        <StudentPage/>
       </ThemeProvider>
-    </div>);
+    </div>
+  );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App tab="home" />);

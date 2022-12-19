@@ -5,7 +5,7 @@ RUN mkdir /app && chown node /app && chmod 700 /app
 WORKDIR /app
 
 # copy and install the node environment
-COPY .babelrc package.json webpack.config.js /app/
+COPY .babelrc package.json webpack.config.js .eslintrc.json jest.config.js /app/
 RUN chown node .babelrc package.json webpack.config.js
 
 # copy the source code of the app
