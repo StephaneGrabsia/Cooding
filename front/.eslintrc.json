@@ -7,8 +7,7 @@
         "plugin:react/recommended",
         "google"
     ],
-    "overrides": [
-    ],
+    "overrides": [],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
@@ -17,6 +16,7 @@
         "react"
     ],
     "rules": {
-        "react/no-unescaped-entities": 0
+        "react/no-unescaped-entities": 0,
+        "react/prop-types": "off"
     }
 }
