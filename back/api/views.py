@@ -1,155 +1,89 @@
-from django.shortcuts import render
+import jwt
+import datetime
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from .models import *
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import *
-import jwt, datetime
-from functools import wraps 
+from django.core.exceptions import ObjectDoesNotExist
 
-# Create your views here.
-def authenticated(function):
-    @wraps(function)
-    def wrapper(*args, **kwargs):
-        request = args[1]
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthentication')
-        
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+from api.models import Teacher
+from api.serializers import TeacherSerializer
+from api.decorators import authenticated
+from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthentication')
 
-        return function(*args, payload['id'], **kwargs)
-        
-    return wrapper
-
-@api_view(['GET'])
+@api_view(["GET"])
 def getRoutes(request):
     routes = [
         {
-            'Endpoint' : '/register/',
-            'method': 'POST',
-            'description': 'To register'
+            "Endpoint": "/<user_type>/register/",
+            "method": "POST",
+            "description": "To register",
+            "Format of the request:": {
+                "user": {"username": "<your username>", "password": "<your pass>"},
+                "first_name": "<your first name>",
+                "last_name": "<your last name>",
+                "gender": "<Homme ou Femme>",
+            },
         },
         {
-            'Endpoint' : '/login/',
-            'method': 'POST',
-            'description': 'To login'
-        },      
-        {
-            'Endpoint' : '/user/',
-            'method': 'GET',
-            'description': 'get users'
-        },    
-        {
-            'Endpoint' : '/logout/',
-            'method': 'POST',
-            'description': 'To logout'
+            "Endpoint": "/<user_type>/login/",
+            "method": "POST",
+            "description": "To login",
+            "Format of the request:": {
+                "username": "<your username>",
+                "password": "<your pass>",
+            },
         },
+        {"Endpoint": "/<user_type>/", "method": "GET", "description": "get users"},
+        {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
     ]
     return Response(routes)
 
-class UserRegisterView(APIView):
+
+class TeacherRegisterView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = TeacherSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
-class TeacherRegisterView(APIView):
-    def post(self, request):
-        user = UserSerializer(data=request.data)
-        user.is_valid(raise_exception=True)
-        user.save()
-        teacher_serializer = TeacherSerializer(data={'user':user.data['id']})
-        teacher_serializer.is_valid(raise_exception=True)
-        teacher_serializer.save()
-        return Response(teacher_serializer.data)
-
-class LoginView(APIView):
-    def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-
-
-        user = User.objects.filter(username=username).first()
-
-        if user is None:
-            raise AuthenticationFailed('User not found')
-        
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
-
-        payload = {
-            'id' : user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90),
-            'iat': datetime.datetime.utcnow()
-        }
-
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
-        
-        response = Response()
-
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        
-        response.data = {
-            'jwt': token
-        }
-        return response
 
 class TeacherLoginView(APIView):
     def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-
-        teacher = Teacher.objects.get(user__username=username)
-
-        if teacher is None:
-            raise AuthenticationFailed('User not found')
-        
+        username = request.data["username"]
+        password = request.data["password"]
+        try:
+            teacher = Teacher.objects.get(user__username=username)
+        except ObjectDoesNotExist:
+            raise AuthenticationFailed("User not found")
         if not teacher.user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
-
-        payload = {
-            'id' : teacher.user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90),
-            'iat': datetime.datetime.utcnow()
+            raise AuthenticationFailed("Incorrect password")
+        playload = {
+            "id": teacher.user.id,
+            "user_type": "teacher",
+            "exp": datetime.datetime.utcnow() + TOKEN_EXPIRATION_TIME,
+            "iat": datetime.datetime.utcnow(),
         }
-
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
-        
+        token = jwt.encode(playload, "secret", algorithm="HS256")
         response = Response()
-
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        
-        response.data = {
-            'jwt': token
-        }
+        response.set_cookie(key="jwt", value=token, httponly=True)
+        response.data = {"jwt": token}
         return response
 
-class UserView(APIView):
-    @authenticated
-    def get(self, request, auth_id):
-        user = User.objects.get(id=auth_id)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
 
 class TeacherView(APIView):
-    @authenticated
+    @authenticated(user_type="teacher")
     def get(self, request, auth_id):
         teacher = Teacher.objects.get(user__id=auth_id)
         serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
+
 class LogoutView(APIView):
-    def post(self, request):
+    def get(self, request):
         response = Response()
-        response.delete_cookie('jwt')
-        response.data = {
-            "message": "success"
-        }
+        response.delete_cookie("jwt")
+        response.data = {"message": "success"}
         return response

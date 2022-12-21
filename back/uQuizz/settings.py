@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 import environ
+import datetime
 
 from pathlib import Path
 
@@ -29,12 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = env("DEBUG", default=False)
 
 if DEBUG:
-    ALLOWED_HOSTS = [
-        "localhost",
-        "127.0.0.1",
-        "back",
-        "testserver"
-    ]
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "back", "testserver"]
 else:
     ALLOWED_HOSTS = [env("DOMAIN_NAME", default="uquizz.enpc.org")]
 
@@ -60,8 +56,6 @@ CORE_APPS = [
     "rest_framework",
     "api.apps.ApiConfig",
     "corsheaders",
-
-
 ]
 
 THIRD_PARTY_APPS = []
@@ -161,4 +155,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "api.User"
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS  =True
+CORS_ALLOW_CREDENTIALS = True
+
+TOKEN_EXPIRATION_TIME = datetime.timedelta(minutes=120)
