@@ -2,7 +2,6 @@ import os
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -24,7 +23,7 @@ class Teacher(models.Model):
     gender = models.CharField(max_length=5, choices=Gender.choices)
 
     is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now())
+    date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username

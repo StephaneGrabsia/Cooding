@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
+from django.core.exceptions import ObjectDoesNotExist
 
 from api.models import Teacher
 from api.serializers import TeacherSerializer
@@ -43,18 +44,19 @@ def getRoutes(request):
 
 class TeacherRegisterView(APIView):
     def post(self, request):
-        teacher = TeacherSerializer(data=request.data)
-        teacher.is_valid(raise_exception=True)
-        teacher.save()
-        return Response(teacher.data)
+        serializer = TeacherSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class TeacherLoginView(APIView):
     def post(self, request):
         username = request.data["username"]
         password = request.data["password"]
-        teacher = Teacher.objects.get(user__username=username)
-        if teacher is None:
+        try:
+            teacher = Teacher.objects.get(user__username=username)
+        except ObjectDoesNotExist:
             raise AuthenticationFailed("User not found")
         if not teacher.user.check_password(password):
             raise AuthenticationFailed("Incorrect password")
