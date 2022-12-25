@@ -1,45 +1,31 @@
 import React from 'react';
-import {createRoot} from 'react-dom/client';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { createRoot } from 'react-dom/client';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import PrivateRoute from './utils/PrivateRoute'
+import { AuthProvider } from './context/AuthContext';
 
-import SignInOutContainer from './containers';
+import SignInOutContainer from './containers/index';
+import RegisterContainer from './containers/register';
 // import StudentPage from './containers/studentPage';
 
 import './styles/style.scss';
+import TeacherIndex from './containers/TeacherIndex';
 
-const theme = createTheme({
-  palette: {
-    tertianary: {
-      light: '#1698F9',
-      main: '#1698F9',
-      dark: '#1698F9',
-      contrastText: '#fff',
-    },
-    secondary: {
-      light: '#FAB208',
-      main: '#F9A429',
-      dark: '#D78E32',
-      contrastText: '#fff',
-    },
-    primary: {
-      light: '#fff',
-      main: '#fff',
-      dark: '#fff',
-      contrastText: '#000',
-    },
-  },
-});
 
 const App = () => {
   return (
-    <div>
-      <SignInOutContainer />
-      <ThemeProvider theme={theme}>
-      </ThemeProvider>
+    <div className='App'>
+      <Router>
+        <AuthProvider>
+          <Route component={SignInOutContainer} path="/" exact />
+          <PrivateRoute component={TeacherIndex} path="/teacher" />
+        </AuthProvider>
+      </Router>
     </div>
   );
 };
 
 const container = document.getElementById('root');
 const root = createRoot(container);
-root.render(<App tab="home" />);
+root.render(<App />);

@@ -1,15 +1,16 @@
-import React from 'react';
-import {Grid, Paper, Tabs, Tab, Box} from '@mui/material';
+import React, { useContext } from 'react';
+import { Grid, Paper, Tabs, Tab, Box, Typography } from '@mui/material';
 
-import {StudentLogin, TeacherLogin} from '../components/login_forms';
+import { StudentLogin, TeacherLogin } from '../components/login_forms';
 
 import Logo from '../assets/logo.svg';
 import Background from '../assets/background.svg';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faGraduationCap,
   faPersonChalkboard,
 } from '@fortawesome/free-solid-svg-icons';
+import AuthContext from '../context/AuthContext';
 
 /**
  * Component coding the index tabs
@@ -17,7 +18,7 @@ import {
  * @return {Component} A component
  */
 function TabPanel(props) {
-  const {children, value, index, ...other} = props;
+  const { children, value, index, ...other } = props;
 
   return (
     <div
@@ -38,7 +39,7 @@ function TabPanel(props) {
 
 const paperStyle = {
   height: '80vh',
-  minHeight: 610,
+  minHeight: 650,
   width: 500,
   margin: '10vh auto',
 
@@ -53,7 +54,7 @@ const imgStyle = {
  * login of student and teacher
  * @return {Component} A component
  */
-const SignInOutContainer = () => {
+const SignInOutContainer = ({ message }) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -69,7 +70,6 @@ const SignInOutContainer = () => {
         <Grid align="center">
           <img src={Logo} style={imgStyle} />
         </Grid>
-
         <Tabs
           value={value}
           onChange={handleChange}
