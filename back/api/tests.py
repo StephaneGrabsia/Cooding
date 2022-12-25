@@ -12,32 +12,30 @@ class TeacherTestCase(TestCase):
             gender="Homme",
         )
 
-    def test_database(self):
+    def test_database_Teacher(self):
         teacher = Teacher.objects.get(user__username="admin")
         self.assertIsInstance(teacher, Teacher)
         self.assertEqual(str(teacher), "admin")
 
-    def test_api_register(self):
+    def test_api_Teacher_register(self):
         c = Client()
         response = c.post(
-            path="/teacher/register/",
-            data={
-                "user": {"username": "boubounou", "password": "pass"},
+            "/teacher/register/",
+            {
+                "user": {"username": "bibo", "password": "pass"},
                 "first_name": "toto",
                 "last_name": "tata",
                 "gender": "Femme",
             },
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_api_login(self):
-        self.test_api_register()
+    def test_apii_Teacher_login(self):
         c = Client()
         response = c.post(
-            path="/teacher/login/", data={"username": "boubounou", "password": "pass"}
+            "/teacher/login/",
+            {"username": "bibo", "password": "pass"},
         )
-        print(response)
         self.assertEqual(response.status_code, 200)
 
 

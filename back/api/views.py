@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.models import Teacher
-from api.serializers import TeacherSerializer
+from api.models import Teacher, Classroom
+from api.serializers import TeacherSerializer, RoomSerializer
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -87,3 +87,29 @@ class LogoutView(APIView):
         response.delete_cookie("jwt")
         response.data = {"message": "success"}
         return response
+
+class RoomCreateView(APIView):
+    def post(self, request):
+        serializer = RoomSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+class RoomView(APIView):
+    @authenticated(user_type="teacher")
+    def get(self, request, auth_id):
+        room_id = self.request.query_params.get('id')
+        print(room_id)
+        room = Classroom.objects.get(room_id=room_id)
+        serializer = RoomSerializer(room)
+        return Response(serializer.data)
+
+class RoomDeleteView(APIView):
+    @authenticated(user_type="teacher")
+    def post(self, request, auth_id):
+        response = Response()
+        Classroom.objects.get(room_id=request.data['id']).delete()
+        response.data = {'message':'success'}
+        return response
+
+
