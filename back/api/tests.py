@@ -12,32 +12,35 @@ class TeacherTestCase(TestCase):
             gender="Homme",
         )
 
-    def test_database(self):
+    def test_database_Teacher(self):
         teacher = Teacher.objects.get(user__username="admin")
         self.assertIsInstance(teacher, Teacher)
         self.assertEqual(str(teacher), "admin")
 
-    def test_api_register(self):
+    def test_api_Teacher_register(self):
         c = Client()
         response = c.post(
-            path="/teacher/register/",
-            data={
-                "user": {"username": "boubounou", "password": "pass"},
+            "/teacher/register/",
+            {
+                "user": {"username": "bibo", "password": "pass"},
                 "first_name": "toto",
                 "last_name": "tata",
                 "gender": "Femme",
             },
-            content_type="application/json",
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_api_login(self):
-        self.test_api_register()
+    def test_api_Teacher_login(self):
+        self.test_api_Teacher_register()
         c = Client()
         response = c.post(
-            path="/teacher/login/", data={"username": "boubounou", "password": "pass"}
+            "/teacher/login/",
+            {
+                "username": "bibo", 
+                "password": "pass"
+            }
         )
-        print(response)
         self.assertEqual(response.status_code, 200)
 
 
@@ -58,6 +61,62 @@ class StudentTestCase(TestCase):
         student = Student.objects.get(user__username="student")
         self.assertIsInstance(student, Student)
         self.assertEqual(str(student), "student")
+
+
+class RoomTestCase(TestCase):
+    def setUp(self):
+        User.objects.create(username="admin", password="root")
+        teacher = Teacher.objects.create(
+            user=User.objects.get(username="admin"),
+            first_name="sully",
+            last_name="lebg",
+            gender="Homme",
+        )
+        Classroom.objects.create(
+            room_id = 666,
+            teacher = teacher
+        )
+
+    def test_database_Teacher(self):
+        room = Classroom.objects.get(room_id=666)
+        self.assertIsInstance(room, Classroom)
+        self.assertEqual(str(room), "666")
+
+    def test_api_Classroom_create_fetch_delete(self):
+        c = Client()
+        c.post(
+            "/teacher/register/",
+            {
+                "user": {"username": "bibo", "password": "pass"}, 
+                "first_name": "toto", 
+                "last_name": "tata", 
+                "gender": "Femme"
+            },
+            content_type="application/json"
+        )
+        c.post(
+            "/teacher/login/",
+            {"username": "bibo", "password": "pass"}
+        )
+        response = c.post(
+            "/room/create/", 
+            {
+                "room_id":999,"teacher":1
+            }, 
+            content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response = c.get(
+            "/room/?id=999"
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/room/delete/", 
+            {
+                "id":999
+            }, 
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 # class StudentTestCase(TestCase):

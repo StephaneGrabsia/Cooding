@@ -5,6 +5,9 @@ from api.views import (
     TeacherLoginView,
     TeacherView,
     LogoutView,
+    RoomCreateView,
+    RoomView,
+    RoomDeleteView
 )
 
 urlpatterns = [
@@ -13,4 +16,7 @@ urlpatterns = [
     path("teacher/login/", TeacherLoginView.as_view()),
     path("teacher/", TeacherView.as_view()),
     path("logout/", LogoutView.as_view()),
+    path("room/create/", RoomCreateView.as_view()),
+    path("room/", RoomView.as_view()),
+    path("room/delete/", RoomDeleteView.as_view())
 ]
