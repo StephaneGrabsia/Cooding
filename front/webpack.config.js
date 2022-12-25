@@ -14,7 +14,11 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'public'),
-        filename: '[name].bundle.js',
+        filename: 'app.bundle.js',
+    },
+    devServer: {
+        historyApiFallback: true,
+        static: path.resolve(__dirname, './public'),
     },
     module: {
         rules: [
