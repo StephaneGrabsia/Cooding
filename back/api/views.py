@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.models import Teacher, Classroom
-from api.serializers import TeacherSerializer, RoomSerializer
+from api.models import Teacher, Student, Classroom
+from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -80,6 +80,41 @@ class TeacherView(APIView):
         serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
+class StudentRegisterView(APIView):
+    def post(self, request):
+        student = StudentSerializer(data=request.data)
+        student.is_valid(raise_exception=True)
+        student.save()
+        return Response(student.data)
+
+class StudentLoginView(APIView):
+    def post(self, request):
+        username = request.data["username"]
+        password = request.data["password"]
+        try:
+            student = Student.objects.get(user__username=username)
+        except ObjectDoesNotExist:
+            raise AuthenticationFailed("User not found")
+        if not student.user.check_password(password):
+            raise AuthenticationFailed("Incorrect password")
+        playload = {
+            "id": student.user.id,
+            "user_type": "student",
+            "exp": datetime.datetime.utcnow() + TOKEN_EXPIRATION_TIME,
+            "iat": datetime.datetime.utcnow(),
+        }
+        token = jwt.encode(playload, "secret", algorithm="HS256")
+        response = Response()
+        response.set_cookie(key="jwt", value=token, httponly=True)
+        response.data = {"jwt": token}
+        return response
+
+class  StudentView(APIView):
+    @authenticated(user_type="student")
+    def get(self, request, auth_id):
+        student = Student.objects.get(user__id=auth_id)
+        serializer = StudentSerializer(student)
+        return Response(serializer.data)
 
 class LogoutView(APIView):
     def get(self, request):
