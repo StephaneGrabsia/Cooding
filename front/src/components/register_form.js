@@ -22,9 +22,6 @@ const SignUp = () => {
     width: 450,
     margin: '10vh auto',
   };
-  const headerStyle = {
-    margin: 0,
-  };
   const textBoxStyle = {
     margin: '8px 0',
   };

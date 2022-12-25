@@ -1,9 +1,8 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
-import PrivateRoute from './utils/PrivateRoute'
-import { AuthProvider } from './context/AuthContext';
+import {createRoot} from 'react-dom/client';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+import PrivateRoute from './utils/PrivateRoute';
+import {AuthProvider} from './context/AuthContext';
 
 import SignInOutContainer from './containers/index';
 import RegisterContainer from './containers/register';
@@ -19,6 +18,7 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Route component={SignInOutContainer} path="/" exact />
+          <Route component={RegisterContainer} path="/register" />
           <PrivateRoute component={TeacherIndex} path="/teacher" />
         </AuthProvider>
       </Router>

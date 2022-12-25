@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import {
   Grid,
   Paper,
@@ -65,7 +65,7 @@ export const StudentLogin = () => {
 };
 
 export const TeacherLogin = () => {
-  let { loginUser } = useContext(AuthContext)
+  const {loginUser} = useContext(AuthContext);
   return (
     <Grid>
       <Paper elevation={0} style={paperStyle}>
