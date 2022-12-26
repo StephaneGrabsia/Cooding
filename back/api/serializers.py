@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from api.models import User, Teacher, Classroom
+from api.models import User, Teacher, Student, Classroom
 
 
 class UserSerializer(ModelSerializer):
@@ -40,3 +40,18 @@ class RoomSerializer(ModelSerializer):
         room = self.Meta.model(**validated_data)
         room.save()
         return room
+
+class StudentSerializer(ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Student
+        fields = ["user", "classroom"]
+
+    def create(self, validated_data):
+        validated_data["user"]["password"] = str(validated_data["classroom"])
+        user = UserSerializer.create(UserSerializer(), validated_data["user"])
+        validated_data["user"] = user
+        student = self.Meta.model(**validated_data)
+        student.save()
+        return student

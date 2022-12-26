@@ -17,7 +17,7 @@ class TeacherTestCase(TestCase):
         self.assertIsInstance(teacher, Teacher)
         self.assertEqual(str(teacher), "admin")
 
-    def test_api_Teacher_register(self):
+    def test_api_Teacher_login(self):
         c = Client()
         response = c.post(
             "/teacher/register/",
@@ -30,10 +30,6 @@ class TeacherTestCase(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
-
-    def test_api_Teacher_login(self):
-        self.test_api_Teacher_register()
-        c = Client()
         response = c.post(
             "/teacher/login/",
             {
@@ -46,21 +42,57 @@ class TeacherTestCase(TestCase):
 
 class StudentTestCase(TestCase):
     def setUp(self):
-        User.objects.create(username="student", password="root")
-        User.objects.create(username="admin", password="root")
-        Teacher.objects.create(user=User.objects.get(username="admin"))
+        User.objects.create(username="teacher", password="root")
+        User.objects.create(username="student", password="osef")
+        Teacher.objects.create(
+            user=User.objects.get(username="teacher"),
+            first_name="sully",
+            last_name="lebg",
+            gender="Homme",
+        )
         Classroom.objects.create(
-            room_id=666, teacher=Teacher.objects.get(user__username="admin")
+            room_id=666, teacher=Teacher.objects.get(user__username="teacher")
         )
         Student.objects.create(
             user=User.objects.get(username="student"),
             classroom=Classroom.objects.get(room_id=666),
         )
 
-    def test_database_Teacher(self):
+    def test_database_Student(self):
         student = Student.objects.get(user__username="student")
         self.assertIsInstance(student, Student)
         self.assertEqual(str(student), "student")
+
+    def test_api_Student(self):
+        c = Client()
+        response = c.post(
+            "/student/register/",
+            {
+                "user": {"username": "chouchou", "password": "osef"},
+                "classroom": "666"
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/student/login/",
+            {
+                "username": "chouchou",
+                "password": "666"
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.get(
+            "/student/",
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.get(
+            "/logout/",
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class RoomTestCase(TestCase):
@@ -101,7 +133,8 @@ class RoomTestCase(TestCase):
         response = c.post(
             "/room/create/", 
             {
-                "room_id":999,"teacher":1
+                "room_id":999,
+                "teacher":1
             }, 
             content_type="application/json")
         self.assertEqual(response.status_code, 200)
