@@ -46,18 +46,12 @@
     "eslint-plugin-react": "^7.31.11",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
-<<<<<<< HEAD
     "@monaco-editor/react": "^4.4.6",
-    "prettier": "^2.8.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-markdown": "^8.0.4",
-=======
     "prettier": "^2.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.4",
->>>>>>> dev
     "sass": "^1.56.0",
     "sass-loader": "^13.1.0",
     "style-loader": "^3.3.1",
