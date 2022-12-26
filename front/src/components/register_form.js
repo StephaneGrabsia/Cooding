@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   Grid,
   Paper,
@@ -13,6 +13,7 @@ import {
   Link,
   Typography,
 } from '@mui/material';
+import AuthContext from '../context/AuthContext';
 
 const SignUp = () => {
   const paperStyle = {
@@ -20,14 +21,15 @@ const SignUp = () => {
     height: '80vh',
     minHeight: 550,
     width: 450,
-    margin: '10vh auto',
+    margin: '0',
   };
   const textBoxStyle = {
     margin: '8px 0',
   };
+  const {registerUser} = useContext(AuthContext);
   return (
     <Grid>
-      <Paper elevation={10} style={paperStyle}>
+      <Paper elevation={0} style={paperStyle}>
         <Grid align='center'>
           <Typography variant="h5">Créer un compte</Typography>
           <Typography variant='caption'>
@@ -38,7 +40,7 @@ const SignUp = () => {
           <Link href='/'>Retour à l'acueil</Link>
         </Grid>
         <Grid>
-          <form>
+          <form onSubmit={registerUser}>
             <TextField
               id="standard-basic"
               label="Nom"
@@ -46,6 +48,7 @@ const SignUp = () => {
               variant="standard"
               fullWidth
               style={textBoxStyle}
+              name='lastName'
             />
             <TextField
               id="standard-basic"
@@ -54,6 +57,7 @@ const SignUp = () => {
               variant="standard"
               fullWidth
               style={textBoxStyle}
+              name='firstName'
             />
             <FormControl>
               <FormLabel
@@ -65,15 +69,15 @@ const SignUp = () => {
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
+                name="gender"
               >
                 <FormControlLabel
-                  value="female"
+                  value="Homme"
                   control={<Radio />}
                   label="Homme"
                 />
                 <FormControlLabel
-                  value="male"
+                  value="Femme"
                   control={<Radio />}
                   label="Femme"
                 />
@@ -81,11 +85,12 @@ const SignUp = () => {
             </FormControl>
             <TextField
               id="standard-basic"
-              label="Email"
-              placeholder="luc.dormieux@enpc.fr"
+              label="Nom d'utilisateur"
+              placeholder="Luluc"
               variant="standard"
               fullWidth
               style={textBoxStyle}
+              name='username'
             />
             <TextField
               id="standard-basic"
@@ -94,6 +99,7 @@ const SignUp = () => {
               variant="standard"
               fullWidth
               style={textBoxStyle}
+              name='password'
             />
             <TextField
               id="standard-basic"

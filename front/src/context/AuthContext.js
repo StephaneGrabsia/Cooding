@@ -14,6 +14,19 @@ export const AuthProvider = ({children}) => {
   );
   const history = useHistory();
 
+  const registerUser = async (e) => {
+    e.preventDefault();
+    console.log(JSON.stringify({
+      'user': {
+        'username': e.target.username.value,
+        'password': e.target.password.value,
+      },
+      'first_name': e.target.firstName.value,
+      'last_name': e.target.lastName.value,
+      'gender': e.target.gender.value,
+    }));
+  };
+
   const loginUser = async (e) => {
     e.preventDefault();
     const response = await fetch(
@@ -70,6 +83,7 @@ export const AuthProvider = ({children}) => {
     user: user,
     loginUser: loginUser,
     logoutUser: logoutUser,
+    registerUser: registerUser,
   };
 
   return (

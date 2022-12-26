@@ -6,7 +6,7 @@ import {AuthProvider} from './context/AuthContext';
 
 import SignInOutContainer from './containers/index';
 import RegisterContainer from './containers/register';
-// import StudentPage from './containers/studentPage';
+import StudentPage from './containers/studentPage';
 
 import './styles/style.scss';
 import TeacherIndex from './containers/TeacherIndex';
@@ -20,6 +20,7 @@ const App = () => {
           <Route component={SignInOutContainer} path="/" exact />
           <Route component={RegisterContainer} path="/register" />
           <PrivateRoute component={TeacherIndex} path="/teacher" />
+          <PrivateRoute component={StudentPage} path="/student" />
         </AuthProvider>
       </Router>
     </div>
