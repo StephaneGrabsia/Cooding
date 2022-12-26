@@ -14,7 +14,6 @@ import {
   Typography,
 } from '@mui/material';
 
-
 const SignUp = () => {
   const paperStyle = {
     padding: 20,
@@ -23,9 +22,6 @@ const SignUp = () => {
     width: 450,
     margin: '10vh auto',
   };
-  const headerStyle = {
-    margin: 0,
-  };
   const textBoxStyle = {
     margin: '8px 0',
   };
@@ -33,10 +29,13 @@ const SignUp = () => {
     <Grid>
       <Paper elevation={10} style={paperStyle}>
         <Grid align='center'>
-          <h2 style={headerStyle}>Créer un compte</h2>
+          <Typography variant="h5">Créer un compte</Typography>
           <Typography variant='caption'>
             Remplir ce formulaire pour créer votre compte professeur !
           </Typography>
+          <br />
+          <br />
+          <Link href='/'>Retour à l'acueil</Link>
         </Grid>
         <Grid>
           <form>
