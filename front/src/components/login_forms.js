@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   Grid,
   Paper,
@@ -7,6 +7,7 @@ import {
   Link,
   Typography,
 } from '@mui/material';
+import AuthContext from '../context/AuthContext';
 
 const paperStyle = {
   padding: 20,
@@ -64,6 +65,7 @@ export const StudentLogin = () => {
 };
 
 export const TeacherLogin = () => {
+  const {loginUser} = useContext(AuthContext);
   return (
     <Grid>
       <Paper elevation={0} style={paperStyle}>
@@ -71,37 +73,41 @@ export const TeacherLogin = () => {
           <Typography variant="h5">Connexion</Typography>
         </Grid>
         <Grid>
-          <TextField
-            id="standard-basic"
-            label="Email"
-            placeholder="Entrer votre email"
-            variant="standard"
-            fullWidth
-            style={buttonStyle}
-          />
-          <TextField
-            id="standard-basic"
-            label="Mot de passe"
-            placeholder="Entrer votre mot de passe"
-            variant="standard"
-            type="password"
-            fullWidth
-            style={buttonStyle}
-          />
-          <Button
-            type="submit"
-            color="primary"
-            variant="contained"
-            fullWidth
-            style={buttonStyle}
-          >
-            Rejoindre
-          </Button>
+          <form onSubmit={loginUser}>
+            <TextField
+              id="standard-basic"
+              label="Nom d'utilisateur"
+              placeholder="Entrer votre nom d'utilisateur"
+              variant="standard"
+              fullWidth
+              name='username'
+              style={buttonStyle}
+            />
+            <TextField
+              id="standard-basic"
+              label="Mot de passe"
+              placeholder="Entrer votre mot de passe"
+              variant="standard"
+              type="password"
+              fullWidth
+              name='password'
+              style={buttonStyle}
+            />
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              fullWidth
+              style={buttonStyle}
+            >
+              Rejoindre
+            </Button>
+          </form>
           <Link href="#">
             Mot de passe oublié ?
           </Link>
           <Typography style={buttonStyle}>Pas de compte ?&ensp;
-            <Link href="#">
+            <Link href="/register">
               Créer mon compte
             </Link>
           </Typography>
