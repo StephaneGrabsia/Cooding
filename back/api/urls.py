@@ -1,13 +1,22 @@
 from django.urls import path
-from . import views
-from .views import RegisterView, LoginView, UserView, LogoutView
+from api.views import (
+    getRoutes,
+    TeacherRegisterView,
+    TeacherLoginView,
+    TeacherView,
+    LogoutView,
+    RoomCreateView,
+    RoomView,
+    RoomDeleteView
+)
 
 urlpatterns = [
-    path('', views.getRoutes, name="routes"),
-
-    path('register/', RegisterView.as_view()),
-    path('login/', LoginView.as_view()),
-    path('user/', UserView.as_view()),
-    path('logout/', LogoutView.as_view()),
-
+    path("", getRoutes, name="routes"),
+    path("teacher/register/", TeacherRegisterView.as_view()),
+    path("teacher/login/", TeacherLoginView.as_view()),
+    path("teacher/", TeacherView.as_view()),
+    path("logout/", LogoutView.as_view()),
+    path("room/create/", RoomCreateView.as_view()),
+    path("room/", RoomView.as_view()),
+    path("room/delete/", RoomDeleteView.as_view())
 ]

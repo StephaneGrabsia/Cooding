@@ -1,101 +1,115 @@
-from django.shortcuts import render
+import jwt
+import datetime
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from .models import User
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import UserSerializer
-import jwt, datetime
-# Create your views here.
+from django.core.exceptions import ObjectDoesNotExist
 
-@api_view(['GET'])
+from api.models import Teacher, Classroom
+from api.serializers import TeacherSerializer, RoomSerializer
+from api.decorators import authenticated
+from uQuizz.settings import TOKEN_EXPIRATION_TIME
+
+
+@api_view(["GET"])
 def getRoutes(request):
     routes = [
         {
-            'Endpoint' : '/register/',
-            'method': 'POST',
-            'description': 'To register'
+            "Endpoint": "/<user_type>/register/",
+            "method": "POST",
+            "description": "To register",
+            "Format of the request:": {
+                "user": {"username": "<your username>", "password": "<your pass>"},
+                "first_name": "<your first name>",
+                "last_name": "<your last name>",
+                "gender": "<Homme ou Femme>",
+            },
         },
         {
-            'Endpoint' : '/login/',
-            'method': 'POST',
-            'description': 'To login'
-        },      
-        {
-            'Endpoint' : '/user/',
-            'method': 'GET',
-            'description': 'get users'
-        },    
-        {
-            'Endpoint' : '/logout/',
-            'method': 'POST',
-            'description': 'To logout'
+            "Endpoint": "/<user_type>/login/",
+            "method": "POST",
+            "description": "To login",
+            "Format of the request:": {
+                "username": "<your username>",
+                "password": "<your pass>",
+            },
         },
+        {"Endpoint": "/<user_type>/", "method": "GET", "description": "get users"},
+        {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
     ]
     return Response(routes)
 
 
-class RegisterView(APIView):
+class TeacherRegisterView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = TeacherSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
-class LoginView(APIView):
+
+class TeacherLoginView(APIView):
     def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-        is_teacher = request.data['is_teacher']
-        is_student = request.data['is_student']
-
-
-        user = User.objects.filter(username=username).first()
-
-        if user is None:
-            raise AuthenticationFailed('User not found')
-        
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
-
-        payload = {
-            'id' : user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=90),
-            'iat': datetime.datetime.utcnow()
+        username = request.data["username"]
+        password = request.data["password"]
+        try:
+            teacher = Teacher.objects.get(user__username=username)
+        except ObjectDoesNotExist:
+            raise AuthenticationFailed("User not found")
+        if not teacher.user.check_password(password):
+            raise AuthenticationFailed("Incorrect password")
+        playload = {
+            "id": teacher.user.id,
+            "user_type": "teacher",
+            "exp": datetime.datetime.utcnow() + TOKEN_EXPIRATION_TIME,
+            "iat": datetime.datetime.utcnow(),
         }
-
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
-        
+        token = jwt.encode(playload, "secret", algorithm="HS256")
         response = Response()
-
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        
-        response.data = {
-            'jwt': token
-        }
+        response.set_cookie(key="jwt", value=token, httponly=True)
+        response.data = {"jwt": token}
         return response
 
-class UserView(APIView):
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthentication')
-        
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
 
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthentication')
-
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
+class TeacherView(APIView):
+    @authenticated(user_type="teacher")
+    def get(self, request, auth_id):
+        teacher = Teacher.objects.get(user__id=auth_id)
+        serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
+
 class LogoutView(APIView):
-    def post(self, request):
+    def get(self, request):
         response = Response()
-        response.delete_cookie('jwt')
-        response.data = {
-            "message": "success"
-        }
+        response.delete_cookie("jwt")
+        response.data = {"message": "success"}
         return response
+
+class RoomCreateView(APIView):
+    def post(self, request):
+        serializer = RoomSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+class RoomView(APIView):
+    @authenticated(user_type="teacher")
+    def get(self, request, auth_id):
+        room_id = self.request.query_params.get('id')
+        print(room_id)
+        room = Classroom.objects.get(room_id=room_id)
+        serializer = RoomSerializer(room)
+        return Response(serializer.data)
+
+class RoomDeleteView(APIView):
+    @authenticated(user_type="teacher")
+    def post(self, request, auth_id):
+        response = Response()
+        Classroom.objects.get(room_id=request.data['id']).delete()
+        response.data = {'message':'success'}
+        return response
+
+

@@ -6,7 +6,7 @@ module.exports = {
     devtool: 'eval-source-map',
     mode: 'development',
     entry: {
-        index: './src/index.js',
+        app: './src/app.js',
     },
     resolve: {
         modules: [__dirname, 'node_modules'],
@@ -14,7 +14,11 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'public'),
-        filename: '[name].bundle.js',
+        filename: 'app.bundle.js',
+    },
+    devServer: {
+        historyApiFallback: true,
+        static: path.resolve(__dirname, './public'),
     },
     module: {
         rules: [

@@ -1,21 +1,42 @@
 from rest_framework.serializers import ModelSerializer
-from .models import User
+from api.models import User, Teacher, Classroom
 
-    
+
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password','is_student', 'is_teacher']
-        extra_kwargs = {
-            'password' : {'write_only': True},
-            'is_student':{'read_only': True},
-            'is_teacher':{'read_only': True}
-        }
+        fields = ["id", "username", "password"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         instance = self.Meta.model(**validated_data)
         if password is not None:
             instance.set_password(password)
         instance.save()
         return instance
+
+
+class TeacherSerializer(ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Teacher
+        fields = ["user", "first_name", "last_name", "gender", "date_joined"]
+
+    def create(self, validated_data):
+        user = UserSerializer.create(UserSerializer(), validated_data["user"])
+        validated_data["user"] = user
+        teacher = self.Meta.model(**validated_data)
+        teacher.save()
+        return teacher
+
+class RoomSerializer(ModelSerializer):
+    class Meta:
+        model = Classroom
+        fields = ["room_id", "teacher"]
+
+    def create(self, validated_data):
+        room = self.Meta.model(**validated_data)
+        room.save()
+        return room
