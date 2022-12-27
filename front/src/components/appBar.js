@@ -63,7 +63,7 @@ function ResponsiveAppBar({user, session}) {
   return (
     <div>
       <AppBar position="fixed" style={toolBarStyle}>
-        <Container maxWidth="xl" style={toolBarStyle}>
+        <Container maxWidth="xxl" style={toolBarStyle}>
           <Toolbar disableGutters style={toolBarStyle}>
             <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
               <IconButton
