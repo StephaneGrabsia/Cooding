@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.models import Teacher, Student, Classroom
-from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer
+from api.models import Teacher, Student, Classroom, Exercise
+from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer, ExerciseSerializer
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -148,3 +148,26 @@ class RoomDeleteView(APIView):
         return response
 
 
+class ExerciseCreateView(APIView):
+    @authenticated(user_type="teacher")
+    def post(self, request, auth_id):
+        serializer = ExerciseSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+class ExerciseView(APIView):
+    @authenticated(user_type="teacher")
+    def post(self, request, auth_id):
+        exercise = Exercise.objects.get(statement=request.data['statement'])
+        serializer = ExerciseSerializer(exercise)
+        return Response(serializer.data)
+
+class ExerciseDeleteView(APIView):
+    @authenticated(user_type="teacher")
+    def post(self, request, auth_id):
+        response = Response()
+        Exercise.objects.get(statement=request.data['statement']).delete()
+        response.data = {'message': 'success'}
+        return response

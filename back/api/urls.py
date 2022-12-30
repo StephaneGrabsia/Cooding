@@ -10,7 +10,10 @@ from api.views import (
     LogoutView,
     RoomCreateView,
     RoomView,
-    RoomDeleteView
+    RoomDeleteView,
+    ExerciseCreateView,
+    ExerciseView,
+    ExerciseDeleteView
 )
 
 urlpatterns = [
@@ -28,5 +31,9 @@ urlpatterns = [
 
     path("room/create/", RoomCreateView.as_view()),
     path("room/", RoomView.as_view()),
-    path("room/delete/", RoomDeleteView.as_view())
+    path("room/delete/", RoomDeleteView.as_view()),
+
+    path("exercise/create/", ExerciseCreateView.as_view()),
+    path("exercise/", ExerciseView.as_view()),
+    path("exercise/delete/", ExerciseDeleteView.as_view())
 ]
