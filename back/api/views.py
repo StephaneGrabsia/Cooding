@@ -24,7 +24,7 @@ def getRoutes(request):
                 "user": {"username": "<your username>", "password": "<your pass>"},
                 "first_name": "<your first name>",
                 "last_name": "<your last name>",
-                "gender": "<Homme ou Femme>",
+                "gender": "<Homme ou Femme>"
             },
         },
         {
@@ -33,11 +33,33 @@ def getRoutes(request):
             "description": "To login",
             "Format of the request:": {
                 "username": "<your username>",
-                "password": "<your pass>",
+                "password": "<your pass>"
             },
         },
         {"Endpoint": "/<user_type>/", "method": "GET", "description": "get users"},
         {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
+
+        {
+            "Endpoint": "/exercise/create/",
+            "method": "POST",
+            "description": "To create an exercise (as a teacher)",
+            "Format of the request:": {
+                "statement": "<the statement>",
+                "solution": "<the solution>",
+                "test_input": "<the test>",
+                "correct_output": "<test output>",
+                "classroom": "<your room_id>",
+            },
+        },
+        {
+            "Endpoint": "/exercise/delete/",
+            "method": "POST",
+            "description": "To delete an exercise",
+            "Format of the request:": {
+                "statement": "<the statement>"
+            },
+
+        }
     ]
     return Response(routes)
 
@@ -160,14 +182,23 @@ class ExerciseCreateView(APIView):
 class ExerciseView(APIView):
     @authenticated(user_type="teacher")
     def post(self, request, auth_id):
-        exercise = Exercise.objects.get(statement=request.data['statement'])
-        serializer = ExerciseSerializer(exercise)
-        return Response(serializer.data)
+        response = Response()
+        try : 
+            exercise = Exercise.objects.get(statement=request.data['statement'])
+            serializer = ExerciseSerializer(exercise)
+            response.data = serializer.data
+        except ObjectDoesNotExist:
+            response.data = {'message':'No exercise found'}
+        return response
+
 
 class ExerciseDeleteView(APIView):
     @authenticated(user_type="teacher")
     def post(self, request, auth_id):
         response = Response()
-        Exercise.objects.get(statement=request.data['statement']).delete()
-        response.data = {'message': 'success'}
+        try:
+            Exercise.objects.get(statement=request.data['statement']).delete()
+            response.data = {'message': 'success'}
+        except ObjectDoesNotExist:
+            response.data = {'message':'No exercise found'}
         return response
