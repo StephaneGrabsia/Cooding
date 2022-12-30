@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.models import Teacher, Student, Classroom, Exercise
-from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer, ExerciseSerializer
+from api.models import Teacher, Student, Classroom, Exercise, Solution
+from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer, ExerciseSerializer, SolutionSerializer
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -57,6 +57,27 @@ def getRoutes(request):
             "description": "To delete an exercise",
             "Format of the request:": {
                 "statement": "<the statement>"
+            },
+
+        },
+        {
+            "Endpoint": "/solution/create/",
+            "method": "POST",
+            "description": "To create a solution as a student",
+            "Format of the request:": {
+                "student": "id",
+                "exercise":"id",
+                "output": "<your output>",
+                "source" : "<the source>"
+            },
+
+        },        
+        {
+            "Endpoint": "/exercise/delete/",
+            "method": "POST",
+            "description": "To delete a solution",
+            "Format of the request:": {
+                "source": "<the source>"
             },
 
         }
@@ -202,3 +223,25 @@ class ExerciseDeleteView(APIView):
         except ObjectDoesNotExist:
             response.data = {'message':'No exercise found'}
         return response
+
+
+class SolutionCreateView(APIView):
+    @authenticated(user_type="student")
+    def post(self, request, auth_id):
+        serializer = SolutionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+class SolutionDeleteView(APIView):
+    @authenticated(user_type="student")
+    def post(self, request, auth_id):
+        response = Response()
+        try:
+            Solution.objects.filter(source=request.data['source']).first().delete()
+            response.data = {'message': 'success'}
+        except ObjectDoesNotExist:
+            response.data = {'message':'No solution found'}
+        return response
+    

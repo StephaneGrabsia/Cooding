@@ -76,12 +76,12 @@ class Solution(models.Model):
     It contains the code submitted by a Student (source). Output
     is the source output in JSON."""
 
-    exercise = models.OneToOneField(
+    exercise = models.ForeignKey(
         Exercise, on_delete=models.PROTECT, default=None, related_name="exercise_done"
     )
     source = models.TextField(null=True)
     output = models.TextField(null=True)
-    student = models.OneToOneField(
+    student = models.ForeignKey(
         Student, on_delete=models.PROTECT, default=None, related_name="student_submit"
     )
 

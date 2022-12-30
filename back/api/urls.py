@@ -13,7 +13,9 @@ from api.views import (
     RoomDeleteView,
     ExerciseCreateView,
     ExerciseView,
-    ExerciseDeleteView
+    ExerciseDeleteView,
+    SolutionCreateView,
+    SolutionDeleteView
 )
 
 urlpatterns = [
@@ -35,5 +37,8 @@ urlpatterns = [
 
     path("exercise/create/", ExerciseCreateView.as_view()),
     path("exercise/", ExerciseView.as_view()),
-    path("exercise/delete/", ExerciseDeleteView.as_view())
+    path("exercise/delete/", ExerciseDeleteView.as_view()),
+
+    path("solution/create/", SolutionCreateView.as_view()),
+    path("solution/delete/", SolutionDeleteView.as_view())
 ]
