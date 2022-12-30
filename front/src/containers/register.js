@@ -1,7 +1,7 @@
 import React from 'react';
-import {Paper} from '@mui/material';
+import { Paper } from '@mui/material';
 
-import SignUp from '../components/register_form';
+import RegisterForm from '../components/RegisterForm';
 import Background from '../assets/background.svg';
 
 const paperStyle = {
@@ -20,7 +20,7 @@ const RegisterContainer = () => {
       backgroundPosition: 'center',
     }}>
       <Paper elevation={10} style={paperStyle}>
-        <SignUp />
+        <RegisterForm />
       </Paper>
     </div>
   );
