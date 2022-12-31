@@ -52,6 +52,14 @@ def getRoutes(request):
             },
         },
         {
+            "Endpoint": "/exercise/",
+            "method": "POST",
+            "description": "To see an exercise",
+            "Format of the request:": {
+                "statement": "<the statement>"
+            },
+        },
+        {
             "Endpoint": "/exercise/delete/",
             "method": "POST",
             "description": "To delete an exercise",
@@ -73,7 +81,7 @@ def getRoutes(request):
 
         },        
         {
-            "Endpoint": "/exercise/delete/",
+            "Endpoint": "/solution/delete/",
             "method": "POST",
             "description": "To delete a solution",
             "Format of the request:": {

@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from api.models import User, Teacher, Student, Classroom
+from api.models import User, Teacher, Student, Classroom, Exercise
 
 
 class TeacherTestCase(TestCase):
@@ -109,7 +109,7 @@ class RoomTestCase(TestCase):
             teacher = teacher
         )
 
-    def test_database_Teacher(self):
+    def test_database_Classroom(self):
         room = Classroom.objects.get(room_id=666)
         self.assertIsInstance(room, Classroom)
         self.assertEqual(str(room), "666")
@@ -152,21 +152,31 @@ class RoomTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-# class StudentTestCase(TestCase):
-#     def setUp(self):
-#         Student.objects.create(username='Sullivan')
+class ExerciseTestCase(TestCase):
+    def setUp(self):
+        User.objects.create(username="admin", password="root")
+        teacher = Teacher.objects.create(
+            user=User.objects.get(username="admin"),
+            first_name="lina",
+            last_name="theblg",
+            gender="Femme",
+        )
+        room = Classroom.objects.create(
+            room_id = 79,
+            teacher = teacher
+        )
+        Exercise.objects.create(
+            statement = "Fontion carrée",
+            solution = "def f(x):\n return x**2",
+            test_input = "[0, 1, 2, 3, 4, 5]", 
+            correct_output = "[0, 1, 8, 27, 64, 125]",
+            classroom = room
+        )
 
-#     def test_assert_username(self):
-#         sullivan = Student.objects.get(username="Sullivan")
-#         self.assertEqual(str(sullivan), "Sullivan")
-
-# class TeacherTestCase(TestCase):
-#     def setUp(self):
-#         Teacher.objects.create(username='Sullivan')
-
-#     def test_assert_username(self):
-#         sullivan = Teacher.objects.get(username="Sullivan")
-#         self.assertEqual(str(sullivan), "Sullivan")
+    def test_database_Exercise(self):
+        exercise = Exercise.objects.get(statement="Fonction carrée")
+        self.assertIsInstance(exercise, Exercise)
+        self.assertEqual(str(exercise), "Fonction carrée")
 
 # class ExerciseTestCase(TestCase):
 #     def setUp(self):
@@ -185,3 +195,20 @@ class RoomTestCase(TestCase):
 #         exercise2 = Exercise.objects.get(statement='Fonction cube')
 #         self.assertNotEqual(exercise2.run(), "[0, 1, 8, 27, 64, 125]\n")
 #         self.assertEqual(exercise2.check_sol(exercise2.run()), False)
+
+# class StudentTestCase(TestCase):
+#     def setUp(self):
+#         Student.objects.create(username='Sullivan')
+
+#     def test_assert_username(self):
+#         sullivan = Student.objects.get(username="Sullivan")
+#         self.assertEqual(str(sullivan), "Sullivan")
+
+# class TeacherTestCase(TestCase):
+#     def setUp(self):
+#         Teacher.objects.create(username='Sullivan')
+
+#     def test_assert_username(self):
+#         sullivan = Teacher.objects.get(username="Sullivan")
+#         self.assertEqual(str(sullivan), "Sullivan")
+
