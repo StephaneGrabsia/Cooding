@@ -110,7 +110,7 @@ class RegisterForm extends React.Component {
       if (!fields['firstName'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
         errors['firstName'] =
-          '*Merci d\'utiliser uniquement que des caractères alphabétiques';
+          '*Merci d\'utiliser uniquement des caractères alphabétiques';
       }
     }
 
@@ -123,7 +123,7 @@ class RegisterForm extends React.Component {
       if (!fields['lastName'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
         errors['lastName'] =
-          '*Merci d\'utiliser uniquement que des caractères alphabétiques';
+          '*Merci d\'utiliser uniquement des caractères alphabétiques';
       }
     }
 
@@ -141,7 +141,7 @@ class RegisterForm extends React.Component {
       if (!fields['username'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
         errors['username'] =
-          '*Merci d\'utiliser uniquement que des caractères alphabétiques';
+          '*Merci d\'utiliser uniquement des caractères alphabétiques';
       }
     }
 
