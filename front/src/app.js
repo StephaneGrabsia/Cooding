@@ -16,13 +16,13 @@ const theme = createTheme({
   palette: {
     tertianary: {
       light: '#ADE6FF',
-      main: '#1698F9',
+      main: '#1698f9',
       dark: '#1670F9',
       contrastText: '#fff',
     },
     secondary: {
       light: '#FFD290',
-      main: '#F9A429',
+      main: '#f9a429',
       dark: '#D78E32',
       contrastText: '#fff',
     },

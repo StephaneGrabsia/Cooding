@@ -6,16 +6,16 @@ import ReactMarkdown from 'react-markdown';
 import Editor from '@monaco-editor/react';
 import PropTypes from 'prop-types';
 import {Button, Box, Paper, Toolbar, Avatar} from '@mui/material';
-import Icon from '../assets/icon.svg';
 import ShibaRunning from '../assets/shiba_running.jpg';
 import ShibaNeedHelp from '../assets/needHelp.jpg';
-import { Container } from '@mui/system';
+import {Container} from '@mui/system';
 
 // import style from '../styles/style.css';
 
 const statementSize = {
   height: '92vh',
   width: '41.6vw',
+  overflow: 'scroll',
 };
 
 const rightPartSize = {
@@ -26,6 +26,7 @@ const rightPartSize = {
 const codeEditorSize = {
   width: '58.3vw',
   height: '61.3vh',
+  paddingTop: '10px',
 };
 
 const terminalSize = {
@@ -69,8 +70,11 @@ function StudentPage({exercice}) {
         spacing={0}>
         <Grid2 xs={5}>
           <Paper elevation={3} style={statementSize}
-            sx={{backgroundColor: 'secondary.light'}}>
-            <ReactMarkdown children={exercice.content} className='reactMarkdown'></ReactMarkdown>
+            sx={{backgroundColor: 'secondary.main'}}>
+            <ReactMarkdown
+              children={exercice.content}
+              className='reactMarkdown'>
+            </ReactMarkdown>
           </Paper>
         </Grid2>
         <Grid2 xs={7}>
@@ -89,25 +93,46 @@ function StudentPage({exercice}) {
             </Grid2>
             <Grid2 xs={4}
               style={terminalSize}
-              sx={{backgroundColor: 'tertianary.light'}}
+              sx={{backgroundColor: 'tertianary.main'}}
             >
               <Toolbar disableGutters>
                 <Box sx={{marginLeft: '20px'}}>
-                  <Button variant="contained" startIcon={<Avatar src={Icon}
-                    variant='square' style={avatarStyle} />} style={buttonStyle} > Need Help?</Button>
+                  <Button
+                    variant="contained"
+                    startIcon={
+                      <Avatar
+                        src={ShibaNeedHelp}
+                        variant='square'
+                        style={avatarStyle}/>
+                    }
+                    style={buttonStyle} >
+                    Need Help?
+                  </Button>
                 </Box>
-                <Box sx={{flexGrow: 1}}>
+                <Box sx={{flexGrow: 1}}></Box>
+                <Box sx={{marginRight: '20px'}}>
+                  <Button
+                    variant="contained"
+                    startIcon={
+                      <Avatar
+                        src={ShibaRunning}
+                        variant='square'
+                        style={avatarStyle}/>
+                    }
+                    style={buttonStyle}>
+                      Run
+                  </Button>
                 </Box>
                 <Box sx={{marginRight: '20px'}}>
-                  <Button variant="contained" startIcon={<Avatar src={ShibaRunning}
-                    variant='square' style={avatarStyle} />} style={buttonStyle} > Run</Button>
-                </Box>
-                <Box sx={{marginRight: '20px'}}>
-                  <Button variant="contained" sx = {{height: '44px'}}> Submit</Button>
+                  <Button
+                    variant="contained"
+                    sx = {{height: '44px'}}>
+                      Submit
+                  </Button>
                 </Box>
               </Toolbar>
               <Container sx={{
-                height: '78%',
+                height: '68%',
                 padding: '0px',
               }}>
                 <Editor
