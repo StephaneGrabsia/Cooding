@@ -87,8 +87,8 @@ class Solution(models.Model):
 
     def run(self):
         with open("test_file.py", "w") as f:
-            f.write(self.solution + "\n")
-            f.write("test_input = " + self.test_input + "\n")
+            f.write(self.source + "\n")
+            f.write("test_input = " + self.exercise.test_input + "\n")
             f.write("output, test = [], 0\n")
             f.write("for input in test_input:\n")
             f.write("   output.append(f(input))\n")
@@ -101,7 +101,7 @@ class Solution(models.Model):
         return test_output
 
     def check_sol(self, test_output):
-        return test_output == self.correct_output + "\n"
+        return test_output == self.exercise.correct_output + "\n"
 
     def __str__(self) -> str:
         return self.source

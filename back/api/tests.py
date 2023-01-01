@@ -253,7 +253,7 @@ class SolutionTestCase(TestCase):
             statement = "Fonction carrée",
             solution = "def f(x):\n return x**2",
             test_input = "[0, 1, 2, 3, 4, 5]", 
-            correct_output = "[0, 1, 8, 27, 64, 125]",
+            correct_output = "[0, 1, 4, 9, 16, 25]",
             classroom = room
         )
         Solution.objects.create(
@@ -268,54 +268,78 @@ class SolutionTestCase(TestCase):
         self.assertIsInstance(solution, Solution)
         self.assertEqual(str(solution), "def f(x):\n return x**2")
 
+    def test_model_Solution(self):
+        solution = Solution.objects.get(source="def f(x):\n return x**2")
+        self.assertEqual(solution.run(), "[0, 1, 4, 9, 16, 25]\n")
+        self.assertEqual(solution.check_sol(solution.run()), True)
 
-    # def test_api_Exercise_create_fetch_delete(self):
-    #     c = Client()
-    #     c.post(
-    #         "/teacher/register/",
-    #         {
-    #             "user": {"username": "help", "password": "please"}, 
-    #             "first_name": "help", 
-    #             "last_name": "help", 
-    #             "gender": "Femme"
-    #         },
-    #         content_type="application/json"
-    #     )
-    #     c.post(
-    #         "/teacher/login/",
-    #         {"username": "help", "password": "please"}
-    #     )
-    #     teacher_id = Teacher.objects.get(user__username="help").user.id
-    #     c.post(
-    #         "/room/create/", 
-    #         {
-    #             "room_id":85,
-    #             "teacher":teacher_id
-    #         }, 
-    #         content_type="application/json")
-    #     response = c.post(
-    #         "/exercise/create/", 
-    #         {
-    #             "statement": "Fonction double",
-    #             "solution": "def f(x):\n return 2*x",
-    #             "test_input": "[0, 1, 2, 3, 4, 5]",
-    #             "correct_output": "[0, 2, 4, 6, 8, 10]",
-    #             "classroom": 85
-    #         },
-    #         content_type="application/json")
-    #     self.assertEqual(response.status_code, 200)
-    #     response = c.post(
-    #         "/exercise/", 
-    #         {
-    #             "statement": "Fonction double"
-    #         },
-    #         content_type="application/json")
-    #     self.assertEqual(response.status_code, 200)
-    #     response = c.post(
-    #         "/exercise/delete/", 
-    #         {
-    #             "statement":"Fonction double"
-    #         }, 
-    #         content_type="application/json"
-    #     )
-    #     self.assertEqual(response.status_code, 200)
+    def test_api_Solution_create_delete(self):
+        c = Client()
+        c.post(
+            "/teacher/register/",
+            {
+                "user": {"username": "help", "password": "please"}, 
+                "first_name": "help", 
+                "last_name": "help", 
+                "gender": "Femme"
+            },
+            content_type="application/json"
+        )
+        c.post(
+            "/teacher/login/",
+            {"username": "help", "password": "please"}
+        )
+        teacher_id = Teacher.objects.get(user__username="help").user.id
+        c.post(
+            "/room/create/", 
+            {
+                "room_id":44,
+                "teacher":teacher_id
+            }, 
+            content_type="application/json")
+        c.post(
+            "/exercise/create/", 
+            {
+                "statement": "Fonction double",
+                "solution": "def f(x):\n return 2*x",
+                "test_input": "[0, 1, 2, 3, 4, 5]",
+                "correct_output": "[0, 2, 4, 6, 8, 10]",
+                "classroom": 44
+            },
+            content_type="application/json")
+        exercise_id = Exercise.objects.get(statement="Fonction double").id
+        c.get(
+            "/logout/",
+            content_type="application/json"
+        )
+        c.post(
+            "/student/register/",
+            {
+                "user": {"username": "hi", "password": "44"}, 
+                "classroom": 44
+            },
+            content_type="application/json"
+        )
+        student_id = Student.objects.get(user__username="hi").user.id
+        c.post(
+            "/student/login/",
+            {"username": "hi", "password": "44"}
+        )
+        response = c.post(
+            "/solution/create/", 
+            {
+                "student" : student_id,
+                "exercise" : exercise_id,
+                "output" : "[0, 2, 4, 6, 8, 10]", 
+                "source" : "def f(x):\n return 2*x"
+            },
+            content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/solution/delete/", 
+            {
+                "source" : "def f(x):\n return 2*x"
+            }, 
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
