@@ -38,7 +38,7 @@ function TabPanel(props) {
 
 const paperStyle = {
   height: '80vh',
-  minHeight: 650,
+  minHeight: 550,
   width: 500,
   margin: '10vh auto',
 
