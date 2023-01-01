@@ -1,11 +1,10 @@
 import React from 'react';
-import { Paper } from '@mui/material';
+import {Paper} from '@mui/material';
 
 import RegisterForm from '../components/RegisterForm';
 import Background from '../assets/background.svg';
 
 const paperStyle = {
-  height: '88vh',
   minHeight: 620,
   width: 490,
   margin: '10vh auto',

@@ -16,15 +16,32 @@ export const AuthProvider = ({children}) => {
 
   const registerUser = async (e) => {
     e.preventDefault();
-    console.log(JSON.stringify({
-      'user': {
-        'username': e.target.username.value,
-        'password': e.target.password.value,
-      },
-      'first_name': e.target.firstName.value,
-      'last_name': e.target.lastName.value,
-      'gender': e.target.gender.value,
-    }));
+    const response = await fetch(
+        'http://localhost:8000/teacher/register/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            'user': {
+              'username': e.target.userName.value,
+              'password': e.target.password.value,
+            },
+            'first_name': e.target.firstName.value,
+            'last_name': e.target.lastName.value,
+            'gender': e.target.gender.value,
+          }),
+        },
+    );
+    if (response.status === 200) {
+      history.push('/');
+      return '';
+    }
+    if (response.status === 400) {
+      return 'Ce nom d\'utilisateur existe déjà !';
+    }
   };
 
   const loginUser = async (e) => {

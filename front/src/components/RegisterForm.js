@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Grid,
   Paper,
@@ -12,131 +12,185 @@ import {
   Checkbox,
   Link,
   Typography,
+  FormHelperText,
 } from '@mui/material';
 import AuthContext from '../context/AuthContext';
 
 
-
+/**
+ * Component coding the teacher register form.
+ * Render the form
+ * @return {Component} A component
+ */
 class RegisterForm extends React.Component {
+  static contextType = AuthContext;
+  /**
+   * Constructor of the component
+   * Setting up the state, and utils functions
+   */
   constructor() {
     super();
     this.state = {
       fields: {
-        firstName: "",
-        lastName: "",
-        gender: "",
-        userName: "",
-        password: "",
-        passwordConfirmation: ""
+        firstName: '',
+        lastName: '',
+        gender: '',
+        userName: '',
+        password: '',
+        passwordConfirmation: '',
+        checkbox: false,
       },
-      errors: {}
-    }
+      errors: {},
+      mainError: '',
+    };
     this.handleChange = this.handleChange.bind(this);
-    this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
+    this.submituserRegistrationForm = this.submituserRegistrationForm.bind(
+        this,
+    );
   };
-
+  /**
+   * handleChange function
+   * set correct values to what user put in fields in state
+   * @argument {Event} e : event called onChange
+   */
   handleChange(e) {
-    let fields = this.state.fields;
-    fields[e.target.name] = e.target.value;
-    this.setState({ fields });
+    const fields = this.state.fields;
+    if (e.target.name === 'checkbox') {
+      fields[e.target.name] = e.target.checked;
+    } else {
+      fields[e.target.name] = e.target.value;
+    }
+    this.setState({fields});
   }
 
+  /**
+   * setErrorMessage function
+   * set a main message error when needed
+   * @argument {string} text : text to display
+   */
+  setErrorMessage(text) {
+    const mainError = text;
+    this.setState({
+      mainError: mainError,
+    });
+  }
+
+  /**
+   * submituserRegistrationForm function
+   * called at the submition of the form
+   * check if the form is valid and return the error message if there is one
+   * @argument {Event} e : event called onSubmit
+   */
   submituserRegistrationForm(e) {
+    const {registerUser} = this.context;
     e.preventDefault();
     if (this.validateForm()) {
-      let fields = {};
-      fields["firstName"] = "";
-      fields["lastName"] = "";
-      fields["gender"] = "";
-      fields["userName"] = "";
-      fields["password"] = "";
-      fields["passwordConfirmation"] = "";
-      this.setState({ fields: fields });
-      alert("Form submitted");
+      registerUser(e).then((a) => {
+        this.setErrorMessage(a);
+      });
     }
   }
 
+  /**
+   * validateForm function
+   * Called when onSubmit and check if the form is valid
+   * @return {boolean} true if its valid, false else
+   */
   validateForm() {
-    let fields = this.state.fields;
-    let errors = {};
+    const fields = this.state.fields;
+    const errors = {};
     let formIsValid = true;
 
-    if (!fields["firstName"]) {
+    if (!fields['firstName']) {
       formIsValid = false;
-      errors["firstName"] = "*Merci d'entrer un prénom";
+      errors['firstName'] = '*Merci d\'entrer un prénom';
     }
 
-    if (typeof fields["firstName"] !== "undefined") {
-      if (!fields["firstName"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields['firstName'] !== 'undefined') {
+      if (!fields['firstName'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
-        errors["firstName"] = "*Merci d'utiliser uniquement que des caractères alphabétiques";
+        errors['firstName'] =
+          '*Merci d\'utiliser uniquement que des caractères alphabétiques';
       }
     }
 
-    if (!fields["lastName"]) {
+    if (!fields['lastName']) {
       formIsValid = false;
-      errors["lastName"] = "*Merci d'entrer un nom";
+      errors['lastName'] = '*Merci d\'entrer un nom';
     }
 
-    if (typeof fields["lastName"] !== "undefined") {
-      if (!fields["lastName"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields['lastName'] !== 'undefined') {
+      if (!fields['lastName'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
-        errors["lastName"] = "*Merci d'utiliser uniquement que des caractères alphabétiques";
+        errors['lastName'] =
+          '*Merci d\'utiliser uniquement que des caractères alphabétiques';
       }
     }
 
-    if (!fields["gender"]) {
+    if (!fields['gender']) {
       formIsValid = false;
-      errors["gender"] = "*Merci de préciser votre genre";
+      errors['gender'] = '*Merci de préciser votre genre';
     }
 
-    if (!fields["userName"]) {
+    if (!fields['userName']) {
       formIsValid = false;
-      errors["userName"] = "*Merci d'entrer un nom d'utilisateur";
+      errors['userName'] = '*Merci d\'entrer un nom d\'utilisateur';
     }
 
-    if (typeof fields["username"] !== "undefined") {
-      if (!fields["username"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields['username'] !== 'undefined') {
+      if (!fields['username'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
-        errors["username"] = "*Merci d'utiliser uniquement que des caractères alphabétiques";
+        errors['username'] =
+          '*Merci d\'utiliser uniquement que des caractères alphabétiques';
       }
     }
 
-    if (!fields["password"]) {
+    if (!fields['password']) {
       formIsValid = false;
-      errors["password"] = "*Merci d'entrer votre mot de passe";
+      errors['password'] = '*Merci d\'entrer votre mot de passe';
     }
 
-    if (typeof fields["password"] !== "undefined") {
-      if (!fields["password"].match(/^(?=.*[A-Z])(?=.{5,}).*$/)) {
+    if (typeof fields['password'] !== 'undefined') {
+      if (!fields['password'].match(/^(?=.*[A-Z])(?=.{5,}).*$/)) {
         formIsValid = false;
-        errors["password"] = "*Merci d'entrer un mot de passe avec au moins 5 caractères et une majuscule";
+        errors['password'] =
+          '*Merci d\'entrer un mot de passe avec au moins' +
+          '5 caractères et une majuscule';
       }
     }
 
-    if (!fields["passwordConfirmation"]) {
+    if (!fields['passwordConfirmation']) {
       formIsValid = false;
-      errors["passwordConfirmation"] = "*Merci de confirmer votre mot de passe";
+      errors['passwordConfirmation'] = '*Merci de confirmer votre mot de passe';
     }
 
-    if (typeof fields["passwordConfirmation"] !== "undefined") {
-      if (fields["passwordConfirmation"] !== fields["password"]) {
+    if (typeof fields['passwordConfirmation'] !== 'undefined') {
+      if (fields['passwordConfirmation'] !== fields['password']) {
         formIsValid = false;
-        errors["passwordConfirmation"] = "*Les mots de passe ne correspondent pas";
+        errors['passwordConfirmation'] =
+          '*Les mots de passe ne correspondent pas';
       }
+    }
+
+    if (!fields['checkbox']) {
+      formIsValid = false;
+      errors['checkbox'] = '*Merci d\'accepter les conditions';
     }
 
     this.setState({
-      errors: errors
+      errors: errors,
     });
     return formIsValid;
   }
 
+  /**
+   * render function
+   * Render the final form
+   * @return {Component}
+   */
   render() {
     const paperStyle = {
       padding: 20,
-      height: '80vh',
-      minHeight: 550,
       width: 450,
       margin: '0',
     };
@@ -151,6 +205,11 @@ class RegisterForm extends React.Component {
             <br />
             <br />
             <Link href='/'>Retour à l'acueil</Link>
+            <br />
+            <br />
+            <Typography color="red">
+              {this.state.mainError}
+            </Typography>
           </Grid>
           <Grid>
             <form onSubmit={this.submituserRegistrationForm}>
@@ -178,7 +237,12 @@ class RegisterForm extends React.Component {
                 error={this.state.errors.lastName ? true : false}
                 helperText={this.state.errors.lastName}
               />
-              <FormControl margin="normal">
+              <FormControl
+                margin="normal"
+                error={
+                  this.state.errors.gender ? true : false
+                }
+              >
                 <FormLabel
                   id="demo-row-radio-buttons-group-label"
                 >
@@ -190,7 +254,6 @@ class RegisterForm extends React.Component {
                   name="gender"
                   value={this.state.fields.gender}
                   onChange={this.handleChange}
-                  error="true"
                 >
                   <FormControlLabel
                     value="Homme"
@@ -203,6 +266,7 @@ class RegisterForm extends React.Component {
                     label="Femme"
                   />
                 </RadioGroup>
+                <FormHelperText>{this.state.errors.gender}</FormHelperText>
               </FormControl>
               <TextField
                 id="standard-basic"
@@ -239,17 +303,23 @@ class RegisterForm extends React.Component {
                 error={this.state.errors.passwordConfirmation ? true : false}
                 helperText={this.state.errors.passwordConfirmation}
               />
-              <FormControlLabel
-                control={<Checkbox
-                  name="CheckedA" />}
-                label={<Typography
-                >
-                  J'accèpte les
-                  <Link href="#">
-                    conditions générales
-                  </Link>
-                </Typography>}
-              />
+              <FormControl error={this.state.errors.checkbox ? true : false}>
+                <FormControlLabel
+                  control={<Checkbox
+                    name="checkbox"
+                    value={this.state.fields.checkbox}
+                    onChange={this.handleChange}
+                  />}
+                  label={<Typography
+                  >
+                    J'accèpte les &nbsp;
+                    <Link href="#">
+                      conditions générales
+                    </Link>
+                  </Typography>}
+                />
+                <FormHelperText>{this.state.errors.checkbox}</FormHelperText>
+              </FormControl>
               <Button
                 type="submit"
                 color="primary"
@@ -265,19 +335,5 @@ class RegisterForm extends React.Component {
   }
 }
 
-
-const SignUp = () => {
-  const paperStyle = {
-    padding: 20,
-    height: '80vh',
-    minHeight: 550,
-    width: 450,
-    margin: '0',
-  };
-  const textBoxStyle = {
-    margin: '8px 0',
-  };
-  const { registerUser } = useContext(AuthContext);
-};
 
 export default RegisterForm;
