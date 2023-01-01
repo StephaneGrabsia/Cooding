@@ -45,7 +45,7 @@ class RegisterForm extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.submituserRegistrationForm = this.submituserRegistrationForm.bind(
-      this,
+        this,
     );
   };
   /**
@@ -60,7 +60,7 @@ class RegisterForm extends React.Component {
     } else {
       fields[e.target.name] = e.target.value;
     }
-    this.setState({ fields });
+    this.setState({fields});
   }
 
   /**
@@ -82,7 +82,7 @@ class RegisterForm extends React.Component {
    * @argument {Event} e : event called onSubmit
    */
   submituserRegistrationForm(e) {
-    const { registerUser } = this.context;
+    const {registerUser} = this.context;
     e.preventDefault();
     if (this.validateForm()) {
       registerUser(e).then((a) => {
