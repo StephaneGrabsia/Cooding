@@ -95,61 +95,62 @@ class StudentTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-# class RoomTestCase(TestCase):
-#     def setUp(self):
-#         User.objects.create(username="admin", password="root")
-#         teacher = Teacher.objects.create(
-#             user=User.objects.get(username="admin"),
-#             first_name="sully",
-#             last_name="lebg",
-#             gender="Homme",
-#         )
-#         Classroom.objects.create(
-#             room_id = 666,
-#             teacher = teacher
-#         )
+class RoomTestCase(TestCase):
+    def setUp(self):
+        User.objects.create(username="admin", password="root")
+        teacher = Teacher.objects.create(
+            user=User.objects.get(username="admin"),
+            first_name="sully",
+            last_name="lebg",
+            gender="Homme",
+        )
+        Classroom.objects.create(
+            room_id = 666,
+            teacher = teacher
+        )
 
-#     def test_database_Classroom(self):
-#         room = Classroom.objects.get(room_id=666)
-#         self.assertIsInstance(room, Classroom)
-#         self.assertEqual(str(room), "666")
+    def test_database_Classroom(self):
+        room = Classroom.objects.get(room_id=666)
+        self.assertIsInstance(room, Classroom)
+        self.assertEqual(str(room), "666")
 
-#     def test_api_Classroom_create_fetch_delete(self):
-#         c = Client()
-#         c.post(
-#             "/teacher/register/",
-#             {
-#                 "user": {"username": "bibo", "password": "pass"}, 
-#                 "first_name": "toto", 
-#                 "last_name": "tata", 
-#                 "gender": "Femme"
-#             },
-#             content_type="application/json"
-#         )
-#         c.post(
-#             "/teacher/login/",
-#             {"username": "bibo", "password": "pass"}
-#         )
-#         response = c.post(
-#             "/room/create/", 
-#             {
-#                 "room_id":999,
-#                 "teacher":1
-#             }, 
-#             content_type="application/json")
-#         self.assertEqual(response.status_code, 200)
-#         response = c.get(
-#             "/room/?id=999"
-#         )
-#         self.assertEqual(response.status_code, 200)
-#         response = c.post(
-#             "/room/delete/", 
-#             {
-#                 "id":999
-#             }, 
-#             content_type="application/json"
-#         )
-#         self.assertEqual(response.status_code, 200)
+    def test_api_Classroom_create_fetch_delete(self):
+        c = Client()
+        c.post(
+            "/teacher/register/",
+            {
+                "user": {"username": "bibo", "password": "pass"}, 
+                "first_name": "toto", 
+                "last_name": "tata", 
+                "gender": "Femme"
+            },
+            content_type="application/json"
+        )
+        c.post(
+            "/teacher/login/",
+            {"username": "bibo", "password": "pass"}
+        )
+        teacher_id = Teacher.objects.get(user__username="bibo").user.id
+        response = c.post(
+            "/room/create/", 
+            {
+                "room_id":999,
+                "teacher":teacher_id
+            }, 
+            content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response = c.get(
+            "/room/?id=999"
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/room/delete/", 
+            {
+                "id":999
+            }, 
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class ExerciseTestCase(TestCase):
@@ -195,11 +196,12 @@ class ExerciseTestCase(TestCase):
             "/teacher/login/",
             {"username": "help", "password": "please"}
         )
+        teacher_id = Teacher.objects.get(user__username="help").user.id
         c.post(
             "/room/create/", 
             {
                 "room_id":85,
-                "teacher":1
+                "teacher":teacher_id
             }, 
             content_type="application/json")
         response = c.post(
@@ -228,7 +230,3 @@ class ExerciseTestCase(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
-
-
-
-
