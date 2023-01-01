@@ -34,13 +34,13 @@ class Classroom(models.Model):
     A class is created by a teacher and joined by several students.
     It also consists of several exercises."""
 
-    room_id = models.IntegerField(null=True, default=None)
+    room_id = models.IntegerField(default=None, primary_key=True)
     teacher = models.ForeignKey(
         Teacher, on_delete=models.PROTECT, related_name="teacher_of_the_classroom"
     )
 
     def __str__(self) -> str:
-        return self.room_id
+        return str(self.room_id)
 
 
 class Student(models.Model):
