@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from api.models import User, Teacher, Student, Classroom, Exercise
+from api.models import User, Teacher, Student, Classroom, Exercise, Solution
 
 
 class TeacherTestCase(TestCase):
@@ -160,7 +160,7 @@ class ExerciseTestCase(TestCase):
             user=User.objects.get(username="admin"),
             first_name="lina",
             last_name="theblg",
-            gender="Femme",
+            gender="Femme"
         )
         room = Classroom.objects.create(
             room_id = 77,
@@ -178,7 +178,6 @@ class ExerciseTestCase(TestCase):
         exercise = Exercise.objects.get(statement="Fonction carrée")
         self.assertIsInstance(exercise, Exercise)
         self.assertEqual(str(exercise), "Fonction carrée")
-
 
     def test_api_Exercise_create_fetch_delete(self):
         c = Client()
@@ -230,3 +229,93 @@ class ExerciseTestCase(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
+
+
+class SolutionTestCase(TestCase):
+    def setUp(self):
+        User.objects.create(username="admin", password="root")
+        student_user = User.objects.create(username="saveme", password="78")
+        teacher = Teacher.objects.create(
+            user=User.objects.get(username="admin"),
+            first_name="lina",
+            last_name="theblg",
+            gender="Femme"
+        )
+        room = Classroom.objects.create(
+            room_id = 78,
+            teacher = teacher
+        )
+        student = Student.objects.create(
+            user = student_user,
+            classroom = room
+        )
+        exercise = Exercise.objects.create(
+            statement = "Fonction carrée",
+            solution = "def f(x):\n return x**2",
+            test_input = "[0, 1, 2, 3, 4, 5]", 
+            correct_output = "[0, 1, 8, 27, 64, 125]",
+            classroom = room
+        )
+        Solution.objects.create(
+            student = student,
+            exercise = exercise,
+            output = "[0, 1, 8, 27, 64, 125]", 
+            source = "def f(x):\n return x**2"
+        )   
+
+    def test_database_Solution(self):
+        solution = Solution.objects.get(source="def f(x):\n return x**2")
+        self.assertIsInstance(solution, Solution)
+        self.assertEqual(str(solution), "def f(x):\n return x**2")
+
+
+    # def test_api_Exercise_create_fetch_delete(self):
+    #     c = Client()
+    #     c.post(
+    #         "/teacher/register/",
+    #         {
+    #             "user": {"username": "help", "password": "please"}, 
+    #             "first_name": "help", 
+    #             "last_name": "help", 
+    #             "gender": "Femme"
+    #         },
+    #         content_type="application/json"
+    #     )
+    #     c.post(
+    #         "/teacher/login/",
+    #         {"username": "help", "password": "please"}
+    #     )
+    #     teacher_id = Teacher.objects.get(user__username="help").user.id
+    #     c.post(
+    #         "/room/create/", 
+    #         {
+    #             "room_id":85,
+    #             "teacher":teacher_id
+    #         }, 
+    #         content_type="application/json")
+    #     response = c.post(
+    #         "/exercise/create/", 
+    #         {
+    #             "statement": "Fonction double",
+    #             "solution": "def f(x):\n return 2*x",
+    #             "test_input": "[0, 1, 2, 3, 4, 5]",
+    #             "correct_output": "[0, 2, 4, 6, 8, 10]",
+    #             "classroom": 85
+    #         },
+    #         content_type="application/json")
+    #     self.assertEqual(response.status_code, 200)
+    #     response = c.post(
+    #         "/exercise/", 
+    #         {
+    #             "statement": "Fonction double"
+    #         },
+    #         content_type="application/json")
+    #     self.assertEqual(response.status_code, 200)
+    #     response = c.post(
+    #         "/exercise/delete/", 
+    #         {
+    #             "statement":"Fonction double"
+    #         }, 
+    #         content_type="application/json"
+    #     )
+    #     self.assertEqual(response.status_code, 200)
