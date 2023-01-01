@@ -45,7 +45,7 @@ class RegisterForm extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.submituserRegistrationForm = this.submituserRegistrationForm.bind(
-        this,
+      this,
     );
   };
   /**
@@ -60,7 +60,7 @@ class RegisterForm extends React.Component {
     } else {
       fields[e.target.name] = e.target.value;
     }
-    this.setState({fields});
+    this.setState({ fields });
   }
 
   /**
@@ -82,7 +82,7 @@ class RegisterForm extends React.Component {
    * @argument {Event} e : event called onSubmit
    */
   submituserRegistrationForm(e) {
-    const {registerUser} = this.context;
+    const { registerUser } = this.context;
     e.preventDefault();
     if (this.validateForm()) {
       registerUser(e).then((a) => {
@@ -198,7 +198,7 @@ class RegisterForm extends React.Component {
       <Grid>
         <Paper elevation={0} style={paperStyle}>
           <Grid align='center'>
-            <Typography variant="h5">Créer un compte</Typography>
+            <Typography variant="h5">Créer un compte professeur</Typography>
             <Typography variant='caption'>
               Remplir ce formulaire pour créer votre compte professeur !
             </Typography>
@@ -282,6 +282,7 @@ class RegisterForm extends React.Component {
               <TextField
                 id="standard-basic"
                 variant="standard"
+                type="password"
                 margin="dense"
                 label="Mot de passe"
                 name='password'
@@ -294,6 +295,7 @@ class RegisterForm extends React.Component {
               <TextField
                 id="standard-basic"
                 variant="standard"
+                type="password"
                 margin="dense"
                 label="Confirmation mot de passe"
                 name='passwordConfirmation'
