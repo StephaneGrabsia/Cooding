@@ -147,4 +147,4 @@ class RoomDeleteView(APIView):
         response.data = {'message':'success'}
         return response
 
-
+#useless
