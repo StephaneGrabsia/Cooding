@@ -44,7 +44,7 @@ RUN apt-get update \
 # precise shell to use with pipefail option to ensure the fail of build if something goes wrong
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
-RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+RUN curl -sSL https://install.python-poetry.org | python
 
 # copy project requirement files here to ensure they will be cached.
 WORKDIR $PYSETUP_PATH
