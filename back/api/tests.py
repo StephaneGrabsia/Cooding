@@ -270,8 +270,8 @@ class SolutionTestCase(TestCase):
 
     def test_model_Solution(self):
         solution = Solution.objects.get(source="def f(x):\n return x**2")
-        self.assertEqual(solution.run(), "[0, 1, 4, 9, 16, 25]\n")
-        self.assertEqual(solution.check_sol(solution.run()), True)
+        self.assertEqual(solution.run()[0], "[0, 1, 4, 9, 16, 25]\n")
+        self.assertEqual(solution.check_sol(solution.run()[0]), True)
 
     def test_api_Solution_create_delete(self):
         c = Client()
