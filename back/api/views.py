@@ -247,6 +247,7 @@ class SolutionDeleteView(APIView):
     def post(self, request, auth_id):
         response = Response()
         try:
+            #To be changed
             Solution.objects.filter(source=request.data['source']).first().delete()
             response.data = {'message': 'success'}
         except ObjectDoesNotExist:
