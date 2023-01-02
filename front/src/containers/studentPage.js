@@ -5,11 +5,9 @@ import ResponsiveAppBar from '../components/appBar';
 import ReactMarkdown from 'react-markdown';
 import Editor from '@monaco-editor/react';
 import PropTypes from 'prop-types';
-import {Button, Box, Paper, Toolbar, Avatar} from '@mui/material';
-import ShibaRunning from '../assets/shiba_running.jpg';
-import ShibaNeedHelp from '../assets/needHelp.jpg';
+import {Paper} from '@mui/material';
 import {Container} from '@mui/system';
-
+import OutputSectionBar from '../components/outputSectionBar';
 // import style from '../styles/style.css';
 
 const statementSize = {
@@ -34,16 +32,6 @@ const terminalSize = {
   height: '30.6vh',
 };
 
-
-const buttonStyle = {
-  paddingTop: '2px',
-  paddingBottom: '2px',
-};
-
-const avatarStyle = {
-  width: '40px',
-  height: '40px',
-};
 
 /**
  * Component coding the main page of the student.
@@ -95,42 +83,7 @@ function StudentPage({exercice}) {
               style={terminalSize}
               sx={{backgroundColor: 'tertianary.main'}}
             >
-              <Toolbar disableGutters>
-                <Box sx={{marginLeft: '20px'}}>
-                  <Button
-                    variant="contained"
-                    startIcon={
-                      <Avatar
-                        src={ShibaNeedHelp}
-                        variant='square'
-                        style={avatarStyle}/>
-                    }
-                    style={buttonStyle} >
-                    Need Help?
-                  </Button>
-                </Box>
-                <Box sx={{flexGrow: 1}}></Box>
-                <Box sx={{marginRight: '20px'}}>
-                  <Button
-                    variant="contained"
-                    startIcon={
-                      <Avatar
-                        src={ShibaRunning}
-                        variant='square'
-                        style={avatarStyle}/>
-                    }
-                    style={buttonStyle}>
-                      Run
-                  </Button>
-                </Box>
-                <Box sx={{marginRight: '20px'}}>
-                  <Button
-                    variant="contained"
-                    sx = {{height: '44px'}}>
-                      Submit
-                  </Button>
-                </Box>
-              </Toolbar>
+              <OutputSectionBar/>
               <Container sx={{
                 height: '68%',
                 padding: '0px',
