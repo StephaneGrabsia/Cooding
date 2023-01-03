@@ -7,8 +7,11 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
 
-from api.models import Teacher, Student, Classroom
-from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from api.models import Teacher
+from api.serializers import TeacherSerializer
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -40,6 +43,22 @@ def getRoutes(request):
         {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
     ]
     return Response(routes)
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token["id"] = user.id
+        token["username"] = user.username
+
+        return token
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class TeacherRegisterView(APIView):
@@ -80,12 +99,14 @@ class TeacherView(APIView):
         serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
+
 class StudentRegisterView(APIView):
     def post(self, request):
         student = StudentSerializer(data=request.data)
         student.is_valid(raise_exception=True)
         student.save()
         return Response(student.data)
+
 
 class StudentLoginView(APIView):
     def post(self, request):
@@ -109,12 +130,14 @@ class StudentLoginView(APIView):
         response.data = {"jwt": token}
         return response
 
-class  StudentView(APIView):
+
+class StudentView(APIView):
     @authenticated(user_type="student")
     def get(self, request, auth_id):
         student = Student.objects.get(user__id=auth_id)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
+
 
 class LogoutView(APIView):
     def get(self, request):
@@ -123,6 +146,7 @@ class LogoutView(APIView):
         response.data = {"message": "success"}
         return response
 
+
 class RoomCreateView(APIView):
     def post(self, request):
         serializer = RoomSerializer(data=request.data)
@@ -130,21 +154,21 @@ class RoomCreateView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+
 class RoomView(APIView):
     @authenticated(user_type="teacher")
     def get(self, request, auth_id):
-        room_id = self.request.query_params.get('id')
+        room_id = self.request.query_params.get("id")
         print(room_id)
         room = Classroom.objects.get(room_id=room_id)
         serializer = RoomSerializer(room)
         return Response(serializer.data)
 
+
 class RoomDeleteView(APIView):
     @authenticated(user_type="teacher")
     def post(self, request, auth_id):
         response = Response()
-        Classroom.objects.get(room_id=request.data['id']).delete()
-        response.data = {'message':'success'}
+        Classroom.objects.get(room_id=request.data["id"]).delete()
+        response.data = {"message": "success"}
         return response
-
-

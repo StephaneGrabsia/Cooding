@@ -1,18 +1,56 @@
 import os
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class User(AbstractUser):
     username = models.CharField(blank=False, max_length=255, unique=True)
     password = models.CharField(blank=False, max_length=255)
 
-    REQUIRED_FIELD = []
+    class Role(models.TextChoices):
+        ADMIN = "ADMIN", "Admin"
+        STUDENT = "STUDENT", "Student"
+        TEACHER = "TEACHER", "Teacher"
+
+    base_role = Role.ADMIN
+    role = models.CharField(max_length=8, choices=Role.choices, default=base_role)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            return super().save(*args, **kwargs)
 
 
-class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+# =========== TEACHER ===========
+
+
+class TeacherManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(role=User.Role.TEACHER)
+
+
+class Teacher(User):
+
+    base_role = User.Role.STUDENT
+
+    teacher = TeacherManager()
+
+    class Meta:
+        proxy = True
+
+
+@receiver(post_save, sender=Teacher)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created and instance.role == "STUDENT":
+        TeacherManager.objects.create(user=instance)
+
+
+class TeacherProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(blank=False, max_length=255)
     last_name = models.CharField(blank=False, max_length=255)
 
