@@ -36,7 +36,7 @@ const toolBarStyle = {
  * classement) and the session informations (number of exercices)
  * @return {Component}
  */
-function ResponsiveAppBar({user, session}) {
+function ResponsiveAppBar({user, otherInfos, session, logoutUserStudent}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [activeExercice, setActiveExercice] = React.useState(0);
@@ -139,7 +139,7 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-              Classement: {user.rank}/12
+              Classement: {otherInfos.rank}/12
               </Typography>
             </Box>
             <Box sx={{flexGrow: 0, mr: '15px'}}>
@@ -158,7 +158,7 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-              Score : {user.score}
+              Score : {otherInfos.score}
               </Typography>
             </Box>
 
@@ -178,7 +178,7 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-                {user.name}
+                {user.user.username}
               </Typography>
             </Box>
             <Box sx={{flexGrow: 0}}>
@@ -206,7 +206,10 @@ function ResponsiveAppBar({user, session}) {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={(setting==='Logout') ? logoutUserStudent :
+                                                      handleCloseUserMenu}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}

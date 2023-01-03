@@ -22,6 +22,7 @@ const buttonStyle = {
 };
 
 export const StudentLogin = () => {
+  const {loginUserStudent} = useContext(AuthContext);
   return (
     <Grid>
       <Paper elevation={0} style={paperStyle}>
@@ -29,30 +30,34 @@ export const StudentLogin = () => {
           <Typography variant="h5">Rejoindre une session</Typography>
         </Grid>
         <Grid>
-          <TextField
-            id="standard-basic"
-            label="Room id"
-            placeholder="Entrer l'id de la room"
-            variant="standard"
-            fullWidth
-            style={buttonStyle}
-          />
-          <TextField
-            id="standard-basic"
-            label="Pseudo"
-            placeholder="Entrer un Pseudo"
-            variant="standard"
-            fullWidth
-            style={buttonStyle}
-          />
-          <Button
-            type="submit"
-            color="primary"
-            variant="contained"
-            fullWidth style={buttonStyle}
-          >
-            Rejoindre
-          </Button>
+          <form onSubmit={loginUserStudent}>
+            <TextField
+              id="standard-basic"
+              label="Room id"
+              placeholder="Entrer l'id de la room"
+              variant="standard"
+              fullWidth
+              name="classroom"
+              style={buttonStyle}
+            />
+            <TextField
+              id="standard-basic"
+              label="Pseudo"
+              placeholder="Entrer un Pseudo"
+              variant="standard"
+              fullWidth
+              name="username"
+              style={buttonStyle}
+            />
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              fullWidth style={buttonStyle}
+            >
+              Rejoindre
+            </Button>
+          </form>
           <Typography style={buttonStyle}> Vous avez&ensp;
             <Link href="#">
               un problème ?
@@ -65,7 +70,7 @@ export const StudentLogin = () => {
 };
 
 export const TeacherLogin = () => {
-  const {loginUser} = useContext(AuthContext);
+  const {loginUserTeacher} = useContext(AuthContext);
   return (
     <Grid>
       <Paper elevation={0} style={paperStyle}>
@@ -73,7 +78,7 @@ export const TeacherLogin = () => {
           <Typography variant="h5">Connexion</Typography>
         </Grid>
         <Grid>
-          <form onSubmit={loginUser}>
+          <form onSubmit={loginUserTeacher}>
             <TextField
               id="standard-basic"
               label="Nom d'utilisateur"

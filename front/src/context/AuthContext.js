@@ -14,7 +14,7 @@ export const AuthProvider = ({children}) => {
   );
   const history = useHistory();
 
-  const registerUser = async (e) => {
+  const registerUserTeacher = async (e) => {
     e.preventDefault();
     const response = await fetch(
         'http://localhost:8000/teacher/register/',
@@ -44,7 +44,68 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-  const loginUser = async (e) => {
+
+  const loginUserStudent = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(
+        'http://localhost:8000/student/register/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            'user': {
+              'username': e.target.username.value,
+              'password': e.target.classroom.value,
+            },
+            'classroom': e.target.classroom.value,
+          }),
+        },
+    );
+    // If the registration went well, we only log the user
+    if (response.status === 200) {
+      const response = await fetch(
+          'http://localhost:8000/student/login/',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              'username': e.target.username.value,
+              'password': e.target.classroom.value,
+            }),
+          },
+      );
+      if (response.status === 200) {
+        const response = await fetch(
+            'http://localhost:8000/student/',
+            {
+              method: 'GET',
+              headers: {'Content-Type': 'application/json'},
+              credentials: 'include',
+            });
+        if (response.status === 200) {
+          const content = await response.json();
+          setUser(content);
+          localStorage.setItem('userProfile', JSON.stringify(content));
+        }
+        history.push('/student');
+      } else {
+        alert('EROOR TODO');
+      }
+    }
+    // Else if the username is already registered in the room
+    if (response.status === 400) {
+      alert('Cet utilisateur est déjà présent dans la classroom');
+    }
+  };
+
+  const loginUserTeacher = async (e) => {
     e.preventDefault();
     const response = await fetch(
         'http://localhost:8000/teacher/login/',
@@ -98,9 +159,10 @@ export const AuthProvider = ({children}) => {
 
   const contextData = {
     user: user,
-    loginUser: loginUser,
+    loginUserTeacher: loginUserTeacher,
+    loginUserStudent: loginUserStudent,
     logoutUser: logoutUser,
-    registerUser: registerUser,
+    registerUserTeacher: registerUserTeacher,
   };
 
   return (

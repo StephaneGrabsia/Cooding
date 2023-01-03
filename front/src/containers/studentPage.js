@@ -1,5 +1,5 @@
 /* eslint-disable react/no-children-prop */
-import React from 'react';
+import React, {useContext} from 'react';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import ResponsiveAppBar from '../components/appBar';
 import ReactMarkdown from 'react-markdown';
@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import {Paper} from '@mui/material';
 import {Container} from '@mui/system';
 import OutputSectionBar from '../components/outputSectionBar';
+import AuthContext from '../context/AuthContext';
 // import style from '../styles/style.css';
 
 const statementSize = {
@@ -47,10 +48,14 @@ function StudentPage({exercice}) {
   const sessionInfo = {
     pages: ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4'],
   };
-
+  const {user, logoutUser} = useContext(AuthContext);
   return (
     <div>
-      <ResponsiveAppBar user={userInfos} session={sessionInfo}/>
+      <ResponsiveAppBar
+        user={user}
+        otherInfos={userInfos}
+        session={sessionInfo}
+        logoutUserStudent={logoutUser}/>
       <Grid2 container
         direction="row"
         justifyContent="center"
