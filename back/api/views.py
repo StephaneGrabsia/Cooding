@@ -17,7 +17,7 @@ from uQuizz.settings import TOKEN_EXPIRATION_TIME
 def getRoutes(request):
     routes = [
         {
-            "Endpoint": "/<user_type>/register/",
+            "Endpoint": "teacher/register/",
             "method": "POST",
             "description": "To register",
             "Format of the request:": {
@@ -28,7 +28,7 @@ def getRoutes(request):
             },
         },
         {
-            "Endpoint": "/<user_type>/login/",
+            "Endpoint": "/teacher/login/",
             "method": "POST",
             "description": "To login",
             "Format of the request:": {
@@ -36,21 +36,50 @@ def getRoutes(request):
                 "password": "<your pass>"
             },
         },
-        {"Endpoint": "/<user_type>/", "method": "GET", "description": "get users"},
-        {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
-
-        {
-            "Endpoint": "/exercise/create/",
+        {"Endpoint": "/teacher/", "method": "GET", "description": "get users"},
+                {
+            "Endpoint": "student/register/",
             "method": "POST",
-            "description": "To create an exercise (as a teacher)",
+            "description": "To register",
             "Format of the request:": {
-                "statement": "<the statement>",
-                "solution": "<the solution>",
-                "test_input": "<the test>",
-                "correct_output": "<test output>",
-                "classroom": "<your room_id>",
+                "user": {"username": "<your username>", "password": "<your room_id>"},
+                "classroom": "<your room_id>"
             },
         },
+        {
+            "Endpoint": "/student/login/",
+            "method": "POST",
+            "description": "To login",
+            "Format of the request:": {
+                "username": "<your username>",
+                "password": "<your room_id>"
+            },
+        },
+        {"Endpoint": "/student/", "method": "GET", "description": "get users"},
+        {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
+        {
+            "Endpoint": "/room/create/",
+            "method": "POST",
+            "description": "To create a room (as a teacher)",
+            "Format of the request:": {
+                "room_id": "<the room_id>",
+                "teacher": "<the teacher id>"
+            },
+        },
+        {
+            "Endpoint": "/room/?id=<room_id>",
+            "method": "GET",
+            "description": "To see a room",
+        },
+        {
+            "Endpoint": "/room/delete/",
+            "method": "POST",
+            "description": "To delete a room",
+            "Format of the request:": {
+                "id": "<the room_id>"
+            },
+
+        },        
         {
             "Endpoint": "/exercise/",
             "method": "POST",
