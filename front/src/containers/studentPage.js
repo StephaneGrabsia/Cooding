@@ -53,7 +53,7 @@ function StudentPage({exercice}) {
     <div>
       <ResponsiveAppBar
         user={user}
-        otherInfos={userInfos}
+        fixedUserInfos={userInfos}
         session={sessionInfo}
         logoutUserStudent={logoutUser}/>
       <Grid2 container

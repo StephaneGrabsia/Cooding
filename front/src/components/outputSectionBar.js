@@ -3,11 +3,6 @@ import {Button, Box, Toolbar, Avatar} from '@mui/material';
 import ShibaRunning from '../assets/shiba_running.svg';
 import ShibaNeedHelp from '../assets/needHelp.svg';
 
-/**
- * Defines the component that is on the bottom of the Student
- * main page contains the exercice and session information
- * @return {Component}
- */
 
 const buttonStyle = {
   paddingTop: '2px',

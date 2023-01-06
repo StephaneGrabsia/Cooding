@@ -59,9 +59,9 @@ export const AuthProvider = ({children}) => {
           body: JSON.stringify({
             'user': {
               'username': e.target.username.value,
-              'password': e.target.classroom.value,
+              'password': e.target.classroom_id.value,
             },
-            'classroom': e.target.classroom.value,
+            'classroom': e.target.classroom_id.value,
           }),
         },
     );
@@ -77,7 +77,7 @@ export const AuthProvider = ({children}) => {
             credentials: 'include',
             body: JSON.stringify({
               'username': e.target.username.value,
-              'password': e.target.classroom.value,
+              'password': e.target.classroom_id.value,
             }),
           },
       );
