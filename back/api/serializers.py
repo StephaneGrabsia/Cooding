@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from api.models import User, Teacher, Student, Classroom
+from api.models import User, Teacher, TeacherProfile, Student, Classroom
 
 
 class UserSerializer(ModelSerializer):
@@ -17,19 +17,37 @@ class UserSerializer(ModelSerializer):
         return instance
 
 
+class TeacherProfileSerializer(ModelSerializer):
+    class Meta:
+        model = TeacherProfile
+        fields = ["first_name", "last_name", "gender"]
+
+
 class TeacherSerializer(ModelSerializer):
-    user = UserSerializer()
+
+    profile = TeacherProfileSerializer(required=True)
 
     class Meta:
         model = Teacher
-        fields = ["user", "first_name", "last_name", "gender", "date_joined"]
+        fields = ["id", "role", "username", "password", "profile"]
+        extra_kwargs = {"password": {"write_only": True}, "role": {"read_only": True}}
 
     def create(self, validated_data):
-        user = UserSerializer.create(UserSerializer(), validated_data["user"])
-        validated_data["user"] = user
-        teacher = self.Meta.model(**validated_data)
-        teacher.save()
-        return teacher
+        # creation of the teacher
+        user = self.Meta.model(username=validated_data["username"])
+        if validated_data["password"]:
+            user.set_password(validated_data["password"])
+        user.save()
+
+        # create teacher profile
+        user_profile = TeacherProfile.objects.create(user=user)
+        user_profile.first_name = validated_data["profile"]["first_name"]
+        user_profile.last_name = validated_data["profile"]["last_name"]
+        user_profile.gender = validated_data["profile"]["gender"]
+        user_profile.save()
+
+        return user
+
 
 class RoomSerializer(ModelSerializer):
     class Meta:
@@ -40,6 +58,7 @@ class RoomSerializer(ModelSerializer):
         room = self.Meta.model(**validated_data)
         room.save()
         return room
+
 
 class StudentSerializer(ModelSerializer):
     user = UserSerializer()
