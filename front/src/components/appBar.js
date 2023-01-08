@@ -13,6 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Icon from '../assets/icon.svg';
+import Coin from '../assets/coin.png';
+import Surf from '../assets/surf.png';
 import PropTypes from 'prop-types';
 
 const settings = ['Change Username', 'Leaderboard', 'Logout'];
@@ -21,6 +23,14 @@ const imgStyle = {
   width: '6vh',
   height: '6vh',
   margin: '20px auto',
+};
+
+const coinStyle = {
+  width: '6vh',
+  height: '6vh',
+  margin: '20px auto',
+  verticalAlign: 'middle',
+  display: 'inline-flex',
 };
 
 
@@ -36,7 +46,7 @@ const toolBarStyle = {
  * classement) and the session informations (number of exercices)
  * @return {Component}
  */
-function ResponsiveAppBar({user, session}) {
+function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [activeExercice, setActiveExercice] = React.useState(0);
@@ -50,6 +60,10 @@ function ResponsiveAppBar({user, session}) {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleChooseMenuItem = () => {
+    alert('EROOR TODO');
   };
 
   const handleCloseUserMenu = () => {
@@ -123,7 +137,12 @@ function ResponsiveAppBar({user, session}) {
             </Box>
             <Box sx={{flexGrow: 1}}>
             </Box>
-            <Box sx={{flexGrow: 0, mr: '15px'}}>
+            <Box sx={{
+              flexGrow: 0,
+              mr: '15px',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}>
               <Typography
                 variant="p"
                 noWrap
@@ -139,10 +158,16 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-              Classement: {user.rank}/12
+              Classement: {fixedUserInfos.rank}/12
               </Typography>
+              <img src={Surf} style={coinStyle}/>
             </Box>
-            <Box sx={{flexGrow: 0, mr: '15px'}}>
+            <Box sx={{
+              flexGrow: 0,
+              mr: '15px',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}>
               <Typography
                 variant="p"
                 noWrap
@@ -158,8 +183,9 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-              Score : {user.score}
+              Score : {fixedUserInfos.score}
               </Typography>
+              <img src={Coin} style={coinStyle}/>
             </Box>
 
             <Box sx={{flexGrow: 0, mr: '15px'}}>
@@ -178,15 +204,18 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-                {user.name}
+                {user.user.username}
               </Typography>
             </Box>
             <Box sx={{flexGrow: 0}}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                  <Avatar alt="Remy Sharp"
-                    src="/static/images/avatar/2.jpg"
-                    sx={{width: '6vh', height: '6vh'}}/>
+                  <Avatar sx={{
+                    width: '6vh',
+                    height: '6vh',
+                    backgroundColor: 'red'}}>
+                    {user.user.username[0]}
+                  </Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -206,7 +235,10 @@ function ResponsiveAppBar({user, session}) {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={(setting==='Logout') ? logoutUserStudent :
+                                                      handleChooseMenuItem}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}
