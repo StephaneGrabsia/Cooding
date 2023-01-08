@@ -1,4 +1,4 @@
-import os
+import os, sys, subprocess
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -76,32 +76,32 @@ class Solution(models.Model):
     It contains the code submitted by a Student (source). Output
     is the source output in JSON."""
 
-    exercise = models.OneToOneField(
+    exercise = models.ForeignKey(
         Exercise, on_delete=models.PROTECT, default=None, related_name="exercise_done"
     )
     source = models.TextField(null=True)
     output = models.TextField(null=True)
-    student = models.OneToOneField(
+    student = models.ForeignKey(
         Student, on_delete=models.PROTECT, default=None, related_name="student_submit"
     )
 
     def run(self):
+
         with open("test_file.py", "w") as f:
-            f.write(self.solution + "\n")
-            f.write("test_input = " + self.test_input + "\n")
+            f.write(self.source + "\n")
+            f.write("test_input = " + self.exercise.test_input + "\n")
             f.write("output, test = [], 0\n")
             f.write("for input in test_input:\n")
             f.write("   output.append(f(input))\n")
             f.write("print(output)")
-        os.system("python3 test_file.py > answer.txt")
-        with open("answer.txt", "r") as out:
-            test_output = out.read()
+        result = subprocess.run(["python", "test_file.py"], capture_output=True, text=True)
+        test_output = result.stdout
+        test_errors = result.stderr
         os.remove("test_file.py")
-        os.remove("answer.txt")
-        return test_output
+        return test_output, test_errors
 
     def check_sol(self, test_output):
-        return test_output == self.correct_output + "\n"
+        return test_output == self.exercise.correct_output + "\n"
 
     def __str__(self) -> str:
         return self.source
