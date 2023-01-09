@@ -96,7 +96,7 @@ def getRoutes(request):
             "method": "POST",
             "description": "To see an exercise",
             "Format of the request:": {
-                "statement": "<the statement>"
+                "classroom": "<the room_id>"
             },
         },
         {
