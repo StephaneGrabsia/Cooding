@@ -217,7 +217,7 @@ class ExerciseTestCase(TestCase):
         response = c.post(
             "/exercise/", 
             {
-                "statement": "Fonction double"
+                "classroom": 85
             },
             content_type="application/json")
         self.assertEqual(response.status_code, 200)
