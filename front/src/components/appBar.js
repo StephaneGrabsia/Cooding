@@ -46,10 +46,17 @@ const toolBarStyle = {
  * classement) and the session informations (number of exercices)
  * @return {Component}
  */
-function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
+function ResponsiveAppBar({
+  user,
+  fixedUserInfos,
+  listExercises,
+  session,
+  logoutUserStudent,
+  activeExercise,
+  setActiveExercise,
+}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [activeExercice, setActiveExercice] = React.useState(0);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -70,8 +77,8 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
     setAnchorElUser(null);
   };
 
-  const handleSelection = (event, newExercice) => {
-    setActiveExercice(newExercice);
+  const handleSelection = (event, newExercise) => {
+    setActiveExercise(newExercise);
   };
 
   return (
@@ -108,16 +115,16 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                   display: {xs: 'block', md: 'none'},
                 }}
               >
-                {session.pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                {listExercises.map((page, index) => (
+                  <MenuItem key={index} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">Exo {index + 1}</Typography>
                   </MenuItem>
                 ))}
               </Menu>
             </Box>
             <img src={Icon} style={imgStyle}/>
             <Box sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-              <Tabs value={activeExercice}
+              <Tabs value={activeExercise}
                 onChange={handleSelection}
                 indicatorColor='secondary'
                 textColor='secondary'
@@ -126,10 +133,10 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                     top: '60px',
                   },
                 }}>
-                {session.pages.map((page) => (
+                {listExercises.map((page, index) => (
                   <Tab
-                    key={page}
-                    label={page}
+                    key={index}
+                    label={'Exo ' + (index + 1)}
                     sx={{my: 2, color: 'black', display: 'block'}}
                   />
                 ))}
