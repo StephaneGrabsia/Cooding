@@ -78,8 +78,19 @@ def getRoutes(request):
             "Format of the request:": {
                 "id": "<the room_id>"
             },
-
-        },        
+        },
+        {
+            "Endpoint": "/exercise/create/",
+            "method": "POST",
+            "description": "To create an exercise",
+            "Format of the request:": {
+                "statement": "<the statement>",
+                "solution":"<the solution>",
+                "test_input": "<the test input>",
+                "correct_output" : "<the correct output>",
+                "classroom" : "<the room_id>"
+            },
+        },         
         {
             "Endpoint": "/exercise/",
             "method": "POST",
@@ -276,10 +287,8 @@ class SolutionDeleteView(APIView):
     def post(self, request, auth_id):
         response = Response()
         try:
-            #To be changed
-            Solution.objects.filter(source=request.data['source']).first().delete()
+            Solution.objects.filter(source=request.data['source']).delete()
             response.data = {'message': 'success'}
         except ObjectDoesNotExist:
             response.data = {'message':'No solution found'}
         return response
-    
