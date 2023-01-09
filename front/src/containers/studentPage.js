@@ -1,5 +1,5 @@
 /* eslint-disable react/no-children-prop */
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import ResponsiveAppBar from '../components/appBar';
 import ReactMarkdown from 'react-markdown';
@@ -9,6 +9,7 @@ import {Paper} from '@mui/material';
 import {Container} from '@mui/system';
 import OutputSectionBar from '../components/outputSectionBar';
 import AuthContext from '../context/AuthContext';
+import CodeEditorWindow from '../components/CodeEditorWindow';
 // import style from '../styles/style.css';
 
 const statementSize = {
@@ -49,13 +50,96 @@ function StudentPage({exercice}) {
     pages: ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4'],
   };
   const {user, logoutUser} = useContext(AuthContext);
+
+  const [code, setCode] = useState('#enter your code here!');
+  const [listExercises, setListExercises] = useState([{statement: ''}]);
+  const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
+  const [activeExerciseStatement, setActiveExerciseStatement]= useState('');
+
+  const fetchExercises = async () => {
+    const response = await fetch(
+        'http://localhost:8000/exercise/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            'classroom': user.classroom,
+          }),
+        },
+    );
+    if (response.status === 200) {
+      const content = await response.json();
+      setListExercises(content);
+      console.log(listExercises[activeExerciseIndex]);
+    } else {
+      alert('Didn\'t work');
+    }
+  };
+
+  useEffect(() => {
+    fetchExercises();
+  }, []);
+
+  useEffect(() => {
+    setActiveExerciseStatement(listExercises[activeExerciseIndex].statement);
+  }, [activeExerciseIndex, listExercises]);
+
+  useEffect(() => {
+    const interval = setInterval(fetchExercises, 10000);
+    return () => clearInterval(interval);
+  }, [listExercises]);
+
+  const onChange = (action, data) => {
+    switch (action) {
+      case 'code': {
+        setCode(data);
+        console.log(typeof(code));
+        break;
+      }
+      default: {
+        console.warn('case not handled!', action, data);
+      }
+    }
+  };
+
+  const onClickSubmit = async (event) => {
+    const response = await fetch(
+        'http://localhost:8000/solution/create/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            'student': user.user.id,
+            'exercise': 1,
+            'output': '',
+            'source': code,
+          }),
+        },
+    );
+    if (response.status === 200) {
+      alert('Submited succesfully');
+    } else {
+      alert('Didn\'t work');
+    }
+  };
+
   return (
     <div>
       <ResponsiveAppBar
         user={user}
         fixedUserInfos={userInfos}
+        listExercises={listExercises}
         session={sessionInfo}
-        logoutUserStudent={logoutUser}/>
+        logoutUserStudent={logoutUser}
+        activeExercise={activeExerciseIndex}
+        setActiveExercise={setActiveExerciseIndex}
+      />
       <Grid2 container
         direction="row"
         justifyContent="center"
@@ -65,7 +149,7 @@ function StudentPage({exercice}) {
           <Paper elevation={3} style={statementSize}
             sx={{backgroundColor: 'secondary.main'}}>
             <ReactMarkdown
-              children={exercice.content}
+              children={activeExerciseStatement}
               className='reactMarkdown'>
             </ReactMarkdown>
           </Paper>
@@ -78,17 +162,16 @@ function StudentPage({exercice}) {
             style={rightPartSize}
           >
             <Grid2 xs={8} style={codeEditorSize}>
-              <Editor
-                defaultLanguage='python'
-                defaultValue='#Insert here your code ;)!'
-                options={{minimap: {enabled: false}}}
+              <CodeEditorWindow
+                code={code}
+                onChange={onChange}
               />
             </Grid2>
             <Grid2 xs={4}
               style={terminalSize}
               sx={{backgroundColor: 'tertianary.main'}}
             >
-              <OutputSectionBar/>
+              <OutputSectionBar onClickSubmit={onClickSubmit}/>
               <Container sx={{
                 height: '68%',
                 padding: '0px',

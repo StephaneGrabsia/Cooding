@@ -238,16 +238,15 @@ class ExerciseCreateView(APIView):
 
 
 class ExerciseView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
-        response = Response()
+    def post(self, request):
+        response=[]
         try : 
-            exercise = Exercise.objects.get(statement=request.data['statement'])
-            serializer = ExerciseSerializer(exercise)
-            response.data = serializer.data
+            exo = list(Exercise.objects.filter(classroom=request.data['classroom']))
+            for exercise in exo:
+                response.append(ExerciseSerializer(exercise).data)
         except ObjectDoesNotExist:
             response.data = {'message':'No exercise found'}
-        return response
+        return Response(response)
 
 
 class ExerciseDeleteView(APIView):
@@ -258,8 +257,8 @@ class ExerciseDeleteView(APIView):
             Exercise.objects.get(statement=request.data['statement']).delete()
             response.data = {'message': 'success'}
         except ObjectDoesNotExist:
-            response.data = {'message':'No exercise found'}
-        return response
+            response.append({'message':'No exercise found'})
+        return Response(response)
 
 
 class SolutionCreateView(APIView):
