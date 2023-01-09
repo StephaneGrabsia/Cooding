@@ -78,14 +78,25 @@ def getRoutes(request):
             "Format of the request:": {
                 "id": "<the room_id>"
             },
-
-        },        
+        },
+        {
+            "Endpoint": "/exercise/create/",
+            "method": "POST",
+            "description": "To create an exercise",
+            "Format of the request:": {
+                "statement": "<the statement>",
+                "solution":"<the solution>",
+                "test_input": "<the test input>",
+                "correct_output" : "<the correct output>",
+                "classroom" : "<the room_id>"
+            },
+        },         
         {
             "Endpoint": "/exercise/",
             "method": "POST",
             "description": "To see an exercise",
             "Format of the request:": {
-                "statement": "<the statement>"
+                "classroom": "<the room_id>"
             },
         },
         {
@@ -240,14 +251,14 @@ class ExerciseCreateView(APIView):
 class ExerciseView(APIView):
     @authenticated(user_type="teacher")
     def post(self, request, auth_id):
-        response = Response()
+        response=[]
         try : 
-            exercise = Exercise.objects.get(statement=request.data['statement'])
-            serializer = ExerciseSerializer(exercise)
-            response.data = serializer.data
+            exo = list(Exercise.objects.filter(classroom=request.data['classroom']))
+            for exercise in exo:
+                response.append(ExerciseSerializer(exercise).data)
         except ObjectDoesNotExist:
-            response.data = {'message':'No exercise found'}
-        return response
+            response.append({'message':'No exercise found'})
+        return Response(response)
 
 
 class ExerciseDeleteView(APIView):
@@ -276,10 +287,8 @@ class SolutionDeleteView(APIView):
     def post(self, request, auth_id):
         response = Response()
         try:
-            #To be changed
-            Solution.objects.filter(source=request.data['source']).first().delete()
+            Solution.objects.filter(source=request.data['source']).delete()
             response.data = {'message': 'success'}
         except ObjectDoesNotExist:
             response.data = {'message':'No solution found'}
         return response
-    
