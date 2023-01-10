@@ -232,8 +232,8 @@ class RoomCreateView(APIView):
 
 
 class RoomView(APIView):
-    @authenticated(user_type="teacher")
-    def get(self, request, auth_id):
+    # TODO : authentification
+    def get(self, request):
         room_id = self.request.query_params.get("id")
         print(room_id)
         room = Classroom.objects.get(room_id=room_id)
@@ -242,8 +242,8 @@ class RoomView(APIView):
 
 
 class RoomDeleteView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
+    # TODO : authentification
+    def post(self, request):
         response = Response()
         Classroom.objects.get(room_id=request.data["id"]).delete()
         response.data = {"message": "success"}
@@ -254,8 +254,8 @@ class RoomDeleteView(APIView):
 
 
 class ExerciseCreateView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
+    # TODO : authentification
+    def post(self, request):
         serializer = ExerciseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -263,8 +263,8 @@ class ExerciseCreateView(APIView):
 
 
 class ExerciseView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
+    # TODO : authentification
+    def post(self, request):
         response = Response()
         try:
             exercise = Exercise.objects.get(statement=request.data["statement"])
@@ -276,8 +276,8 @@ class ExerciseView(APIView):
 
 
 class ExerciseDeleteView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
+    # TODO : authentification
+    def post(self, request):
         response = Response()
         try:
             Exercise.objects.get(statement=request.data["statement"]).delete()
@@ -291,8 +291,8 @@ class ExerciseDeleteView(APIView):
 
 
 class SolutionCreateView(APIView):
-    @authenticated(user_type="student")
-    def post(self, request, auth_id):
+    # TODO : authentification
+    def post(self, request):
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -300,8 +300,8 @@ class SolutionCreateView(APIView):
 
 
 class SolutionDeleteView(APIView):
-    @authenticated(user_type="student")
-    def post(self, request, auth_id):
+    # TODO : authentification
+    def post(self, request):
         response = Response()
         try:
             # To be changed

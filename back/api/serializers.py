@@ -12,7 +12,6 @@ from api.models import (
     Solution,
 )
 
-
 # =========== AUTH ===========
 
 
@@ -38,7 +37,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         token["username"] = user.username
         token["role"] = user.role
-        token["user_info"] = user.teacher_profile
+        if user.role == User.Role.TEACHER:
+            token["user_info"] = {
+                "first_name": user.teacher_profile.first_name,
+                "last_name": user.teacher_profile.last_name,
+                "gender": user.teacher_profile.gender,
+            }
+
+        elif user.role == User.Role.STUDENT:
+            token["user_info"] = {"classroom": user.student_profile.classroom.room_id}
 
         return token
 
