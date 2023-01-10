@@ -1,18 +1,57 @@
 import os, sys, subprocess
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class User(AbstractUser):
     username = models.CharField(blank=False, max_length=255, unique=True)
     password = models.CharField(blank=False, max_length=255)
 
-    REQUIRED_FIELD = []
+    class Role(models.TextChoices):
+        INACTIVE = "INACTIVE", "Inactive"
+        STUDENT = "STUDENT", "Student"
+        TEACHER = "TEACHER", "Teacher"
+
+    base_role = Role.INACTIVE
+    role = models.CharField(max_length=8, choices=Role.choices, default=Role.INACTIVE)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.username
 
 
-class Teacher(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+# =========== TEACHER ===========
+
+
+class TeacherManager(BaseUserManager):
+    """Personalized manager for user type Teacher"""
+
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(role=User.Role.TEACHER)
+
+
+class Teacher(User):
+    """user type Teacher"""
+
+    base_role = User.Role.TEACHER
+    teacher = TeacherManager()
+
+    class Meta:
+        proxy = True
+
+
+class TeacherProfile(models.Model):
+    """Profile of user type Teacher"""
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="teacher_profile"
+    )
     first_name = models.CharField(blank=False, max_length=255)
     last_name = models.CharField(blank=False, max_length=255)
 
@@ -29,28 +68,24 @@ class Teacher(models.Model):
         return self.user.username
 
 
+# =========== CLASSROOM ===========
+
+
 class Classroom(models.Model):
     """A classroom is identified by its primary key (room_id).
     A class is created by a teacher and joined by several students.
     It also consists of several exercises."""
 
-    room_id = models.IntegerField(default=None, primary_key=True)
+    room_id = models.IntegerField(primary_key=True)
     teacher = models.ForeignKey(
         Teacher, on_delete=models.PROTECT, related_name="teacher_of_the_classroom"
     )
 
     def __str__(self) -> str:
-        return str(self.room_id)
+        return f"classroom {self.room_id}"
 
 
-class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    classroom = models.ForeignKey(
-        Classroom, on_delete=models.CASCADE, related_name="students_on_classroom"
-    )
-
-    def __str__(self):
-        return self.user.username
+# =========== EXERCISE ===========
 
 
 class Exercise(models.Model):
@@ -69,6 +104,42 @@ class Exercise(models.Model):
 
     def __str__(self) -> str:
         return self.statement
+
+
+# =========== STUDENT ===========
+
+
+class StudentManager(BaseUserManager):
+    """Personalized manager for user type Student"""
+
+    def get_queryset(self, *args, **kwargs):
+        results = super().get_queryset(*args, **kwargs)
+        return results.filter(role=User.Role.STUDENT)
+
+
+class Student(User):
+    """user type Student"""
+
+    base_role = User.Role.STUDENT
+    objects = StudentManager()
+
+    class Meta:
+        proxy = True
+
+
+class StudentProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, primary_key=True, related_name="student_profile"
+    )
+    classroom = models.ForeignKey(
+        Classroom, on_delete=models.CASCADE, related_name="students_on_classroom"
+    )
+
+    def __str__(self):
+        return self.user.username
+
+
+# =========== SOLUTION ===========
 
 
 class Solution(models.Model):
@@ -94,7 +165,9 @@ class Solution(models.Model):
             f.write("for input in test_input:\n")
             f.write("   output.append(f(input))\n")
             f.write("print(output)")
-        result = subprocess.run(["python", "test_file.py"], capture_output=True, text=True)
+        result = subprocess.run(
+            ["python", "test_file.py"], capture_output=True, text=True
+        )
         test_output = result.stdout
         test_errors = result.stderr
         os.remove("test_file.py")

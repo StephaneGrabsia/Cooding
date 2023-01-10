@@ -8,7 +8,13 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
 
 from api.models import Teacher, Student, Classroom, Exercise, Solution
-from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer, ExerciseSerializer, SolutionSerializer
+from api.serializers import (
+    TeacherSerializer,
+    StudentSerializer,
+    ClassroomSerializer,
+    ExerciseSerializer,
+    SolutionSerializer,
+)
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -21,10 +27,13 @@ def getRoutes(request):
             "method": "POST",
             "description": "To register",
             "Format of the request:": {
-                "user": {"username": "<your username>", "password": "<your pass>"},
-                "first_name": "<your first name>",
-                "last_name": "<your last name>",
-                "gender": "<Homme ou Femme>"
+                "username": "<your username>",
+                "password": "<your pass>",
+                "teacher_profile": {
+                    "first_name": "<your first name>",
+                    "last_name": "<your last name>",
+                    "gender": "<Homme ou Femme>",
+                },
             },
         },
         {
@@ -33,17 +42,17 @@ def getRoutes(request):
             "description": "To login",
             "Format of the request:": {
                 "username": "<your username>",
-                "password": "<your pass>"
+                "password": "<your pass>",
             },
         },
         {"Endpoint": "/teacher/", "method": "GET", "description": "get users"},
-                {
+        {
             "Endpoint": "student/register/",
             "method": "POST",
             "description": "To register",
             "Format of the request:": {
-                "user": {"username": "<your username>", "password": "<your room_id>"},
-                "classroom": "<your room_id>"
+                "username": "<your username>",
+                "student_profile": {"classroom": "<your room_id>"},
             },
         },
         {
@@ -52,7 +61,7 @@ def getRoutes(request):
             "description": "To login",
             "Format of the request:": {
                 "username": "<your username>",
-                "password": "<your room_id>"
+                "password": "<your room_id>",
             },
         },
         {"Endpoint": "/student/", "method": "GET", "description": "get users"},
@@ -63,7 +72,7 @@ def getRoutes(request):
             "description": "To create a room (as a teacher)",
             "Format of the request:": {
                 "room_id": "<the room_id>",
-                "teacher": "<the teacher id>"
+                "teacher": "<the teacher id>",
             },
         },
         {
@@ -75,27 +84,19 @@ def getRoutes(request):
             "Endpoint": "/room/delete/",
             "method": "POST",
             "description": "To delete a room",
-            "Format of the request:": {
-                "id": "<the room_id>"
-            },
-
-        },        
+            "Format of the request:": {"id": "<the room_id>"},
+        },
         {
             "Endpoint": "/exercise/",
             "method": "POST",
             "description": "To see an exercise",
-            "Format of the request:": {
-                "statement": "<the statement>"
-            },
+            "Format of the request:": {"statement": "<the statement>"},
         },
         {
             "Endpoint": "/exercise/delete/",
             "method": "POST",
             "description": "To delete an exercise",
-            "Format of the request:": {
-                "statement": "<the statement>"
-            },
-
+            "Format of the request:": {"statement": "<the statement>"},
         },
         {
             "Endpoint": "/solution/create/",
@@ -103,23 +104,22 @@ def getRoutes(request):
             "description": "To create a solution as a student",
             "Format of the request:": {
                 "student": "id",
-                "exercise":"id",
+                "exercise": "id",
                 "output": "<your output>",
-                "source" : "<the source>"
+                "source": "<the source>",
             },
-
-        },        
+        },
         {
             "Endpoint": "/solution/delete/",
             "method": "POST",
             "description": "To delete a solution",
-            "Format of the request:": {
-                "source": "<the source>"
-            },
-
-        }
+            "Format of the request:": {"source": "<the source>"},
+        },
     ]
     return Response(routes)
+
+
+# =========== TEACHER ===========
 
 
 class TeacherRegisterView(APIView):
@@ -160,12 +160,17 @@ class TeacherView(APIView):
         serializer = TeacherSerializer(teacher)
         return Response(serializer.data)
 
+
+# =========== STUDENT ===========
+
+
 class StudentRegisterView(APIView):
     def post(self, request):
         student = StudentSerializer(data=request.data)
         student.is_valid(raise_exception=True)
         student.save()
         return Response(student.data)
+
 
 class StudentLoginView(APIView):
     def post(self, request):
@@ -189,12 +194,14 @@ class StudentLoginView(APIView):
         response.data = {"jwt": token}
         return response
 
-class  StudentView(APIView):
+
+class StudentView(APIView):
     @authenticated(user_type="student")
     def get(self, request, auth_id):
         student = Student.objects.get(user__id=auth_id)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
+
 
 class LogoutView(APIView):
     def get(self, request):
@@ -203,29 +210,38 @@ class LogoutView(APIView):
         response.data = {"message": "success"}
         return response
 
+
+# =========== CLASSROOM ===========
+
+
 class RoomCreateView(APIView):
     def post(self, request):
-        serializer = RoomSerializer(data=request.data)
+        serializer = ClassroomSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
+
 class RoomView(APIView):
     @authenticated(user_type="teacher")
     def get(self, request, auth_id):
-        room_id = self.request.query_params.get('id')
+        room_id = self.request.query_params.get("id")
         print(room_id)
         room = Classroom.objects.get(room_id=room_id)
-        serializer = RoomSerializer(room)
+        serializer = ClassroomSerializer(room)
         return Response(serializer.data)
+
 
 class RoomDeleteView(APIView):
     @authenticated(user_type="teacher")
     def post(self, request, auth_id):
         response = Response()
-        Classroom.objects.get(room_id=request.data['id']).delete()
-        response.data = {'message':'success'}
+        Classroom.objects.get(room_id=request.data["id"]).delete()
+        response.data = {"message": "success"}
         return response
+
+
+# =========== EXERCISE ===========
 
 
 class ExerciseCreateView(APIView):
@@ -241,12 +257,12 @@ class ExerciseView(APIView):
     @authenticated(user_type="teacher")
     def post(self, request, auth_id):
         response = Response()
-        try : 
-            exercise = Exercise.objects.get(statement=request.data['statement'])
+        try:
+            exercise = Exercise.objects.get(statement=request.data["statement"])
             serializer = ExerciseSerializer(exercise)
             response.data = serializer.data
         except ObjectDoesNotExist:
-            response.data = {'message':'No exercise found'}
+            response.data = {"message": "No exercise found"}
         return response
 
 
@@ -255,11 +271,14 @@ class ExerciseDeleteView(APIView):
     def post(self, request, auth_id):
         response = Response()
         try:
-            Exercise.objects.get(statement=request.data['statement']).delete()
-            response.data = {'message': 'success'}
+            Exercise.objects.get(statement=request.data["statement"]).delete()
+            response.data = {"message": "success"}
         except ObjectDoesNotExist:
-            response.data = {'message':'No exercise found'}
+            response.data = {"message": "No exercise found"}
         return response
+
+
+# =========== SOLUTION ===========
 
 
 class SolutionCreateView(APIView):
@@ -268,7 +287,7 @@ class SolutionCreateView(APIView):
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response()
 
 
 class SolutionDeleteView(APIView):
@@ -276,10 +295,9 @@ class SolutionDeleteView(APIView):
     def post(self, request, auth_id):
         response = Response()
         try:
-            #To be changed
-            Solution.objects.filter(source=request.data['source']).first().delete()
-            response.data = {'message': 'success'}
+            # To be changed
+            Solution.objects.filter(source=request.data["source"]).first().delete()
+            response.data = {"message": "success"}
         except ObjectDoesNotExist:
-            response.data = {'message':'No solution found'}
+            response.data = {"message": "No solution found"}
         return response
-    
