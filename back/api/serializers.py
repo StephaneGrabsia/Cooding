@@ -1,4 +1,6 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from api.models import (
     User,
     Teacher,
@@ -9,6 +11,9 @@ from api.models import (
     Exercise,
     Solution,
 )
+
+
+# =========== AUTH ===========
 
 
 class UserSerializer(ModelSerializer):
@@ -24,6 +29,18 @@ class UserSerializer(ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token["username"] = user.username
+        token["role"] = user.role
+        token["user_info"] = user.teacher_profile
+
+        return token
 
 
 # =========== TEACHER ===========
@@ -97,7 +114,9 @@ class StudentSerializer(ModelSerializer):
         # creation of the student
         user = self.Meta.model(username=validated_data["username"])
         if validated_data["student_profile"]["classroom"]:
-            user.set_password(str(validated_data["student_profile"]["classroom"]))
+            user.set_password(
+                str(validated_data["student_profile"]["classroom"].room_id)
+            )
         user.save()
 
         # create student profile

@@ -6,9 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.models import Teacher, Student, Classroom, Exercise, Solution
 from api.serializers import (
+    MyTokenObtainPairSerializer,
     TeacherSerializer,
     StudentSerializer,
     ClassroomSerializer,
@@ -117,6 +119,13 @@ def getRoutes(request):
         },
     ]
     return Response(routes)
+
+
+# =========== AUTHENTIFICATION ===========
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 # =========== TEACHER ===========
