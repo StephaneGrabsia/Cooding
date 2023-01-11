@@ -1,14 +1,16 @@
 import jwt
 import datetime
 
+from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from api.models import Teacher, Student, Classroom, Exercise, Solution
+from api.models import User, Teacher, Student, Classroom, Exercise, Solution
 from api.serializers import (
     MyTokenObtainPairSerializer,
     TeacherSerializer,
@@ -162,12 +164,15 @@ class TeacherLoginView(APIView):
         return response
 
 
+@permission_classes([IsAuthenticated])
 class TeacherView(APIView):
-    @authenticated(user_type="teacher")
-    def get(self, request, auth_id):
-        teacher = Teacher.objects.get(user__id=auth_id)
-        serializer = TeacherSerializer(teacher)
-        return Response(serializer.data)
+    def get(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            serializer = TeacherSerializer(user)
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # =========== STUDENT ===========
@@ -204,50 +209,56 @@ class StudentLoginView(APIView):
         return response
 
 
+@permission_classes([IsAuthenticated])
 class StudentView(APIView):
-    @authenticated(user_type="student")
-    def get(self, request, auth_id):
-        student = Student.objects.get(user__id=auth_id)
-        serializer = StudentSerializer(student)
-        return Response(serializer.data)
-
-
-class LogoutView(APIView):
     def get(self, request):
-        response = Response()
-        response.delete_cookie("jwt")
-        response.data = {"message": "success"}
-        return response
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            serializer = StudentSerializer(user)
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # =========== CLASSROOM ===========
 
 
+@permission_classes([IsAuthenticated])
 class RoomCreateView(APIView):
     def post(self, request):
-        serializer = ClassroomSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            serializer = ClassroomSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class RoomView(APIView):
-    # TODO : authentification
     def get(self, request):
-        room_id = self.request.query_params.get("id")
-        print(room_id)
-        room = Classroom.objects.get(room_id=room_id)
-        serializer = ClassroomSerializer(room)
-        return Response(serializer.data)
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            room_id = self.request.query_params.get("id")
+            room = Classroom.objects.get(room_id=room_id)
+            serializer = ClassroomSerializer(room)
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class RoomDeleteView(APIView):
-    # TODO : authentification
-    def post(self, request):
-        response = Response()
-        Classroom.objects.get(room_id=request.data["id"]).delete()
-        response.data = {"message": "success"}
-        return response
+    def get(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = Response()
+            Classroom.objects.get(room_id=request.data["id"]).delete()
+            response.data = {"message": "success"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # =========== EXERCISE ===========
