@@ -71,7 +71,7 @@ class ExerciseSerializer(ModelSerializer):
 class SolutionSerializer(ModelSerializer):
     class Meta:
         model = Solution
-        fields = ["exercise", "student", "source", "output"]
+        fields = ["exercise", "student", "source"]
 
     def create(self, validated_data):
         solution = self.Meta.model(**validated_data)

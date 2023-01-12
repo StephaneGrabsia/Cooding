@@ -80,7 +80,6 @@ class Solution(models.Model):
         Exercise, on_delete=models.PROTECT, default=None, related_name="exercise_done"
     )
     source = models.TextField(null=True)
-    output = models.TextField(null=True)
     student = models.ForeignKey(
         Student, on_delete=models.PROTECT, default=None, related_name="student_submit"
     )
@@ -90,18 +89,21 @@ class Solution(models.Model):
         with open("test_file.py", "w") as f:
             f.write(self.source + "\n")
             f.write("test_input = " + self.exercise.test_input + "\n")
+            f.write("correct_output = " + self.exercise.correct_output + "\n")
             f.write("output, test = [], 0\n")
             f.write("for input in test_input:\n")
             f.write("   output.append(f(input))\n")
-            f.write("print(output)")
+            f.write("bool = (output == correct_output)\n")
+            f.write("print(f'Your output is {output}, the result is {bool}')")
         result = subprocess.run(["python", "test_file.py"], capture_output=True, text=True)
-        test_output = result.stdout
-        test_errors = result.stderr
+        test_output = result.stdout.replace("\n", "")
+        test_errors = result.stderr.replace("\n", "")
         os.remove("test_file.py")
+
         return test_output, test_errors
 
-    def check_sol(self, test_output):
-        return test_output == self.exercise.correct_output + "\n"
+    # def check_sol(self, test_output):
+    #     return test_output == self.exercise.correct_output + "\n"
 
     def __str__(self) -> str:
         return self.source

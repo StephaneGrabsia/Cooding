@@ -115,7 +115,6 @@ def getRoutes(request):
             "Format of the request:": {
                 "student": "id",
                 "exercise":"id",
-                "output": "<your output>",
                 "source" : "<the source>"
             },
 
@@ -249,8 +248,7 @@ class ExerciseCreateView(APIView):
 
 
 class ExerciseView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
+    def post(self, request):
         response=[]
         try : 
             exo = list(Exercise.objects.filter(classroom=request.data['classroom']))
@@ -279,7 +277,9 @@ class SolutionCreateView(APIView):
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        solution = Solution.objects.filter(source=request.data['source']).first()
+        test_output, test_error = solution.run()
+        return Response([test_output, test_error])
 
 
 class SolutionDeleteView(APIView):
