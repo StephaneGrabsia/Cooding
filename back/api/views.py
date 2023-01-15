@@ -227,7 +227,7 @@ class StudentView(APIView):
 class RoomCreateView(APIView):
     def post(self, request):
         user = request.user
-        if user.role == User.Role.STUDENT:
+        if user.role == User.Role.TEACHER:
             serializer = ClassroomSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -249,8 +249,9 @@ class RoomView(APIView):
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class RoomDeleteView(APIView):
-    def get(self, request):
+    def post(self, request):
         user = request.user
         if user.role == User.Role.TEACHER:
             response = Response()
@@ -264,60 +265,80 @@ class RoomDeleteView(APIView):
 # =========== EXERCISE ===========
 
 
+@permission_classes([IsAuthenticated])
 class ExerciseCreateView(APIView):
-    # TODO : authentification
     def post(self, request):
-        serializer = ExerciseSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            serializer = ExerciseSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class ExerciseView(APIView):
-    # TODO : authentification
     def post(self, request):
-        response = Response()
-        try:
-            exercise = Exercise.objects.get(statement=request.data["statement"])
-            serializer = ExerciseSerializer(exercise)
-            response.data = serializer.data
-        except ObjectDoesNotExist:
-            response.data = {"message": "No exercise found"}
-        return response
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = Response()
+            try:
+                exercise = Exercise.objects.get(statement=request.data["statement"])
+                serializer = ExerciseSerializer(exercise)
+                response.data = serializer.data
+            except ObjectDoesNotExist:
+                response.data = {"message": "No exercise found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class ExerciseDeleteView(APIView):
-    # TODO : authentification
     def post(self, request):
-        response = Response()
-        try:
-            Exercise.objects.get(statement=request.data["statement"]).delete()
-            response.data = {"message": "success"}
-        except ObjectDoesNotExist:
-            response.data = {"message": "No exercise found"}
-        return response
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = Response()
+            try:
+                Exercise.objects.get(statement=request.data["statement"]).delete()
+                response.data = {"message": "success"}
+            except ObjectDoesNotExist:
+                response.data = {"message": "No exercise found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # =========== SOLUTION ===========
 
 
+@permission_classes([IsAuthenticated])
 class SolutionCreateView(APIView):
-    # TODO : authentification
     def post(self, request):
-        serializer = SolutionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response()
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            serializer = SolutionSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response()
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class SolutionDeleteView(APIView):
-    # TODO : authentification
     def post(self, request):
-        response = Response()
-        try:
-            # To be changed
-            Solution.objects.filter(source=request.data["source"]).first().delete()
-            response.data = {"message": "success"}
-        except ObjectDoesNotExist:
-            response.data = {"message": "No solution found"}
-        return response
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            response = Response()
+            try:
+                # To be changed
+                Solution.objects.filter(source=request.data["source"]).first().delete()
+                response.data = {"message": "success"}
+            except ObjectDoesNotExist:
+                response.data = {"message": "No solution found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)

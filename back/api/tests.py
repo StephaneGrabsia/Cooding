@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase, Client
 from api.models import (
     User,
@@ -131,17 +133,27 @@ class RoomTestCase(TestCase):
             },
             content_type="application/json",
         )
-        c.post("/login/", {"username": "sully", "password": "sully"})
+        login_request = c.post("/login/", {"username": "sully", "password": "sully"})
+        access_token = json.loads(login_request.content)["access"]
         teacher_id = Teacher.objects.get(username="sully").id
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
         response = c.post(
             "/room/create/",
-            {"room_id": 999, "teacher": teacher_id},
+            data={"room_id": 999, "teacher": teacher_id},
             content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
-        response = c.get("/room/?id=999")
+        response = c.get("/room/?id=999", **auth_headers)
         self.assertEqual(response.status_code, 200)
-        response = c.post("/room/delete/", {"id": 999}, content_type="application/json")
+        response = c.post(
+            "/room/delete/",
+            {"id": 999},
+            content_type="application/json",
+            **auth_headers
+        )
         self.assertEqual(response.status_code, 200)
 
 
@@ -184,12 +196,17 @@ class ExerciseTestCase(TestCase):
             },
             content_type="application/json",
         )
-        c.post("/login/", {"username": "help", "password": "please"})
+        login_request = c.post("/login/", {"username": "help", "password": "please"})
+        access_token = json.loads(login_request.content)["access"]
         teacher_id = Teacher.objects.get(username="help").id
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
         c.post(
             "/room/create/",
             {"room_id": 85, "teacher": teacher_id},
             content_type="application/json",
+            **auth_headers
         )
         response = c.post(
             "/exercise/create/",
@@ -201,18 +218,21 @@ class ExerciseTestCase(TestCase):
                 "classroom": 85,
             },
             content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
         response = c.post(
             "/exercise/",
             {"statement": "Fonction double"},
             content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
         response = c.post(
             "/exercise/delete/",
             {"statement": "Fonction double"},
             content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
 
@@ -268,12 +288,17 @@ class SolutionTestCase(TestCase):
             },
             content_type="application/json",
         )
-        c.post("/login/", {"username": "help", "password": "please"})
+        login_request = c.post("/login/", {"username": "help", "password": "please"})
+        access_token = json.loads(login_request.content)["access"]
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
         teacher_id = Teacher.objects.get(username="help").id
         c.post(
             "/room/create/",
             {"room_id": 44, "teacher": teacher_id},
             content_type="application/json",
+            **auth_headers
         )
         c.post(
             "/exercise/create/",
@@ -285,6 +310,7 @@ class SolutionTestCase(TestCase):
                 "classroom": 44,
             },
             content_type="application/json",
+            **auth_headers
         )
         exercise_id = Exercise.objects.get(statement="Fonction double").id
         c.get("/logout/", content_type="application/json")
@@ -294,7 +320,11 @@ class SolutionTestCase(TestCase):
             content_type="application/json",
         )
         student_id = Student.objects.get(username="hi").id
-        c.post("/login/", {"username": "hi", "password": "44"})
+        login_request = c.post("/login/", {"username": "hi", "password": "44"})
+        access_token = json.loads(login_request.content)["access"]
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
         response = c.post(
             "/solution/create/",
             {
@@ -304,11 +334,13 @@ class SolutionTestCase(TestCase):
                 "source": "def f(x):\n return 2*x",
             },
             content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
         response = c.post(
             "/solution/delete/",
             {"source": "def f(x):\n return 2*x"},
             content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)

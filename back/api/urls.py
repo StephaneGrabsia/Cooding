@@ -12,7 +12,6 @@ from api.views import (
     StudentRegisterView,
     StudentLoginView,
     StudentView,
-    LogoutView,
     RoomCreateView,
     RoomView,
     RoomDeleteView,
@@ -26,7 +25,6 @@ from api.views import (
 auth_endpoints = [
     path("login/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("logout/", LogoutView.as_view()),
 ]
 
 teacher_endpoints = [

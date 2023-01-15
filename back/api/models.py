@@ -40,7 +40,7 @@ class Teacher(User):
     """user type Teacher"""
 
     base_role = User.Role.TEACHER
-    teacher = TeacherManager()
+    objects = TeacherManager()
 
     class Meta:
         proxy = True
