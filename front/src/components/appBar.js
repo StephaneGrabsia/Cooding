@@ -1,44 +1,42 @@
-import React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Icon from '../assets/icon.svg';
-import Coin from '../assets/coin.png';
-import Surf from '../assets/surf.png';
-import PropTypes from 'prop-types';
+import React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Icon from "../assets/icon.svg";
+import Coin from "../assets/coin.png";
+import Surf from "../assets/surf.png";
+import PropTypes from "prop-types";
 
-const settings = ['Change Username', 'Leaderboard', 'Logout'];
+const settings = ["Change Username", "Leaderboard", "Logout"];
 
 const imgStyle = {
-  width: '6vh',
-  height: '6vh',
-  margin: '20px auto',
+  width: "6vh",
+  height: "6vh",
+  margin: "20px auto",
 };
 
 const coinStyle = {
-  width: '6vh',
-  height: '6vh',
-  margin: '20px auto',
-  verticalAlign: 'middle',
-  display: 'inline-flex',
+  width: "6vh",
+  height: "6vh",
+  margin: "20px auto",
+  verticalAlign: "middle",
+  display: "inline-flex",
 };
-
 
 const toolBarStyle = {
-  height: '8vh',
-  minHeight: '8vh',
+  height: "8vh",
+  minHeight: "8vh",
 };
-
 
 /**
  * Defines the component that is on the top of the Student main page
@@ -46,7 +44,12 @@ const toolBarStyle = {
  * classement) and the session informations (number of exercices)
  * @return {Component}
  */
-function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
+function ResponsiveAppBar({
+  user,
+  fixedUserInfos,
+  session,
+  logoutUserStudent,
+}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [activeExercice, setActiveExercice] = React.useState(0);
@@ -63,7 +66,7 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
   };
 
   const handleChooseMenuItem = () => {
-    alert('EROOR TODO');
+    alert("EROOR TODO");
   };
 
   const handleCloseUserMenu = () => {
@@ -79,7 +82,7 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
       <AppBar position="fixed" style={toolBarStyle}>
         <Container maxWidth="xxl" style={toolBarStyle}>
           <Toolbar disableGutters style={toolBarStyle}>
-            <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+            <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -94,18 +97,18 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                 id="menu-appbar"
                 anchorEl={anchorElNav}
                 anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
+                  vertical: "bottom",
+                  horizontal: "left",
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
+                  vertical: "top",
+                  horizontal: "left",
                 }}
                 open={Boolean(anchorElNav)}
                 onClose={handleCloseNavMenu}
                 sx={{
-                  display: {xs: 'block', md: 'none'},
+                  display: { xs: "block", md: "none" },
                 }}
               >
                 {session.pages.map((page) => (
@@ -115,121 +118,131 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                 ))}
               </Menu>
             </Box>
-            <img src={Icon} style={imgStyle}/>
-            <Box sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-              <Tabs value={activeExercice}
+            <img src={Icon} style={imgStyle} />
+            <Box
+              sx={{ ml: 7, flexGrow: 1, display: { xs: "none", md: "flex" } }}
+            >
+              <Tabs
+                value={activeExercice}
                 onChange={handleSelection}
-                indicatorColor='secondary'
-                textColor='secondary'
+                indicatorColor="secondary"
+                textColor="secondary"
                 TabIndicatorProps={{
                   sx: {
-                    top: '60px',
+                    top: "60px",
                   },
-                }}>
+                }}
+              >
                 {session.pages.map((page) => (
                   <Tab
                     key={page}
                     label={page}
-                    sx={{my: 2, color: 'black', display: 'block'}}
+                    sx={{ my: 2, color: "black", display: "block" }}
                   />
                 ))}
               </Tabs>
             </Box>
-            <Box sx={{flexGrow: 1}}>
-            </Box>
-            <Box sx={{
-              flexGrow: 0,
-              mr: '15px',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}>
+            <Box sx={{ flexGrow: 1 }}></Box>
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: "15px",
+                display: "inline-flex",
+                alignItems: "center",
+              }}
+            >
               <Typography
                 variant="p"
                 noWrap
                 component="p"
                 href="/"
-                color= "black"
+                color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
-                  fontFamily: 'Roboto',
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "Roboto",
                   fontWeight: 200,
-                  letterSpacing: '.3rem',
-                  textDecoration: 'none',
-                  textAlign: 'Right',
+                  letterSpacing: ".3rem",
+                  textDecoration: "none",
+                  textAlign: "Right",
                 }}
               >
-              Classement: {fixedUserInfos.rank}/12
+                Classement: {fixedUserInfos.rank}/12
               </Typography>
-              <img src={Surf} style={coinStyle}/>
+              <img src={Surf} style={coinStyle} />
             </Box>
-            <Box sx={{
-              flexGrow: 0,
-              mr: '15px',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}>
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: "15px",
+                display: "inline-flex",
+                alignItems: "center",
+              }}
+            >
               <Typography
                 variant="p"
                 noWrap
                 component="p"
                 href="/"
-                color= "black"
+                color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
-                  fontFamily: 'Roboto',
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "Roboto",
                   fontWeight: 200,
-                  letterSpacing: '.3rem',
-                  textDecoration: 'none',
-                  textAlign: 'Right',
+                  letterSpacing: ".3rem",
+                  textDecoration: "none",
+                  textAlign: "Right",
                 }}
               >
-              Score : {fixedUserInfos.score}
+                Score : {fixedUserInfos.score}
               </Typography>
-              <img src={Coin} style={coinStyle}/>
+              <img src={Coin} style={coinStyle} />
             </Box>
 
-            <Box sx={{flexGrow: 0, mr: '15px'}}>
+            <Box sx={{ flexGrow: 0, mr: "15px" }}>
               <Typography
                 variant="h5"
                 noWrap
                 component="p"
                 href="/"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
-                  fontFamily: 'Roboto',
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "Roboto",
                   fontWeight: 350,
-                  letterSpacing: '.3rem',
-                  color: 'inherit',
-                  textDecoration: 'none',
-                  textAlign: 'Right',
+                  letterSpacing: ".3rem",
+                  color: "inherit",
+                  textDecoration: "none",
+                  textAlign: "Right",
                 }}
               >
-                {user.user.username}
+                {user.username}
               </Typography>
             </Box>
-            <Box sx={{flexGrow: 0}}>
+            <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                  <Avatar sx={{
-                    width: '6vh',
-                    height: '6vh',
-                    backgroundColor: 'red'}}>
-                    {user.user.username[0]}
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    sx={{
+                      width: "6vh",
+                      height: "6vh",
+                      backgroundColor: "red",
+                    }}
+                  >
+                    {user.username[0]}
                   </Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
-                sx={{mt: '45px'}}
+                sx={{ mt: "45px" }}
                 id="menu-appbar"
                 anchorEl={anchorElUser}
                 anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
@@ -237,8 +250,12 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                 {settings.map((setting) => (
                   <MenuItem
                     key={setting}
-                    onClick={(setting==='Logout') ? logoutUserStudent :
-                                                      handleChooseMenuItem}>
+                    onClick={
+                      setting === "Logout"
+                        ? logoutUserStudent
+                        : handleChooseMenuItem
+                    }
+                  >
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}

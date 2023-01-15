@@ -56,13 +56,12 @@ export const AuthProvider = ({ children }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
       body: JSON.stringify({
         username: e.target.username.value,
-        password: e.target.classroom_id.value,
         student_profile: { classroom: e.target.classroom_id.value },
       }),
     });
+    let data = await response.json();
     // If the registration went well, we only log the user
     if (response.status === 200) {
       const response = await fetch("http://localhost:8000/login/", {
@@ -70,31 +69,36 @@ export const AuthProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({
           username: e.target.username.value,
           password: e.target.classroom_id.value,
         }),
       });
-      if (response.status === 200) {
-        const response = await fetch("http://localhost:8000/student/", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
-        if (response.status === 200) {
-          const content = await response.json();
-          setUser(content);
-          localStorage.setItem("userProfile", JSON.stringify(content));
-        }
+      let data = await response.json();
+      if (
+        response.status === 200 &&
+        jwt_decode(data.access).role == "STUDENT"
+      ) {
+        setAuthTokens(data);
+        setUser(jwt_decode(data.access));
+        localStorage.setItem("authTokens", JSON.stringify(data));
         history.push("/student");
+        return "";
       } else {
-        alert("EROOR TODO");
+        return "Une erreur s'est produite, etes vous bien étudiant ?";
       }
     }
-    // Else if the username is already registered in the room
-    if (response.status === 400) {
-      alert("Cet utilisateur est déjà présent dans la classroom");
+    // Else need to check if the classroom exists and if the user already exist
+    else if (response.status === 400) {
+      if ("student_profile" in data) {
+        return "Cette room n'existe pas";
+      } else if ("username" in data) {
+        return "Cet utilisateur existe deja";
+      } else {
+        return "Une erreur s'est produite, merci d'essayer de nouveau";
+      }
+    } else {
+      return "Une erreur s'est produite, merci d'essayer de nouveau";
     }
   };
 
@@ -105,7 +109,6 @@ export const AuthProvider = ({ children }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
       body: JSON.stringify({
         username: e.target.username.value,
         password: e.target.password.value,

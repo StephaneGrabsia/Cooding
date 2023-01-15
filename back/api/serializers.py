@@ -43,7 +43,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
                 "last_name": user.teacher_profile.last_name,
                 "gender": user.teacher_profile.gender,
             }
-
         elif user.role == User.Role.STUDENT:
             token["user_info"] = {"classroom": user.student_profile.classroom.room_id}
 
