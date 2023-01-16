@@ -1,5 +1,7 @@
 import React from 'react';
-import {createContext, useState} from 'react';
+import {createContext, useState, useEffect} from 'react';
+// eslint-disable-next-line camelcase
+import jwt_decode from 'jwt-decode';
 import {useHistory} from 'react-router-dom';
 
 const AuthContext = createContext();
@@ -7,34 +9,36 @@ const AuthContext = createContext();
 export default AuthContext;
 
 export const AuthProvider = ({children}) => {
-  const [user, setUser] = useState(
-      () => localStorage.getItem('userProfile') ?
-      JSON.parse(localStorage.getItem('userProfile')) :
+  const [authTokens, setAuthTokens] = useState(() =>
+    localStorage.getItem('authTokens') ?
+      JSON.parse(localStorage.getItem('authTokens')) :
       null,
   );
+  const [user, setUser] = useState(() =>
+    localStorage.getItem('authTokens') ?
+      jwt_decode(localStorage.getItem('authTokens')) :
+      null,
+  );
+  const [loading, setLoading] = useState(true);
   const history = useHistory();
 
   const registerUserTeacher = async (e) => {
     e.preventDefault();
-    const response = await fetch(
-        'http://localhost:8000/teacher/register/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            'user': {
-              'username': e.target.userName.value,
-              'password': e.target.password.value,
-            },
-            'first_name': e.target.firstName.value,
-            'last_name': e.target.lastName.value,
-            'gender': e.target.gender.value,
-          }),
+    const response = await fetch('http://localhost:8000/teacher/register/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: e.target.userName.value,
+        password: e.target.password.value,
+        teacher_profile: {
+          first_name: e.target.firstName.value,
+          last_name: e.target.lastName.value,
+          gender: e.target.gender.value,
         },
-    );
+      }),
+    });
     if (response.status === 200) {
       history.push('/');
       return '';
@@ -44,130 +48,138 @@ export const AuthProvider = ({children}) => {
     }
   };
 
-
   const loginUserStudent = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(
-        'http://localhost:8000/student/register/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            'user': {
-              'username': e.target.username.value,
-              'password': e.target.classroom_id.value,
-            },
-            'classroom': e.target.classroom_id.value,
-          }),
-        },
-    );
+    const response = await fetch('http://localhost:8000/student/register/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: e.target.username.value,
+        student_profile: {classroom: e.target.classroom_id.value},
+      }),
+    });
+    const data = await response.json();
     // If the registration went well, we only log the user
     if (response.status === 200) {
-      const response = await fetch(
-          'http://localhost:8000/student/login/',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-              'username': e.target.username.value,
-              'password': e.target.classroom_id.value,
-            }),
-          },
-      );
-      if (response.status === 200) {
-        const response = await fetch(
-            'http://localhost:8000/student/',
-            {
-              method: 'GET',
-              headers: {'Content-Type': 'application/json'},
-              credentials: 'include',
-            });
-        if (response.status === 200) {
-          const content = await response.json();
-          setUser(content);
-          localStorage.setItem('userProfile', JSON.stringify(content));
-        }
+      const response = await fetch('http://localhost:8000/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: e.target.username.value,
+          password: e.target.classroom_id.value,
+        }),
+      });
+      const data = await response.json();
+      if (
+        response.status === 200 &&
+        jwt_decode(data.access).role == 'STUDENT'
+      ) {
+        setAuthTokens(data);
+        setUser(jwt_decode(data.access));
+        localStorage.setItem('authTokens', JSON.stringify(data));
         history.push('/student');
+        return '';
       } else {
-        alert('EROOR TODO');
+        return 'Une erreur s\'est produite, etes vous bien étudiant ?';
       }
+    // eslint-disable-next-line brace-style
     }
-    // Else if the username is already registered in the room
-    if (response.status === 400) {
-      alert('Cet utilisateur est déjà présent dans la classroom');
+    // Else need to check if the classroom exists and if the user already exist
+    else if (response.status === 400) {
+      if ('student_profile' in data) {
+        return 'Cette room n\'existe pas';
+      } else if ('username' in data) {
+        return 'Cet utilisateur existe deja';
+      } else {
+        return 'Une erreur s\'est produite, merci d\'essayer de nouveau';
+      }
+    } else {
+      return 'Une erreur s\'est produite, merci d\'essayer de nouveau';
     }
   };
 
   const loginUserTeacher = async (e) => {
     e.preventDefault();
-    const response = await fetch(
-        'http://localhost:8000/teacher/login/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            'username': e.target.username.value,
-            'password': e.target.password.value,
-          }),
-        },
-    );
-    if (response.status === 200) {
-      const response = await fetch(
-          'http://localhost:8000/teacher/',
-          {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'include',
-          });
-      if (response.status === 200) {
-        const content = await response.json();
-        setUser(content);
-        localStorage.setItem('userProfile', JSON.stringify(content));
-      }
+    const response = await fetch('http://localhost:8000/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: e.target.username.value,
+        password: e.target.password.value,
+      }),
+    });
+    const data = await response.json();
+    if (response.status === 200 && jwt_decode(data.access).role == 'TEACHER') {
+      setAuthTokens(data);
+      setUser(jwt_decode(data.access));
+      localStorage.setItem('authTokens', JSON.stringify(data));
       history.push('/teacher');
     } else {
       alert('EROOR TODO');
     }
   };
 
-  const logoutUser = async (e) => {
-    e.preventDefault();
-    const response = await fetch(
-        'http://localhost:8000/logout/', {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-          credentials: 'include',
-        });
+  const logoutUser = async () => {
+    setUser(null);
+    setAuthTokens(null);
+    localStorage.removeItem('authTokens');
+    // history.push("/");
+  };
+
+  const updateToken = async () => {
+    const response = await fetch('http://localhost:8000/login/refresh/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        refresh: authTokens?.refresh,
+      }),
+    });
+    const data = await response.json();
     if (response.status === 200) {
-      setUser(null);
-      localStorage.removeItem('userProfile');
-      history.push('/');
-    } else {
-      alert('EROOR TODO');
+      setAuthTokens(data);
+      setUser(jwt_decode(data.access));
+      localStorage.setItem('authTokens', JSON.stringify(data));
+    } else if (authTokens !== null) {
+      logoutUser();
+    }
+    if (loading) {
+      setLoading(false);
     }
   };
 
   const contextData = {
     user: user,
+    authTokens: authTokens,
     loginUserTeacher: loginUserTeacher,
     loginUserStudent: loginUserStudent,
     logoutUser: logoutUser,
     registerUserTeacher: registerUserTeacher,
   };
 
+  useEffect(() => {
+    if (loading) {
+      updateToken();
+    }
+    const fourMinutes = 1000 * 60 * 4;
+    const interval = setInterval(() => {
+      if (authTokens) {
+        updateToken();
+      }
+    }, fourMinutes);
+    return () => clearInterval(interval);
+  }, [authTokens, loading]);
   return (
     <AuthContext.Provider value={contextData}>
-      {children}
-    </AuthContext.Provider >
+      {loading ? null : children}
+    </AuthContext.Provider>
   );
 };

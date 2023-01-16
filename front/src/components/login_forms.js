@@ -45,7 +45,7 @@ export class StudentLogin extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.submituserLoginForm = this.submituserLoginForm.bind(this);
-  };
+  }
   /**
    * handleChange function
    * set correct values to what user put in fields in state
@@ -104,8 +104,8 @@ export class StudentLogin extends React.Component {
       if (!fields['classroom_id'].match(/^([1-9][0-9]{0,2}|1000)$/)) {
         formIsValid = false;
         errors['classroom_id'] =
-          '*Merci d\'utiliser uniquement un identifiant'+
-            ' compris entre 1 et 1000';
+          '*Merci d\'utiliser uniquement un identifiant' +
+          ' compris entre 1 et 1000';
       }
     }
 
@@ -139,6 +139,7 @@ export class StudentLogin extends React.Component {
         <Paper elevation={0} style={paperStyle}>
           <Grid align="center">
             <Typography variant="h5">Rejoindre une session</Typography>
+            <Typography color="red">{this.state.mainError}</Typography>
           </Grid>
           <Grid>
             <form onSubmit={this.submituserLoginForm}>
@@ -172,15 +173,16 @@ export class StudentLogin extends React.Component {
                 type="submit"
                 color="primary"
                 variant="contained"
-                fullWidth style={buttonStyle}
+                fullWidth
+                style={buttonStyle}
               >
-              Rejoindre
+                Rejoindre
               </Button>
             </form>
-            <Typography style={buttonStyle}> Vous avez&ensp;
-              <Link href="#">
-              un problème ?
-              </Link>
+            <Typography style={buttonStyle}>
+              {' '}
+              Vous avez&ensp;
+              <Link href="#">un problème ?</Link>
             </Typography>
           </Grid>
         </Paper>
@@ -188,7 +190,6 @@ export class StudentLogin extends React.Component {
     );
   }
 }
-
 
 export const TeacherLogin = () => {
   const {loginUserTeacher} = useContext(AuthContext);
@@ -206,7 +207,7 @@ export const TeacherLogin = () => {
               placeholder="Entrer votre nom d'utilisateur"
               variant="standard"
               fullWidth
-              name='username'
+              name="username"
               style={buttonStyle}
             />
             <TextField
@@ -216,7 +217,7 @@ export const TeacherLogin = () => {
               variant="standard"
               type="password"
               fullWidth
-              name='password'
+              name="password"
               style={buttonStyle}
             />
             <Button
@@ -229,13 +230,10 @@ export const TeacherLogin = () => {
               Rejoindre
             </Button>
           </form>
-          <Link href="#">
-            Mot de passe oublié ?
-          </Link>
-          <Typography style={buttonStyle}>Pas de compte ?&ensp;
-            <Link href="/register">
-              Créer mon compte
-            </Link>
+          <Link href="#">Mot de passe oublié ?</Link>
+          <Typography style={buttonStyle}>
+            Pas de compte ?&ensp;
+            <Link href="/register">Créer mon compte</Link>
           </Typography>
         </Grid>
       </Paper>

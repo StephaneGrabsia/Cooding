@@ -1,14 +1,24 @@
 import jwt
 import datetime
 
+from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-from api.models import Teacher, Student, Classroom, Exercise, Solution
-from api.serializers import TeacherSerializer, StudentSerializer, RoomSerializer, ExerciseSerializer, SolutionSerializer
+from api.models import User, Teacher, Student, Classroom, Exercise, Solution
+from api.serializers import (
+    MyTokenObtainPairSerializer,
+    TeacherSerializer,
+    StudentSerializer,
+    ClassroomSerializer,
+    ExerciseSerializer,
+    SolutionSerializer,
+)
 from api.decorators import authenticated
 from uQuizz.settings import TOKEN_EXPIRATION_TIME
 
@@ -21,10 +31,13 @@ def getRoutes(request):
             "method": "POST",
             "description": "To register",
             "Format of the request:": {
-                "user": {"username": "<your username>", "password": "<your pass>"},
-                "first_name": "<your first name>",
-                "last_name": "<your last name>",
-                "gender": "<Homme ou Femme>"
+                "username": "<your username>",
+                "password": "<your pass>",
+                "teacher_profile": {
+                    "first_name": "<your first name>",
+                    "last_name": "<your last name>",
+                    "gender": "<Homme ou Femme>",
+                },
             },
         },
         {
@@ -33,17 +46,17 @@ def getRoutes(request):
             "description": "To login",
             "Format of the request:": {
                 "username": "<your username>",
-                "password": "<your pass>"
+                "password": "<your pass>",
             },
         },
         {"Endpoint": "/teacher/", "method": "GET", "description": "get users"},
-                {
+        {
             "Endpoint": "student/register/",
             "method": "POST",
             "description": "To register",
             "Format of the request:": {
-                "user": {"username": "<your username>", "password": "<your room_id>"},
-                "classroom": "<your room_id>"
+                "username": "<your username>",
+                "student_profile": {"classroom": "<your room_id>"},
             },
         },
         {
@@ -52,7 +65,7 @@ def getRoutes(request):
             "description": "To login",
             "Format of the request:": {
                 "username": "<your username>",
-                "password": "<your room_id>"
+                "password": "<your room_id>",
             },
         },
         {"Endpoint": "/student/", "method": "GET", "description": "get users"},
@@ -63,7 +76,7 @@ def getRoutes(request):
             "description": "To create a room (as a teacher)",
             "Format of the request:": {
                 "room_id": "<the room_id>",
-                "teacher": "<the teacher id>"
+                "teacher": "<the teacher id>",
             },
         },
         {
@@ -75,27 +88,19 @@ def getRoutes(request):
             "Endpoint": "/room/delete/",
             "method": "POST",
             "description": "To delete a room",
-            "Format of the request:": {
-                "id": "<the room_id>"
-            },
-
-        },        
+            "Format of the request:": {"id": "<the room_id>"},
+        },
         {
             "Endpoint": "/exercise/",
             "method": "POST",
             "description": "To see an exercise",
-            "Format of the request:": {
-                "statement": "<the statement>"
-            },
+            "Format of the request:": {"statement": "<the statement>"},
         },
         {
             "Endpoint": "/exercise/delete/",
             "method": "POST",
             "description": "To delete an exercise",
-            "Format of the request:": {
-                "statement": "<the statement>"
-            },
-
+            "Format of the request:": {"statement": "<the statement>"},
         },
         {
             "Endpoint": "/solution/create/",
@@ -103,23 +108,29 @@ def getRoutes(request):
             "description": "To create a solution as a student",
             "Format of the request:": {
                 "student": "id",
-                "exercise":"id",
+                "exercise": "id",
                 "output": "<your output>",
-                "source" : "<the source>"
+                "source": "<the source>",
             },
-
-        },        
+        },
         {
             "Endpoint": "/solution/delete/",
             "method": "POST",
             "description": "To delete a solution",
-            "Format of the request:": {
-                "source": "<the source>"
-            },
-
-        }
+            "Format of the request:": {"source": "<the source>"},
+        },
     ]
     return Response(routes)
+
+
+# =========== AUTHENTIFICATION ===========
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+
+# =========== TEACHER ===========
 
 
 class TeacherRegisterView(APIView):
@@ -153,12 +164,19 @@ class TeacherLoginView(APIView):
         return response
 
 
+@permission_classes([IsAuthenticated])
 class TeacherView(APIView):
-    @authenticated(user_type="teacher")
-    def get(self, request, auth_id):
-        teacher = Teacher.objects.get(user__id=auth_id)
-        serializer = TeacherSerializer(teacher)
-        return Response(serializer.data)
+    def get(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            serializer = TeacherSerializer(user)
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# =========== STUDENT ===========
+
 
 class StudentRegisterView(APIView):
     def post(self, request):
@@ -166,6 +184,7 @@ class StudentRegisterView(APIView):
         student.is_valid(raise_exception=True)
         student.save()
         return Response(student.data)
+
 
 class StudentLoginView(APIView):
     def post(self, request):
@@ -189,54 +208,77 @@ class StudentLoginView(APIView):
         response.data = {"jwt": token}
         return response
 
-class  StudentView(APIView):
-    @authenticated(user_type="student")
-    def get(self, request, auth_id):
-        student = Student.objects.get(user__id=auth_id)
-        serializer = StudentSerializer(student)
-        return Response(serializer.data)
 
-class LogoutView(APIView):
+@permission_classes([IsAuthenticated])
+class StudentView(APIView):
     def get(self, request):
-        response = Response()
-        response.delete_cookie("jwt")
-        response.data = {"message": "success"}
-        return response
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            serializer = StudentSerializer(user)
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
+
+# =========== CLASSROOM ===========
+
+
+@permission_classes([IsAuthenticated])
 class RoomCreateView(APIView):
     def post(self, request):
-        serializer = RoomSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            serializer = ClassroomSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
+
+@permission_classes([IsAuthenticated])
 class RoomView(APIView):
-    @authenticated(user_type="teacher")
-    def get(self, request, auth_id):
-        room_id = self.request.query_params.get('id')
-        print(room_id)
-        room = Classroom.objects.get(room_id=room_id)
-        serializer = RoomSerializer(room)
-        return Response(serializer.data)
+    def get(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            room_id = self.request.query_params.get("id")
+            room = Classroom.objects.get(room_id=room_id)
+            serializer = ClassroomSerializer(room)
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
+
+@permission_classes([IsAuthenticated])
 class RoomDeleteView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
-        response = Response()
-        Classroom.objects.get(room_id=request.data['id']).delete()
-        response.data = {'message':'success'}
-        return response
+    def post(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = Response()
+            Classroom.objects.get(room_id=request.data["id"]).delete()
+            response.data = {"message": "success"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+# =========== EXERCISE ===========
+
+
+@permission_classes([IsAuthenticated])
 class ExerciseCreateView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
-        serializer = ExerciseSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    def post(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            serializer = ExerciseSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class ExerciseView(APIView):
     def post(self, request):
         response=[]
@@ -249,36 +291,50 @@ class ExerciseView(APIView):
         return Response(response)
 
 
+@permission_classes([IsAuthenticated])
 class ExerciseDeleteView(APIView):
-    @authenticated(user_type="teacher")
-    def post(self, request, auth_id):
-        response = Response()
-        try:
-            Exercise.objects.get(statement=request.data['statement']).delete()
-            response.data = {'message': 'success'}
-        except ObjectDoesNotExist:
-            response.append({'message':'No exercise found'})
-        return Response(response)
+    def post(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = Response()
+            try:
+                Exercise.objects.get(statement=request.data["statement"]).delete()
+                response.data = {"message": "success"}
+            except ObjectDoesNotExist:
+                response.data = {"message": "No exercise found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+# =========== SOLUTION ===========
+
+
+@permission_classes([IsAuthenticated])
 class SolutionCreateView(APIView):
-    @authenticated(user_type="student")
-    def post(self, request, auth_id):
-        serializer = SolutionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    def post(self, request):
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            serializer = SolutionSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response()
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@permission_classes([IsAuthenticated])
 class SolutionDeleteView(APIView):
-    @authenticated(user_type="student")
-    def post(self, request, auth_id):
-        response = Response()
-        try:
-            #To be changed
-            Solution.objects.filter(source=request.data['source']).first().delete()
-            response.data = {'message': 'success'}
-        except ObjectDoesNotExist:
-            response.data = {'message':'No solution found'}
-        return response
-    
+    def post(self, request):
+        user = request.user
+        if user.role == User.Role.STUDENT:
+            response = Response()
+            try:
+                # To be changed
+                Solution.objects.filter(source=request.data["source"]).first().delete()
+                response.data = {"message": "success"}
+            except ObjectDoesNotExist:
+                response.data = {"message": "No solution found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)

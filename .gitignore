@@ -2,5 +2,4 @@ backups
 *.DS_Store
 database
 front/node_modules
-front/package-lock.json
 front/public/bundle.js
