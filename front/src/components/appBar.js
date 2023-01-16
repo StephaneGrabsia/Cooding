@@ -33,12 +33,10 @@ const coinStyle = {
   display: 'inline-flex',
 };
 
-
 const toolBarStyle = {
   height: '8vh',
   minHeight: '8vh',
 };
-
 
 /**
  * Defines the component that is on the top of the Student main page
@@ -46,7 +44,12 @@ const toolBarStyle = {
  * classement) and the session informations (number of exercices)
  * @return {Component}
  */
-function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
+function ResponsiveAppBar({
+  user,
+  fixedUserInfos,
+  session,
+  logoutUserStudent,
+}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [activeExercice, setActiveExercice] = React.useState(0);
@@ -115,17 +118,21 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                 ))}
               </Menu>
             </Box>
-            <img src={Icon} style={imgStyle}/>
-            <Box sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-              <Tabs value={activeExercice}
+            <img src={Icon} style={imgStyle} />
+            <Box
+              sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}
+            >
+              <Tabs
+                value={activeExercice}
                 onChange={handleSelection}
-                indicatorColor='secondary'
-                textColor='secondary'
+                indicatorColor="secondary"
+                textColor="secondary"
                 TabIndicatorProps={{
                   sx: {
                     top: '60px',
                   },
-                }}>
+                }}
+              >
                 {session.pages.map((page) => (
                   <Tab
                     key={page}
@@ -135,20 +142,21 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                 ))}
               </Tabs>
             </Box>
-            <Box sx={{flexGrow: 1}}>
-            </Box>
-            <Box sx={{
-              flexGrow: 0,
-              mr: '15px',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}>
+            <Box sx={{flexGrow: 1}}></Box>
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: '15px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
               <Typography
                 variant="p"
                 noWrap
                 component="p"
                 href="/"
-                color= "black"
+                color="black"
                 sx={{
                   display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
@@ -158,22 +166,24 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                   textAlign: 'Right',
                 }}
               >
-              Classement: {fixedUserInfos.rank}/12
+                Classement: {fixedUserInfos.rank}/12
               </Typography>
-              <img src={Surf} style={coinStyle}/>
+              <img src={Surf} style={coinStyle} />
             </Box>
-            <Box sx={{
-              flexGrow: 0,
-              mr: '15px',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}>
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: '15px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
               <Typography
                 variant="p"
                 noWrap
                 component="p"
                 href="/"
-                color= "black"
+                color="black"
                 sx={{
                   display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
@@ -183,9 +193,9 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                   textAlign: 'Right',
                 }}
               >
-              Score : {fixedUserInfos.score}
+                Score : {fixedUserInfos.score}
               </Typography>
-              <img src={Coin} style={coinStyle}/>
+              <img src={Coin} style={coinStyle} />
             </Box>
 
             <Box sx={{flexGrow: 0, mr: '15px'}}>
@@ -204,17 +214,20 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                   textAlign: 'Right',
                 }}
               >
-                {user.user.username}
+                {user.username}
               </Typography>
             </Box>
             <Box sx={{flexGrow: 0}}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                  <Avatar sx={{
-                    width: '6vh',
-                    height: '6vh',
-                    backgroundColor: 'red'}}>
-                    {user.user.username[0]}
+                  <Avatar
+                    sx={{
+                      width: '6vh',
+                      height: '6vh',
+                      backgroundColor: 'red',
+                    }}
+                  >
+                    {user.username[0]}
                   </Avatar>
                 </IconButton>
               </Tooltip>
@@ -237,8 +250,12 @@ function ResponsiveAppBar({user, fixedUserInfos, session, logoutUserStudent}) {
                 {settings.map((setting) => (
                   <MenuItem
                     key={setting}
-                    onClick={(setting==='Logout') ? logoutUserStudent :
-                                                      handleChooseMenuItem}>
+                    onClick={
+                      setting === 'Logout' ?
+                        logoutUserStudent :
+                        handleChooseMenuItem
+                    }
+                  >
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}
