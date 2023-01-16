@@ -1,11 +1,22 @@
+import json
+
 from django.test import TestCase, Client
-from api.models import User, Teacher, Student, Classroom
+from api.models import (
+    User,
+    Teacher,
+    TeacherProfile,
+    Student,
+    StudentProfile,
+    Classroom,
+    Exercise,
+    Solution,
+)
 
 
 class TeacherTestCase(TestCase):
     def setUp(self):
-        User.objects.create(username="admin", password="root")
-        Teacher.objects.create(
+        Teacher.objects.create(username="admin", password="root")
+        TeacherProfile.objects.create(
             user=User.objects.get(username="admin"),
             first_name="sully",
             last_name="lebg",
@@ -13,175 +24,318 @@ class TeacherTestCase(TestCase):
         )
 
     def test_database_Teacher(self):
-        teacher = Teacher.objects.get(user__username="admin")
+        teacher = Teacher.objects.get(username="admin")
+        teacher_profile = TeacherProfile.objects.get(user__username="admin")
         self.assertIsInstance(teacher, Teacher)
+        self.assertIsInstance(teacher_profile, TeacherProfile)
         self.assertEqual(str(teacher), "admin")
+        self.assertEqual(teacher_profile.first_name, "sully")
+        self.assertEqual(teacher_profile.last_name, "lebg")
 
     def test_api_Teacher_login(self):
         c = Client()
         response = c.post(
             "/teacher/register/",
             {
-                "user": {"username": "bibo", "password": "pass"},
-                "first_name": "toto",
-                "last_name": "tata",
-                "gender": "Femme",
+                "username": "sully",
+                "password": "sully",
+                "teacher_profile": {
+                    "first_name": "sully",
+                    "last_name": "lebg",
+                    "gender": "Femme",
+                },
             },
-            content_type="application/json"
+            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
         response = c.post(
-            "/teacher/login/",
-            {
-                "username": "bibo", 
-                "password": "pass"
-            }
+            "/login/",
+            {"username": "sully", "password": "sully"},
+            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
 
 class StudentTestCase(TestCase):
     def setUp(self):
-        User.objects.create(username="teacher", password="root")
-        User.objects.create(username="student", password="osef")
-        Teacher.objects.create(
+        Teacher.objects.create(username="teacher", password="root")
+        Student.objects.create(username="student", password="osef")
+        TeacherProfile.objects.create(
             user=User.objects.get(username="teacher"),
             first_name="sully",
             last_name="lebg",
             gender="Homme",
         )
         Classroom.objects.create(
-            room_id=666, teacher=Teacher.objects.get(user__username="teacher")
+            room_id=666, teacher=Teacher.objects.get(username="teacher")
         )
-        Student.objects.create(
+        StudentProfile.objects.create(
             user=User.objects.get(username="student"),
             classroom=Classroom.objects.get(room_id=666),
         )
 
     def test_database_Student(self):
-        student = Student.objects.get(user__username="student")
+        teacher = Teacher.objects.get(username="teacher")
+        student = Student.objects.get(username="student")
+        student_profile = StudentProfile.objects.get(user__username="student")
         self.assertIsInstance(student, Student)
         self.assertEqual(str(student), "student")
+        self.assertEqual(student_profile.classroom.room_id, 666)
+        self.assertEqual(student_profile.classroom.teacher, teacher)
 
     def test_api_Student(self):
         c = Client()
         response = c.post(
             "/student/register/",
             {
-                "user": {"username": "chouchou", "password": "osef"},
-                "classroom": "666"
+                "username": "toto",
+                "student_profile": {"classroom": "666"},
             },
-            content_type="application/json"
+            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
         response = c.post(
-            "/student/login/",
-            {
-                "username": "chouchou",
-                "password": "666"
-            },
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 200)
-        response = c.get(
-            "/student/",
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 200)
-        response = c.get(
-            "/logout/",
-            content_type="application/json"
+            "/login/",
+            {"username": "toto", "password": "666"},
+            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
 
 class RoomTestCase(TestCase):
     def setUp(self):
-        User.objects.create(username="admin", password="root")
-        teacher = Teacher.objects.create(
-            user=User.objects.get(username="admin"),
+        teacher = Teacher.objects.create(username="admin", password="root")
+        teacher_profile = TeacherProfile.objects.create(
+            user=teacher,
             first_name="sully",
             last_name="lebg",
             gender="Homme",
         )
-        Classroom.objects.create(
-            room_id = 666,
-            teacher = teacher
-        )
+        Classroom.objects.create(room_id=666, teacher=teacher)
 
-    def test_database_Teacher(self):
+    def test_database_Classroom(self):
         room = Classroom.objects.get(room_id=666)
         self.assertIsInstance(room, Classroom)
-        self.assertEqual(str(room), "666")
+        self.assertEqual(room.room_id, 666)
 
     def test_api_Classroom_create_fetch_delete(self):
         c = Client()
         c.post(
             "/teacher/register/",
             {
-                "user": {"username": "bibo", "password": "pass"}, 
-                "first_name": "toto", 
-                "last_name": "tata", 
-                "gender": "Femme"
+                "username": "sully",
+                "password": "sully",
+                "teacher_profile": {
+                    "first_name": "sully",
+                    "last_name": "lebg",
+                    "gender": "Femme",
+                },
             },
-            content_type="application/json"
+            content_type="application/json",
+        )
+        login_request = c.post("/login/", {"username": "sully", "password": "sully"})
+        access_token = json.loads(login_request.content)["access"]
+        teacher_id = Teacher.objects.get(username="sully").id
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
+        response = c.post(
+            "/room/create/",
+            data={"room_id": 999, "teacher": teacher_id},
+            content_type="application/json",
+            **auth_headers
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.get("/room/?id=999", **auth_headers)
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/room/delete/",
+            {"id": 999},
+            content_type="application/json",
+            **auth_headers
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class ExerciseTestCase(TestCase):
+    def setUp(self):
+        teacher = Teacher.objects.create(username="admin", password="root")
+        TeacherProfile
+        TeacherProfile.objects.create(
+            user=teacher,
+            first_name="lina",
+            last_name="theblg",
+            gender="Femme",
+        )
+        room = Classroom.objects.create(room_id=77, teacher=teacher)
+        Exercise.objects.create(
+            statement="Fonction carrée",
+            solution="def f(x):\n return x**2",
+            test_input="[0, 1, 2, 3, 4, 5]",
+            correct_output="[0, 1, 8, 27, 64, 125]",
+            classroom=room,
+        )
+
+    def test_database_Exercise(self):
+        exercise = Exercise.objects.get(statement="Fonction carrée")
+        self.assertIsInstance(exercise, Exercise)
+        self.assertEqual(str(exercise), "Fonction carrée")
+
+    def test_api_Exercise_create_fetch_delete(self):
+        c = Client()
+        c.post(
+            "/teacher/register/",
+            {
+                "username": "help",
+                "password": "please",
+                "teacher_profile": {
+                    "first_name": "help",
+                    "last_name": "help",
+                    "gender": "Femme",
+                },
+            },
+            content_type="application/json",
+        )
+        login_request = c.post("/login/", {"username": "help", "password": "please"})
+        access_token = json.loads(login_request.content)["access"]
+        teacher_id = Teacher.objects.get(username="help").id
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
+        c.post(
+            "/room/create/",
+            {"room_id": 85, "teacher": teacher_id},
+            content_type="application/json",
+            **auth_headers
+        )
+        response = c.post(
+            "/exercise/create/",
+            {
+                "statement": "Fonction double",
+                "solution": "def f(x):\n return 2*x",
+                "test_input": "[0, 1, 2, 3, 4, 5]",
+                "correct_output": "[0, 2, 4, 6, 8, 10]",
+                "classroom": 85,
+            },
+            content_type="application/json",
+            **auth_headers
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/exercise/",
+            {"classroom": 85},
+            content_type="application/json",
+            **auth_headers
+        )
+        self.assertEqual(response.status_code, 200)
+        response = c.post(
+            "/exercise/delete/",
+            {"statement": "Fonction double"},
+            content_type="application/json",
+            **auth_headers
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class SolutionTestCase(TestCase):
+    def setUp(self):
+        teacher = Teacher.objects.create(username="admin", password="root")
+        student = Student.objects.create(username="saveme", password="78")
+        teacher_profile = TeacherProfile.objects.create(
+            user=teacher,
+            first_name="lina",
+            last_name="theblg",
+            gender="Femme",
+        )
+        room = Classroom.objects.create(room_id=78, teacher=teacher)
+        StudentProfile.objects.create(user=student, classroom=room)
+        exercise = Exercise.objects.create(
+            statement="Fonction carrée",
+            solution="def f(x):\n return x**2",
+            test_input="[0, 1, 2, 3, 4, 5]",
+            correct_output="[0, 1, 4, 9, 16, 25]",
+            classroom=room,
+        )
+        Solution.objects.create(
+            student=student, exercise=exercise, source="def f(x):\n return x**2"
+        )
+
+    def test_database_Solution(self):
+        solution = Solution.objects.get(source="def f(x):\n return x**2")
+        self.assertIsInstance(solution, Solution)
+        self.assertEqual(str(solution), "def f(x):\n return x**2")
+
+    def test_model_Solution(self):
+        solution = Solution.objects.get(source="def f(x):\n return x**2")
+        # self.assertEqual(solution.run()[0], "[0, 1, 4, 9, 16, 25]\n")
+
+    def test_api_Solution_create_delete(self):
+        c = Client()
+        c.post(
+            "/teacher/register/",
+            {
+                "username": "help",
+                "password": "please",
+                "teacher_profile": {
+                    "first_name": "help",
+                    "last_name": "help",
+                    "gender": "Femme",
+                },
+            },
+            content_type="application/json",
+        )
+        login_request = c.post("/login/", {"username": "help", "password": "please"})
+        access_token = json.loads(login_request.content)["access"]
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
+        teacher_id = Teacher.objects.get(username="help").id
+        c.post(
+            "/room/create/",
+            {"room_id": 44, "teacher": teacher_id},
+            content_type="application/json",
+            **auth_headers
         )
         c.post(
-            "/teacher/login/",
-            {"username": "bibo", "password": "pass"}
-        )
-        response = c.post(
-            "/room/create/", 
+            "/exercise/create/",
             {
-                "room_id":999,
-                "teacher":1
-            }, 
-            content_type="application/json")
-        self.assertEqual(response.status_code, 200)
-        response = c.get(
-            "/room/?id=999"
+                "statement": "Fonction double",
+                "solution": "def f(x):\n return 2*x",
+                "test_input": "[0, 1, 2, 3, 4, 5]",
+                "correct_output": "[0, 2, 4, 6, 8, 10]",
+                "classroom": 44,
+            },
+            content_type="application/json",
+            **auth_headers
+        )
+        exercise_id = Exercise.objects.get(statement="Fonction double").id
+        c.get("/logout/", content_type="application/json")
+        c.post(
+            "/student/register/",
+            {"username": "hi", "password": "44", "student_profile": {"classroom": 44}},
+            content_type="application/json",
+        )
+        student_id = Student.objects.get(username="hi").id
+        login_request = c.post("/login/", {"username": "hi", "password": "44"})
+        access_token = json.loads(login_request.content)["access"]
+        auth_headers = {
+            "HTTP_AUTHORIZATION": "Bearer " + str(access_token),
+        }
+        response = c.post(
+            "/solution/create/",
+            {
+                "student": student_id,
+                "exercise": exercise_id,
+                "source": "def f(x):\n return 2*x",
+            },
+            content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
         response = c.post(
-            "/room/delete/", 
-            {
-                "id":999
-            }, 
-            content_type="application/json"
+            "/solution/delete/",
+            {"source": "def f(x):\n return 2*x"},
+            content_type="application/json",
+            **auth_headers
         )
         self.assertEqual(response.status_code, 200)
-
-
-# class StudentTestCase(TestCase):
-#     def setUp(self):
-#         Student.objects.create(username='Sullivan')
-
-#     def test_assert_username(self):
-#         sullivan = Student.objects.get(username="Sullivan")
-#         self.assertEqual(str(sullivan), "Sullivan")
-
-# class TeacherTestCase(TestCase):
-#     def setUp(self):
-#         Teacher.objects.create(username='Sullivan')
-
-#     def test_assert_username(self):
-#         sullivan = Teacher.objects.get(username="Sullivan")
-#         self.assertEqual(str(sullivan), "Sullivan")
-
-# class ExerciseTestCase(TestCase):
-#     def setUp(self):
-#         Exercise.objects.create(statement='Fonction carré',
-#             solution="def f(x):\n   return x**2", test_input="[0, 1, 2, 3, 4, 5]",
-#             correct_output="[0, 1, 4, 9, 16, 25]")
-#         Exercise.objects.create(statement='Fonction cube',
-#             solution="def f(x):\n   return 2*x**3\n", test_input="[0, 1, 2, 3, 4, 5]",
-#             correct_output="[0, 1, 8, 27, 64, 125]")
-
-#     def test_assert_exercise(self):
-#         exercise1 = Exercise.objects.get(statement='Fonction carré')
-#         self.assertEqual(str(exercise1), 'Fonction carré')
-#         self.assertEqual(exercise1.run(), "[0, 1, 4, 9, 16, 25]\n")
-#         self.assertEqual(exercise1.check_sol(exercise1.run()), True)
-#         exercise2 = Exercise.objects.get(statement='Fonction cube')
-#         self.assertNotEqual(exercise2.run(), "[0, 1, 8, 27, 64, 125]\n")
-#         self.assertEqual(exercise2.check_sol(exercise2.run()), False)

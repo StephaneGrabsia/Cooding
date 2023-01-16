@@ -1,23 +1,28 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+import PrivateRoute from './utils/PrivateRoute';
+import {AuthProvider} from './context/AuthContext';
+
+import SignInOutContainer from './containers/index';
+import RegisterContainer from './containers/register';
+import StudentPage from './containers/studentPage';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
-import SignInOutContainer from './containers';
-// import StudentPage from './containers/studentPage';
-
-import './styles/style.scss';
+import './styles/style.css';
+import TeacherIndex from './containers/TeacherIndex';
 
 const theme = createTheme({
   palette: {
     tertianary: {
-      light: '#1698F9',
-      main: '#1698F9',
-      dark: '#1698F9',
+      light: '#ADE6FF',
+      main: '#1698f9',
+      dark: '#1670F9',
       contrastText: '#fff',
     },
     secondary: {
-      light: '#FAB208',
-      main: '#F9A429',
+      light: '#FFD290',
+      main: '#f9a429',
       dark: '#D78E32',
       contrastText: '#fff',
     },
@@ -31,15 +36,63 @@ const theme = createTheme({
 });
 
 const App = () => {
+  const exercice = {
+    content: '# Exercice 1 \n '+
+    ' Lorem ipsum dolor sit amet, '+
+    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
+    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
+    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
+    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
+    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
+    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
+    'id est laborum.' +
+    ' \n \n '+
+    ' Lorem ipsum dolor sit amet, '+
+    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
+    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
+    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
+    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
+    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
+    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
+    'id est laborum.' +
+    ' \n \n '+
+    ' Lorem ipsum dolor sit amet, '+
+    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
+    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
+    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
+    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
+    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
+    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
+    'id est laborum.' +
+    ' \n \n '+
+    ' Lorem ipsum dolor sit amet, '+
+    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
+    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
+    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
+    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
+    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
+    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
+    'id est laborum.' +
+    ' \n \n ',
+  };
   return (
-    <div>
-      <SignInOutContainer />
-      <ThemeProvider theme={theme}>
-      </ThemeProvider>
+    <div className='App'>
+      <Router>
+        <AuthProvider>
+          <Route component={SignInOutContainer} path="/" exact />
+          <Route component={RegisterContainer} path="/register" />
+          <PrivateRoute component={TeacherIndex} path="/teacher" />
+          <Route path="/student">
+            <ThemeProvider theme={theme}>
+              <StudentPage exercice={exercice}/>
+            </ThemeProvider>
+          </Route>
+        </AuthProvider>
+      </Router>
     </div>
   );
 };
 
 const container = document.getElementById('root');
 const root = createRoot(container);
-root.render(<App tab="home" />);
+root.render(<App />);

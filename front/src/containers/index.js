@@ -38,7 +38,7 @@ function TabPanel(props) {
 
 const paperStyle = {
   height: '80vh',
-  minHeight: 610,
+  minHeight: 550,
   width: 500,
   margin: '10vh auto',
 
@@ -53,7 +53,7 @@ const imgStyle = {
  * login of student and teacher
  * @return {Component} A component
  */
-const SignInOutContainer = () => {
+const SignInOutContainer = ({message}) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -69,7 +69,6 @@ const SignInOutContainer = () => {
         <Grid align="center">
           <img src={Logo} style={imgStyle} />
         </Grid>
-
         <Tabs
           value={value}
           onChange={handleChange}
