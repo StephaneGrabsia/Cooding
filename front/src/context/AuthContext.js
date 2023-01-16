@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
       body: JSON.stringify({
         username: e.target.userName.value,
         password: e.target.password.value,
@@ -129,7 +128,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setAuthTokens(null);
     localStorage.removeItem("authTokens");
-    history.push("/");
+    //history.push("/");
   };
 
   const updateToken = async () => {
@@ -147,7 +146,7 @@ export const AuthProvider = ({ children }) => {
       setAuthTokens(data);
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
-    } else {
+    } else if (authTokens !== null) {
       logoutUser();
     }
     if (loading) {
@@ -176,7 +175,6 @@ export const AuthProvider = ({ children }) => {
     }, fourMinutes);
     return () => clearInterval(interval);
   }, [authTokens, loading]);
-
   return (
     <AuthContext.Provider value={contextData}>
       {loading ? null : children}
