@@ -82,10 +82,10 @@ class RegisterForm extends React.Component {
    * @argument {Event} e : event called onSubmit
    */
   submituserRegistrationForm(e) {
-    const {registerUser} = this.context;
+    const {registerUserTeacher} = this.context;
     e.preventDefault();
     if (this.validateForm()) {
-      registerUser(e).then((a) => {
+      registerUserTeacher(e).then((a) => {
         this.setErrorMessage(a);
       });
     }

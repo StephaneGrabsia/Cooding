@@ -1,15 +1,14 @@
 /* eslint-disable react/no-children-prop */
-import React from 'react';
+import React, {useContext} from 'react';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import ResponsiveAppBar from '../components/appBar';
 import ReactMarkdown from 'react-markdown';
 import Editor from '@monaco-editor/react';
 import PropTypes from 'prop-types';
-import {Button, Box, Paper, Toolbar, Avatar} from '@mui/material';
-import ShibaRunning from '../assets/shiba_running.jpg';
-import ShibaNeedHelp from '../assets/needHelp.jpg';
+import {Paper} from '@mui/material';
 import {Container} from '@mui/system';
-
+import OutputSectionBar from '../components/outputSectionBar';
+import AuthContext from '../context/AuthContext';
 // import style from '../styles/style.css';
 
 const statementSize = {
@@ -35,16 +34,6 @@ const terminalSize = {
 };
 
 
-const buttonStyle = {
-  paddingTop: '2px',
-  paddingBottom: '2px',
-};
-
-const avatarStyle = {
-  width: '40px',
-  height: '40px',
-};
-
 /**
  * Component coding the main page of the student.
  * Render the appBar
@@ -59,10 +48,14 @@ function StudentPage({exercice}) {
   const sessionInfo = {
     pages: ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4'],
   };
-
+  const {user, logoutUser} = useContext(AuthContext);
   return (
     <div>
-      <ResponsiveAppBar user={userInfos} session={sessionInfo}/>
+      <ResponsiveAppBar
+        user={user}
+        fixedUserInfos={userInfos}
+        session={sessionInfo}
+        logoutUserStudent={logoutUser}/>
       <Grid2 container
         direction="row"
         justifyContent="center"
@@ -95,42 +88,7 @@ function StudentPage({exercice}) {
               style={terminalSize}
               sx={{backgroundColor: 'tertianary.main'}}
             >
-              <Toolbar disableGutters>
-                <Box sx={{marginLeft: '20px'}}>
-                  <Button
-                    variant="contained"
-                    startIcon={
-                      <Avatar
-                        src={ShibaNeedHelp}
-                        variant='square'
-                        style={avatarStyle}/>
-                    }
-                    style={buttonStyle} >
-                    Need Help?
-                  </Button>
-                </Box>
-                <Box sx={{flexGrow: 1}}></Box>
-                <Box sx={{marginRight: '20px'}}>
-                  <Button
-                    variant="contained"
-                    startIcon={
-                      <Avatar
-                        src={ShibaRunning}
-                        variant='square'
-                        style={avatarStyle}/>
-                    }
-                    style={buttonStyle}>
-                      Run
-                  </Button>
-                </Box>
-                <Box sx={{marginRight: '20px'}}>
-                  <Button
-                    variant="contained"
-                    sx = {{height: '44px'}}>
-                      Submit
-                  </Button>
-                </Box>
-              </Toolbar>
+              <OutputSectionBar/>
               <Container sx={{
                 height: '68%',
                 padding: '0px',

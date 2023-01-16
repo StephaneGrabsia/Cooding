@@ -13,6 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Icon from '../assets/icon.svg';
+import Coin from '../assets/coin.png';
+import Surf from '../assets/surf.png';
 import PropTypes from 'prop-types';
 
 const settings = ['Change Username', 'Leaderboard', 'Logout'];
@@ -23,12 +25,18 @@ const imgStyle = {
   margin: '20px auto',
 };
 
+const coinStyle = {
+  width: '6vh',
+  height: '6vh',
+  margin: '20px auto',
+  verticalAlign: 'middle',
+  display: 'inline-flex',
+};
 
 const toolBarStyle = {
   height: '8vh',
   minHeight: '8vh',
 };
-
 
 /**
  * Defines the component that is on the top of the Student main page
@@ -36,7 +44,12 @@ const toolBarStyle = {
  * classement) and the session informations (number of exercices)
  * @return {Component}
  */
-function ResponsiveAppBar({user, session}) {
+function ResponsiveAppBar({
+  user,
+  fixedUserInfos,
+  session,
+  logoutUserStudent,
+}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [activeExercice, setActiveExercice] = React.useState(0);
@@ -50,6 +63,10 @@ function ResponsiveAppBar({user, session}) {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleChooseMenuItem = () => {
+    alert('EROOR TODO');
   };
 
   const handleCloseUserMenu = () => {
@@ -101,17 +118,21 @@ function ResponsiveAppBar({user, session}) {
                 ))}
               </Menu>
             </Box>
-            <img src={Icon} style={imgStyle}/>
-            <Box sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-              <Tabs value={activeExercice}
+            <img src={Icon} style={imgStyle} />
+            <Box
+              sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}
+            >
+              <Tabs
+                value={activeExercice}
                 onChange={handleSelection}
-                indicatorColor='secondary'
-                textColor='secondary'
+                indicatorColor="secondary"
+                textColor="secondary"
                 TabIndicatorProps={{
                   sx: {
                     top: '60px',
                   },
-                }}>
+                }}
+              >
                 {session.pages.map((page) => (
                   <Tab
                     key={page}
@@ -121,15 +142,21 @@ function ResponsiveAppBar({user, session}) {
                 ))}
               </Tabs>
             </Box>
-            <Box sx={{flexGrow: 1}}>
-            </Box>
-            <Box sx={{flexGrow: 0, mr: '15px'}}>
+            <Box sx={{flexGrow: 1}}></Box>
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: '15px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
               <Typography
                 variant="p"
                 noWrap
                 component="p"
                 href="/"
-                color= "black"
+                color="black"
                 sx={{
                   display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
@@ -139,16 +166,24 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-              Classement: {user.rank}/12
+                Classement: {fixedUserInfos.rank}/12
               </Typography>
+              <img src={Surf} style={coinStyle} />
             </Box>
-            <Box sx={{flexGrow: 0, mr: '15px'}}>
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: '15px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
               <Typography
                 variant="p"
                 noWrap
                 component="p"
                 href="/"
-                color= "black"
+                color="black"
                 sx={{
                   display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
@@ -158,8 +193,9 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-              Score : {user.score}
+                Score : {fixedUserInfos.score}
               </Typography>
+              <img src={Coin} style={coinStyle} />
             </Box>
 
             <Box sx={{flexGrow: 0, mr: '15px'}}>
@@ -178,15 +214,21 @@ function ResponsiveAppBar({user, session}) {
                   textAlign: 'Right',
                 }}
               >
-                {user.name}
+                {user.username}
               </Typography>
             </Box>
             <Box sx={{flexGrow: 0}}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                  <Avatar alt="Remy Sharp"
-                    src="/static/images/avatar/2.jpg"
-                    sx={{width: '6vh', height: '6vh'}}/>
+                  <Avatar
+                    sx={{
+                      width: '6vh',
+                      height: '6vh',
+                      backgroundColor: 'red',
+                    }}
+                  >
+                    {user.username[0]}
+                  </Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -206,7 +248,14 @@ function ResponsiveAppBar({user, session}) {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={
+                      setting === 'Logout' ?
+                        logoutUserStudent :
+                        handleChooseMenuItem
+                    }
+                  >
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}
