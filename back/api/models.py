@@ -156,19 +156,22 @@ class Solution(models.Model):
     )
 
     def run(self):
-        code_student = f"""
-        {self.solution}\n
-        output, test = [], 0\n
-        for input in test_input:\n
-           output.append(f(input))\n
-        print(output)
-        """
-        os.system("python3 test_file.py > answer.txt")
+        with open("test_file.py", "w") as f:
+            f.write(self.source + "\n")
+            f.write("test_input = " + self.exercise.test_input + "\n")
+            f.write("correct_output = " + self.exercise.correct_output + "\n")
+            f.write("output, test = [], 0\n")
+            f.write("for input in test_input:\n")
+            f.write("   output.append(f(input))\n")
+            f.write("print(output)")
         epicbox.configure(
             profiles=[epicbox.Profile('python', 'python:3.6.5-alpine')]
             )
-        files = [{'name': 'test_file.py', 'content': code_student}]
-        result = epicbox.run('python', 'python3 main.py', files=files)
+        files = [{'name': 'test_file.py', 'content': b''}]
+        limits = {'cputime': 1, 'memory': 64}
+        result = epicbox.run('python', 'docker ps -a')
+        print(result.stdout, result.stderr)
+        result = epicbox.run('python', 'python test_file.py', files=files, limits=limits)
         test_output = result.stdout
         test_errors = result.stderr
         os.remove("test_file.py")
