@@ -91,10 +91,22 @@ def getRoutes(request):
             "Format of the request:": {"id": "<the room_id>"},
         },
         {
+            "Endpoint": "/exercise/create/",
+            "method": "POST",
+            "description": "To create an exercise",
+            "Format of the request:": {
+                "statement": "<the statement>",
+                "solution": "<the solution>",
+                "test_input": "<the test input>",
+                "correct_output": "<the correct output>",
+                "classroom": "<the room_id>",
+            },
+        },
+        {
             "Endpoint": "/exercise/",
             "method": "POST",
             "description": "To see an exercise",
-            "Format of the request:": {"statement": "<the statement>"},
+            "Format of the request:": {"classroom": "<the room_id>"},
         },
         {
             "Endpoint": "/exercise/delete/",
@@ -109,7 +121,6 @@ def getRoutes(request):
             "Format of the request:": {
                 "student": "id",
                 "exercise": "id",
-                "output": "<your output>",
                 "source": "<the source>",
             },
         },
@@ -283,14 +294,14 @@ class ExerciseView(APIView):
     def post(self, request):
         user = request.user
         if user.role == User.Role.TEACHER:
-            response = Response()
+            response = []
             try:
-                exercise = Exercise.objects.get(statement=request.data["statement"])
-                serializer = ExerciseSerializer(exercise)
-                response.data = serializer.data
+                exo = list(Exercise.objects.filter(classroom=request.data["classroom"]))
+                for exercise in exo:
+                    response.append(ExerciseSerializer(exercise).data)
             except ObjectDoesNotExist:
-                response.data = {"message": "No exercise found"}
-            return response
+                response.append({"message": "No exercise found"})
+            return Response(response)
         content = {"detail": "Type d'utilisateur non autorisé"}
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -322,7 +333,9 @@ class SolutionCreateView(APIView):
             serializer = SolutionSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response()
+            solution = Solution.objects.filter(source=request.data["source"]).first()
+            test_output, test_error = solution.run()
+            return Response([test_output, test_error])
         content = {"detail": "Type d'utilisateur non autorisé"}
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -334,8 +347,7 @@ class SolutionDeleteView(APIView):
         if user.role == User.Role.STUDENT:
             response = Response()
             try:
-                # To be changed
-                Solution.objects.filter(source=request.data["source"]).first().delete()
+                Solution.objects.filter(source=request.data["source"]).delete()
                 response.data = {"message": "success"}
             except ObjectDoesNotExist:
                 response.data = {"message": "No solution found"}

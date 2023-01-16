@@ -130,7 +130,7 @@ export const AuthProvider = ({children}) => {
     setUser(null);
     setAuthTokens(null);
     localStorage.removeItem('authTokens');
-    // history.push("/");
+    history.push('/');
   };
 
   const updateToken = async () => {

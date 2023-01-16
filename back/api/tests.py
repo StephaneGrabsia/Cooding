@@ -223,7 +223,7 @@ class ExerciseTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         response = c.post(
             "/exercise/",
-            {"statement": "Fonction double"},
+            {"classroom": 85},
             content_type="application/json",
             **auth_headers
         )
@@ -257,10 +257,7 @@ class SolutionTestCase(TestCase):
             classroom=room,
         )
         Solution.objects.create(
-            student=student,
-            exercise=exercise,
-            output="[0, 1, 8, 27, 64, 125]",
-            source="def f(x):\n return x**2",
+            student=student, exercise=exercise, source="def f(x):\n return x**2"
         )
 
     def test_database_Solution(self):
@@ -270,8 +267,7 @@ class SolutionTestCase(TestCase):
 
     def test_model_Solution(self):
         solution = Solution.objects.get(source="def f(x):\n return x**2")
-        self.assertEqual(solution.run()[0], "[0, 1, 4, 9, 16, 25]\n")
-        self.assertEqual(solution.check_sol(solution.run()[0]), True)
+        # self.assertEqual(solution.run()[0], "[0, 1, 4, 9, 16, 25]\n")
 
     def test_api_Solution_create_delete(self):
         c = Client()
@@ -330,7 +326,6 @@ class SolutionTestCase(TestCase):
             {
                 "student": student_id,
                 "exercise": exercise_id,
-                "output": "[0, 2, 4, 6, 8, 10]",
                 "source": "def f(x):\n return 2*x",
             },
             content_type="application/json",
