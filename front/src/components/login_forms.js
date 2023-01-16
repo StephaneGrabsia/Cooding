@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, {useContext} from 'react';
 import {
   Grid,
   Paper,
@@ -6,19 +6,19 @@ import {
   Button,
   Link,
   Typography,
-} from "@mui/material";
-import AuthContext from "../context/AuthContext";
+} from '@mui/material';
+import AuthContext from '../context/AuthContext';
 
 const paperStyle = {
   padding: 20,
-  height: "45vh",
+  height: '45vh',
   minHeight: 350,
   width: 450,
-  margin: "0",
+  margin: '0',
 };
 
 const buttonStyle = {
-  margin: "8px 0",
+  margin: '8px 0',
 };
 
 /**
@@ -37,11 +37,11 @@ export class StudentLogin extends React.Component {
     super();
     this.state = {
       fields: {
-        classroom_id: "",
-        username: "",
+        classroom_id: '',
+        username: '',
       },
       errors: {},
-      mainError: "",
+      mainError: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.submituserLoginForm = this.submituserLoginForm.bind(this);
@@ -54,7 +54,7 @@ export class StudentLogin extends React.Component {
   handleChange(e) {
     const fields = this.state.fields;
     fields[e.target.name] = e.target.value;
-    this.setState({ fields });
+    this.setState({fields});
   }
 
   /**
@@ -76,7 +76,7 @@ export class StudentLogin extends React.Component {
    * @argument {Event} e : event called onSubmit
    */
   submituserLoginForm(e) {
-    const { loginUserStudent } = this.context;
+    const {loginUserStudent} = this.context;
     e.preventDefault();
     if (this.validateForm()) {
       loginUserStudent(e).then((a) => {
@@ -95,30 +95,30 @@ export class StudentLogin extends React.Component {
     const errors = {};
     let formIsValid = true;
 
-    if (!fields["classroom_id"]) {
+    if (!fields['classroom_id']) {
       formIsValid = false;
-      errors["classroom_id"] = "*Merci de préciser l'id de la classroom";
+      errors['classroom_id'] = '*Merci de préciser l\'id de la classroom';
     }
 
-    if (typeof fields["classroom_id"] !== "undefined") {
-      if (!fields["classroom_id"].match(/^([1-9][0-9]{0,2}|1000)$/)) {
+    if (typeof fields['classroom_id'] !== 'undefined') {
+      if (!fields['classroom_id'].match(/^([1-9][0-9]{0,2}|1000)$/)) {
         formIsValid = false;
-        errors["classroom_id"] =
-          "*Merci d'utiliser uniquement un identifiant" +
-          " compris entre 1 et 1000";
+        errors['classroom_id'] =
+          '*Merci d\'utiliser uniquement un identifiant' +
+          ' compris entre 1 et 1000';
       }
     }
 
-    if (!fields["username"]) {
+    if (!fields['username']) {
       formIsValid = false;
-      errors["username"] = "*Merci d'entrer un pseudo";
+      errors['username'] = '*Merci d\'entrer un pseudo';
     }
 
-    if (typeof fields["username"] !== "undefined") {
-      if (!fields["username"].match(/^[a-zA-Z-]+$/)) {
+    if (typeof fields['username'] !== 'undefined') {
+      if (!fields['username'].match(/^[a-zA-Z-]+$/)) {
         formIsValid = false;
-        errors["username"] =
-          "*Merci d'utiliser uniquement des caractères alphabétiques";
+        errors['username'] =
+          '*Merci d\'utiliser uniquement des caractères alphabétiques';
       }
     }
 
@@ -180,7 +180,7 @@ export class StudentLogin extends React.Component {
               </Button>
             </form>
             <Typography style={buttonStyle}>
-              {" "}
+              {' '}
               Vous avez&ensp;
               <Link href="#">un problème ?</Link>
             </Typography>
@@ -192,7 +192,7 @@ export class StudentLogin extends React.Component {
 }
 
 export const TeacherLogin = () => {
-  const { loginUserTeacher } = useContext(AuthContext);
+  const {loginUserTeacher} = useContext(AuthContext);
   return (
     <Grid>
       <Paper elevation={0} style={paperStyle}>

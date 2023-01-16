@@ -1,25 +1,25 @@
-import React, { useContext, useState, useEffect } from "react";
-import AuthContext from "../context/AuthContext";
+import React, {useContext, useState, useEffect} from 'react';
+import AuthContext from '../context/AuthContext';
 
 const TeacherIndex = () => {
-  const { user, logoutUser, authTokens } = useContext(AuthContext);
-  let [userInfo, setUserInfo] = useState();
+  const {user, logoutUser, authTokens} = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState();
   useEffect(() => {
     getUserInfo();
   }, []);
 
-  let getUserInfo = async () => {
-    let response = await fetch("http://localhost:8000/teacher/", {
-      method: "GET",
+  const getUserInfo = async () => {
+    const response = await fetch('http://localhost:8000/teacher/', {
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + String(authTokens.access),
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
       },
     });
-    let data = await response.json();
+    const data = await response.json();
     if (response.status === 200) {
       setUserInfo(data);
-    } else if (response.statusText === "Unauthorized") {
+    } else if (response.statusText === 'Unauthorized') {
       logoutUser();
     }
   };
@@ -29,7 +29,7 @@ const TeacherIndex = () => {
   return (
     <div>
       <h1>
-        {user ? "Welcome " + user.user_info.first_name : "You are not loged-in"}
+        {user ? 'Welcome ' + user.user_info.first_name : 'You are not loged-in'}
       </h1>
       <p>{JSON.stringify(userInfo)}</p>
       <a href="#" onClick={logoutUser}>
