@@ -1,4 +1,4 @@
-import os, sys, subprocess
+import os, sys, epicbox
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -156,20 +156,23 @@ class Solution(models.Model):
     )
 
     def run(self):
-        with open("test_file.py", "w") as f:
-            f.write(self.source + "\n")
-            f.write("test_input = " + self.exercise.test_input + "\n")
-            f.write("correct_output = " + self.exercise.correct_output + "\n")
-            f.write("output, test = [], 0\n")
-            f.write("for input in test_input:\n")
-            f.write("   output.append(f(input))\n")
-            f.write("print(output)")
-        result = subprocess.run(
-            ["python", "test_file.py"], capture_output=True, text=True
-        )
+        code_student = f"""
+        {self.solution}\n
+        output, test = [], 0\n
+        for input in test_input:\n
+           output.append(f(input))\n
+        print(output)
+        """
+        os.system("python3 test_file.py > answer.txt")
+        epicbox.configure(
+            profiles=[epicbox.Profile('python', 'python:3.6.5-alpine')]
+            )
+        files = [{'name': 'test_file.py', 'content': code_student}]
+        result = epicbox.run('python', 'python3 main.py', files=files)
         test_output = result.stdout
         test_errors = result.stderr
         os.remove("test_file.py")
+        return test_output, test_errors
 
         return test_output, test_errors
 
