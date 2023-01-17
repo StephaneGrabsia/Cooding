@@ -30,7 +30,6 @@ const coinStyle = {
   height: '6vh',
   margin: '20px auto',
   verticalAlign: 'middle',
-  display: 'inline-flex',
 };
 
 const toolBarStyle = {
@@ -125,7 +124,7 @@ function ResponsiveAppBar({
               sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}
             >
               <Tabs
-                value={activeExercice}
+                value={activeExercise}
                 onChange={handleSelection}
                 indicatorColor="secondary"
                 textColor="secondary"
@@ -148,7 +147,7 @@ function ResponsiveAppBar({
               sx={{
                 flexGrow: 0,
                 mr: '15px',
-                display: 'inline-flex',
+                display: {xs: 'none', md: 'flex'},
                 alignItems: 'center',
               }}
             >
@@ -159,7 +158,6 @@ function ResponsiveAppBar({
                 href="/"
                 color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
                   fontWeight: 200,
                   letterSpacing: '.3rem',
@@ -175,7 +173,7 @@ function ResponsiveAppBar({
               sx={{
                 flexGrow: 0,
                 mr: '15px',
-                display: 'inline-flex',
+                display: {xs: 'none', md: 'flex'},
                 alignItems: 'center',
               }}
             >
@@ -186,7 +184,6 @@ function ResponsiveAppBar({
                 href="/"
                 color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
                   fontWeight: 200,
                   letterSpacing: '.3rem',

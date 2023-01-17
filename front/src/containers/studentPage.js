@@ -40,7 +40,7 @@ const terminalSize = {
  * Render the appBar
  * @return {Component} A component
  */
-function StudentPage({exercice}) {
+function StudentPage() {
   const userInfos = {
     name: 'GOAT',
     score: 5893,
@@ -49,7 +49,7 @@ function StudentPage({exercice}) {
   const sessionInfo = {
     pages: ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4'],
   };
-  const {user, logoutUser} = useContext(AuthContext);
+  const {user, logoutUser, authTokens} = useContext(AuthContext);
 
   const [code, setCode] = useState('#enter your code here!');
   const [listExercises, setListExercises] = useState([{statement: ''}]);
@@ -63,10 +63,10 @@ function StudentPage({exercice}) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens.access),
           },
-          credentials: 'include',
           body: JSON.stringify({
-            'classroom': user.classroom,
+            'classroom': user.user_info.classroom,
           }),
         },
     );
