@@ -173,8 +173,8 @@ class Solution(models.Model):
 
         return test_output, test_errors
 
-    # def check_sol(self, test_output):
-    #     return test_output == self.exercise.correct_output + "\n"
+    def check_sol(self, test_output):
+        return test_output == self.exercise.correct_output + '\n'
 
     def __str__(self) -> str:
         return self.source

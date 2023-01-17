@@ -3,9 +3,7 @@ import React, {useContext, useState, useEffect} from 'react';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import ResponsiveAppBar from '../components/appBar';
 import ReactMarkdown from 'react-markdown';
-import Editor from '@monaco-editor/react';
-import PropTypes from 'prop-types';
-import {Paper} from '@mui/material';
+import {Paper, Typography} from '@mui/material';
 import {Container} from '@mui/system';
 import OutputSectionBar from '../components/outputSectionBar';
 import AuthContext from '../context/AuthContext';
@@ -15,6 +13,18 @@ import CodeEditorWindow from '../components/CodeEditorWindow';
 const statementSize = {
   height: '92vh',
   width: '41.6vw',
+  overflow: 'scroll',
+};
+
+const outputSize = {
+  height: '3vh',
+  width: '55vw',
+  overflow: 'scroll',
+};
+
+const tracebackSize = {
+  height: '13vh',
+  width: '55vw',
   overflow: 'scroll',
 };
 
@@ -51,10 +61,14 @@ function StudentPage() {
   };
   const {user, logoutUser, authTokens} = useContext(AuthContext);
 
-  const [code, setCode] = useState('#enter your code here!');
+  const [code, setCode] = useState(
+      '# Enter your code here! \n# Your'+
+      ' function have to be named f \n \n# def f():',
+  );
   const [listExercises, setListExercises] = useState([{statement: ''}]);
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
   const [activeExerciseStatement, setActiveExerciseStatement]= useState('');
+  const [results, setResults] = useState([[], [], []]);
 
   const fetchExercises = async () => {
     const response = await fetch(
@@ -73,7 +87,6 @@ function StudentPage() {
     if (response.status === 200) {
       const content = await response.json();
       setListExercises(content);
-      console.log(listExercises[activeExerciseIndex]);
     } else {
       alert('Didn\'t work');
     }
@@ -106,24 +119,26 @@ function StudentPage() {
   };
 
   const onClickSubmit = async (event) => {
+    console.log(user.user_info);
     const response = await fetch(
         'http://localhost:8000/solution/create/',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens.access),
           },
           credentials: 'include',
           body: JSON.stringify({
-            'student': user.user.id,
+            'student': user.user_id,
             'exercise': 1,
-            'output': '',
             'source': code,
           }),
         },
     );
     if (response.status === 200) {
-      alert('Submited succesfully');
+      const content = await response.json();
+      setResults(content);
     } else {
       alert('Didn\'t work');
     }
@@ -176,12 +191,87 @@ function StudentPage() {
                 height: '68%',
                 padding: '0px',
               }}>
-                <Editor
-                  defaultLanguage='python'
-                  defaultValue='Traceback will be here!'
-                  options={{minimap: {enabled: false}}}
-                  sx={{height: '78%'}}
-                />
+                <Typography
+                  variant="p"
+                  noWrap
+                  component="p"
+                  href="/"
+                  color="black"
+                  sx={{
+                    fontFamily: 'Roboto',
+                    fontWeight: 200,
+                    letterSpacing: '.3rem',
+                    textDecoration: 'none',
+                    textAlign: 'Left',
+                    marginLeft: '3px',
+                    marginBottom: '3px',
+                  }}
+                >
+                    Output:
+                </Typography>
+                <Paper
+                  elevation={3}
+                  style={outputSize}
+                  sx={{backgroundColor: results[2]==true ? 'green' : 'red'}}
+                >
+                  <Typography
+                    variant="p"
+                    component="p"
+                    href="/"
+                    color="black"
+                    sx={{
+                      fontFamily: 'Roboto',
+                      fontWeight: 200,
+                      letterSpacing: '.3rem',
+                      textDecoration: 'none',
+                      textAlign: 'Left',
+                      marginLeft: '3px',
+                    }}
+                  >
+                    {results[2]==true ? 'Congratulations !! ': 'Bad output :' }
+                    {results[0]}
+                  </Typography>
+                </Paper>
+                <Typography
+                  variant="p"
+                  component="p"
+                  href="/"
+                  color="black"
+                  sx={{
+                    fontFamily: 'Roboto',
+                    fontWeight: 200,
+                    letterSpacing: '.3rem',
+                    textDecoration: 'none',
+                    textAlign: 'Left',
+                    marginLeft: '3px',
+                    marginTop: '10px',
+                    marginBottom: '3px',
+                  }}
+                >
+                    Traceback:
+                </Typography>
+                <Paper
+                  elevation={3}
+                  style={tracebackSize}
+                  sx={{backgroundColor: 'primary.main'}}
+                >
+                  <Typography
+                    variant="p"
+                    component="p"
+                    href="/"
+                    color="black"
+                    sx={{
+                      fontFamily: 'Roboto',
+                      fontWeight: 200,
+                      letterSpacing: '.3rem',
+                      textDecoration: 'none',
+                      textAlign: 'Left',
+                      marginLeft: '3px',
+                    }}
+                  >
+                    {results[1]}
+                  </Typography>
+                </Paper>
               </Container>
             </Grid2>
           </Grid2>
@@ -189,8 +279,5 @@ function StudentPage() {
       </Grid2>
     </div>
   );
-};
-StudentPage.propTypes = {
-  exercice: PropTypes.object.isRequired,
 };
 export default StudentPage;
