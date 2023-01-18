@@ -52,13 +52,10 @@ const terminalSize = {
  */
 function StudentPage() {
   const userInfos = {
-    name: 'GOAT',
     score: 5893,
     rank: 2,
   };
-  const sessionInfo = {
-    pages: ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4'],
-  };
+
   const {user, logoutUser, authTokens} = useContext(AuthContext);
 
   const [code, setCode] = useState(
@@ -109,7 +106,6 @@ function StudentPage() {
     switch (action) {
       case 'code': {
         setCode(data);
-        console.log(typeof(code));
         break;
       }
       default: {
@@ -128,7 +124,6 @@ function StudentPage() {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + String(authTokens.access),
           },
-          credentials: 'include',
           body: JSON.stringify({
             'student': user.user_id,
             'exercise': 1,
@@ -150,7 +145,6 @@ function StudentPage() {
         user={user}
         fixedUserInfos={userInfos}
         listExercises={listExercises}
-        session={sessionInfo}
         logoutUserStudent={logoutUser}
         activeExercise={activeExerciseIndex}
         setActiveExercise={setActiveExerciseIndex}

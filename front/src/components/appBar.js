@@ -47,7 +47,6 @@ function ResponsiveAppBar({
   user,
   fixedUserInfos,
   listExercises,
-  session,
   logoutUserStudent,
   activeExercise,
   setActiveExercise,
@@ -269,7 +268,6 @@ function ResponsiveAppBar({
 
 ResponsiveAppBar.propTypes = {
   user: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired,
 };
 
 export default ResponsiveAppBar;
