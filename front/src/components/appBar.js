@@ -30,7 +30,6 @@ const coinStyle = {
   height: '6vh',
   margin: '20px auto',
   verticalAlign: 'middle',
-  display: 'inline-flex',
 };
 
 const toolBarStyle = {
@@ -47,12 +46,13 @@ const toolBarStyle = {
 function ResponsiveAppBar({
   user,
   fixedUserInfos,
-  session,
+  listExercises,
   logoutUserStudent,
+  activeExercise,
+  setActiveExercise,
 }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [activeExercice, setActiveExercice] = React.useState(0);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -73,8 +73,8 @@ function ResponsiveAppBar({
     setAnchorElUser(null);
   };
 
-  const handleSelection = (event, newExercice) => {
-    setActiveExercice(newExercice);
+  const handleSelection = (event, newExercise) => {
+    setActiveExercise(newExercise);
   };
 
   return (
@@ -111,9 +111,9 @@ function ResponsiveAppBar({
                   display: {xs: 'block', md: 'none'},
                 }}
               >
-                {session.pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                {listExercises.map((page, index) => (
+                  <MenuItem key={index} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">Exo {index + 1}</Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -123,7 +123,7 @@ function ResponsiveAppBar({
               sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}
             >
               <Tabs
-                value={activeExercice}
+                value={activeExercise}
                 onChange={handleSelection}
                 indicatorColor="secondary"
                 textColor="secondary"
@@ -131,12 +131,11 @@ function ResponsiveAppBar({
                   sx: {
                     top: '60px',
                   },
-                }}
-              >
-                {session.pages.map((page) => (
+                }}>
+                {listExercises.map((page, index) => (
                   <Tab
-                    key={page}
-                    label={page}
+                    key={index}
+                    label={'Exo ' + (index + 1)}
                     sx={{my: 2, color: 'black', display: 'block'}}
                   />
                 ))}
@@ -147,7 +146,7 @@ function ResponsiveAppBar({
               sx={{
                 flexGrow: 0,
                 mr: '15px',
-                display: 'inline-flex',
+                display: {xs: 'none', md: 'flex'},
                 alignItems: 'center',
               }}
             >
@@ -158,7 +157,6 @@ function ResponsiveAppBar({
                 href="/"
                 color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
                   fontWeight: 200,
                   letterSpacing: '.3rem',
@@ -174,7 +172,7 @@ function ResponsiveAppBar({
               sx={{
                 flexGrow: 0,
                 mr: '15px',
-                display: 'inline-flex',
+                display: {xs: 'none', md: 'flex'},
                 alignItems: 'center',
               }}
             >
@@ -185,7 +183,6 @@ function ResponsiveAppBar({
                 href="/"
                 color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
                   fontWeight: 200,
                   letterSpacing: '.3rem',
@@ -271,7 +268,6 @@ function ResponsiveAppBar({
 
 ResponsiveAppBar.propTypes = {
   user: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired,
 };
 
 export default ResponsiveAppBar;

@@ -293,7 +293,7 @@ class ExerciseCreateView(APIView):
 class ExerciseView(APIView):
     def post(self, request):
         user = request.user
-        if user.role == User.Role.TEACHER:
+        if user.role == User.Role.TEACHER or user.role == User.Role.STUDENT:
             response = []
             try:
                 exo = list(Exercise.objects.filter(classroom=request.data["classroom"]))
@@ -335,7 +335,8 @@ class SolutionCreateView(APIView):
             serializer.save()
             solution = Solution.objects.filter(source=request.data["source"]).first()
             test_output, test_error = solution.run()
-            return Response([test_output, test_error])
+            isTrue = solution.check_sol(test_output)
+            return Response([test_output, test_error, isTrue])
         content = {"detail": "Type d'utilisateur non autorisé"}
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
