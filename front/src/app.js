@@ -10,8 +10,7 @@ import StudentPage from './containers/studentPage';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
 import './styles/style.css';
-import TeacherIndex from './containers/TeacherIndex';
-import Paperbase from './components/teacherDashboard/Paperbase'
+import TeacherPage from './containers/TeacherPage';
 
 const theme = createTheme({
   palette: {
@@ -38,56 +37,57 @@ const theme = createTheme({
 
 const App = () => {
   const exercice = {
-    content: '# Exercice 1 \n '+
-    ' Lorem ipsum dolor sit amet, '+
-    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
-    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
-    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
-    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
-    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
-    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
-    'id est laborum.' +
-    ' \n \n '+
-    ' Lorem ipsum dolor sit amet, '+
-    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
-    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
-    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
-    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
-    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
-    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
-    'id est laborum.' +
-    ' \n \n '+
-    ' Lorem ipsum dolor sit amet, '+
-    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
-    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
-    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
-    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
-    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
-    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
-    'id est laborum.' +
-    ' \n \n '+
-    ' Lorem ipsum dolor sit amet, '+
-    'consectetur adipiscing elit, sed do eiusmod tempor incididunt'+
-    ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis'+
-    ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo'+
-    ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit'+
-    'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat'+
-    'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim'+
-    'id est laborum.' +
-    ' \n \n ',
+    content:
+      '# Exercice 1 \n ' +
+      ' Lorem ipsum dolor sit amet, ' +
+      'consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
+      ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis' +
+      ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' +
+      ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit' +
+      'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat' +
+      'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim' +
+      'id est laborum.' +
+      ' \n \n ' +
+      ' Lorem ipsum dolor sit amet, ' +
+      'consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
+      ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis' +
+      ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' +
+      ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit' +
+      'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat' +
+      'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim' +
+      'id est laborum.' +
+      ' \n \n ' +
+      ' Lorem ipsum dolor sit amet, ' +
+      'consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
+      ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis' +
+      ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' +
+      ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit' +
+      'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat' +
+      'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim' +
+      'id est laborum.' +
+      ' \n \n ' +
+      ' Lorem ipsum dolor sit amet, ' +
+      'consectetur adipiscing elit, sed do eiusmod tempor incididunt' +
+      ' ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis' +
+      ' nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo' +
+      ' consequat. Duis aute irure dolor in reprehenderit in voluptate velit' +
+      'esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat' +
+      'cupidatat non proident, sunt in culpa qui officia deserunt mollit anim' +
+      'id est laborum.' +
+      ' \n \n ',
   };
   return (
-    <div className='App'>
+    <div className="App">
       <Router>
         <AuthProvider>
           <Route component={SignInOutContainer} path="/" exact />
           <Route component={RegisterContainer} path="/register" />
-          <Route component={Paperbase} path="/teacher" />
-          <Route path="/student">
+          <Route component={TeacherPage} path="/teacher" />
+          <PrivateRoute path="/student">
             <ThemeProvider theme={theme}>
-              <StudentPage exercice={exercice}/>
+              <StudentPage exercice={exercice} />
             </ThemeProvider>
-          </Route>
+          </PrivateRoute>
         </AuthProvider>
       </Router>
     </div>

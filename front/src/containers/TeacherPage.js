@@ -3,30 +3,18 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Navigator from './Navigator';
-import Content from './Content';
-import Header from './Header';
+import TeacherNavigator from '../components/teacherDashboard/TeacherNavigator';
+import Content from '../components/teacherDashboard/Content';
+import Header from '../components/teacherDashboard/Header';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}.
-    </Typography>
-  );
-}
+import AuthContext from '../context/AuthContext';
 
 let theme = createTheme({
   palette: {
     primary: {
-      light: '#63ccff',
-      main: '#009be5',
-      dark: '#006db3',
+      light: '#5AB8FF',
+      main: '#1698f9',
+      dark: '#137FCF',
     },
   },
   typography: {
@@ -166,10 +154,15 @@ theme = {
 
 const drawerWidth = 256;
 
-export default function Paperbase() {
+/**
+ * Component coding the main page of the student.
+ * Render the appBar
+ * @return {Component} A component
+ */
+export default function TeacherPage() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
-
+  const {user, logoutUser} = React.useContext(AuthContext);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -183,7 +176,7 @@ export default function Paperbase() {
           sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}
         >
           {isSmUp ? null : (
-            <Navigator
+            <TeacherNavigator
               PaperProps={{style: {width: drawerWidth}}}
               variant="temporary"
               open={mobileOpen}
@@ -191,21 +184,22 @@ export default function Paperbase() {
             />
           )}
 
-          <Navigator
+          <TeacherNavigator
             PaperProps={{style: {width: drawerWidth}}}
             sx={{display: {sm: 'block', xs: 'none'}}}
           />
         </Box>
         <Box sx={{flex: 1, display: 'flex', flexDirection: 'column'}}>
-          <Header onDrawerToggle={handleDrawerToggle} />
+          <Header
+            user={user}
+            logoutUser={logoutUser}
+            onDrawerToggle={handleDrawerToggle}
+          />
           <Box
             component="main"
             sx={{flex: 1, py: 6, px: 4, bgcolor: '#eaeff1'}}
           >
             <Content />
-          </Box>
-          <Box component="footer" sx={{p: 2, bgcolor: '#eaeff1'}}>
-            <Copyright />
           </Box>
         </Box>
       </Box>
