@@ -7,8 +7,6 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -16,6 +14,7 @@ import Icon from '../assets/icon.svg';
 import Coin from '../assets/coin.png';
 import Surf from '../assets/surf.png';
 import PropTypes from 'prop-types';
+import ProfileAvatar from './avatar';
 
 const settings = ['Change Username', 'Leaderboard', 'Logout'];
 
@@ -51,26 +50,14 @@ function ResponsiveAppBar({
   logoutUserStudent,
 }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [activeExercice, setActiveExercice] = React.useState(0);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleChooseMenuItem = () => {
-    alert('EROOR TODO');
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   const handleSelection = (event, newExercice) => {
@@ -197,7 +184,6 @@ function ResponsiveAppBar({
               </Typography>
               <img src={Coin} style={coinStyle} />
             </Box>
-
             <Box sx={{flexGrow: 0, mr: '15px'}}>
               <Typography
                 variant="h5"
@@ -217,50 +203,11 @@ function ResponsiveAppBar({
                 {user.username}
               </Typography>
             </Box>
-            <Box sx={{flexGrow: 0}}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                  <Avatar
-                    sx={{
-                      width: '6vh',
-                      height: '6vh',
-                      backgroundColor: 'red',
-                    }}
-                  >
-                    {user.username[0]}
-                  </Avatar>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{mt: '45px'}}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {settings.map((setting) => (
-                  <MenuItem
-                    key={setting}
-                    onClick={
-                      setting === 'Logout' ?
-                        logoutUserStudent :
-                        handleChooseMenuItem
-                    }
-                  >
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
+            <ProfileAvatar
+              user={user}
+              settings={settings}
+              logoutFunction={logoutUserStudent}
+            />
           </Toolbar>
         </Container>
       </AppBar>
