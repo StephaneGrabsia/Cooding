@@ -333,7 +333,7 @@ class SolutionCreateView(APIView):
             serializer = SolutionSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            solution = Solution.objects.filter(source=request.data["source"]).first()
+            solution = Solution.objects.filter(source=request.data["source"]).filter(exercise=request.data["exercise"]).first()
             test_output, test_error = solution.run()
             isTrue = solution.check_sol(test_output)
             return Response([test_output, test_error, isTrue])
