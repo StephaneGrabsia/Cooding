@@ -18,6 +18,7 @@ const RegisterContainer = () => {
       backgroundImage: `url(${Background})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
+      height: '100vh',
     }}>
       <Paper elevation={10} style={paperStyle}>
         <RegisterForm />

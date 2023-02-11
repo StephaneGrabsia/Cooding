@@ -38,7 +38,7 @@ function TabPanel(props) {
 
 const paperStyle = {
   height: '80vh',
-  minHeight: 550,
+  minHeight: 500,
   width: 500,
   margin: '10vh auto',
 
@@ -64,6 +64,7 @@ const SignInOutContainer = ({message}) => {
       backgroundImage: `url(${Background})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
+      height: '100vh',
     }}>
       <Paper elevation={10} style={paperStyle}>
         <Grid align="center">
