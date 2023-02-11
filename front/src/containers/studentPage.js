@@ -126,7 +126,7 @@ function StudentPage() {
           },
           body: JSON.stringify({
             'student': user.user_id,
-            'exercise': 1,
+            'exercise': activeExerciseIndex + 1,
             'source': code,
           }),
         },
