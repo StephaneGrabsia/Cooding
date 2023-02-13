@@ -356,3 +356,25 @@ class SolutionDeleteView(APIView):
             return response
         content = {"detail": "Type d'utilisateur non autorisé"}
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# =================== INTERVIEW KI ===================
+
+
+class GetAllStudentView(APIView):
+    def get(selt, request):
+        response = []
+        try:
+            students = Student.objects.all()
+            for student in students:
+                response.append(StudentSerializer(student).data)
+        except ObjectDoesNotExist:
+            response.append({"message": "No exercise found"})
+        return Response(response)
+
+
+class GetAllTeacherView(APIView):
+    # === WRITE YOUR CODE HERE ===
+    pass
+
+    # ============================

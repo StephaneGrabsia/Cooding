@@ -344,3 +344,26 @@ class SolutionTestCase(TestCase):
             **auth_headers
         )
         self.assertEqual(response.status_code, 200)
+
+
+class ModelTestCase(TestCase):
+    def setUp(self):
+        Teacher.objects.create(username="teacher1", password="root")
+        Teacher.objects.create(username="teacher2", password="root")
+
+        Student.objects.create(username="name1", password="78")
+        Student.objects.create(username="name2", password="78")
+        Student.objects.create(username="name3", password="78")
+        Student.objects.create(username="name4", password="78")
+
+    def test_student_list(self):
+        response = self.client.get("/getallstudents/")
+        self.assertEqual(response.status_code, 200)
+        models = response.data
+        self.assertEqual(len(models), 4)
+
+    def test_teacher_list(self):
+        response = self.client.get("/getallteachers/")
+        self.assertEqual(response.status_code, 200)
+        models = response.data
+        self.assertEqual(len(models), 2)

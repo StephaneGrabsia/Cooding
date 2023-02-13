@@ -20,6 +20,8 @@ from api.views import (
     ExerciseDeleteView,
     SolutionCreateView,
     SolutionDeleteView,
+    GetAllStudentView,
+    GetAllTeacherView,
 )
 
 auth_endpoints = [
@@ -31,12 +33,14 @@ teacher_endpoints = [
     path("teacher/register/", TeacherRegisterView.as_view()),
     path("teacher/login/", TeacherLoginView.as_view()),
     path("teacher/", TeacherView.as_view()),
+    path("getallteachers/", GetAllTeacherView.as_view()),
 ]
 
 student_endpoints = [
     path("student/register/", StudentRegisterView.as_view()),
     path("student/login/", StudentLoginView.as_view()),
     path("student/", StudentView.as_view()),
+    path("getallstudents/", GetAllStudentView.as_view()),
 ]
 
 room_endpoints = [
