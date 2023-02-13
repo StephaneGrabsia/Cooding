@@ -157,10 +157,13 @@ function StudentPage() {
         <Grid2 xs={5}>
           <Paper elevation={3} style={statementSize}
             sx={{backgroundColor: 'secondary.main'}}>
-            <ReactMarkdown
-              children={activeExerciseStatement}
-              className='reactMarkdown'>
-            </ReactMarkdown>
+            <Container sx={{padding: '20px'}}>
+              <ReactMarkdown
+                children={activeExerciseStatement}
+                className='reactMarkdown'
+              >
+              </ReactMarkdown>
+            </Container>
           </Paper>
         </Grid2>
         <Grid2 xs={7}>
