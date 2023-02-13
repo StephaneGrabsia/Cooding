@@ -10,7 +10,7 @@ import StudentPage from './containers/studentPage';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
 import './styles/style.css';
-import TeacherIndex from './containers/TeacherIndex';
+import TeacherPage from './containers/TeacherPage';
 
 const theme = createTheme({
   palette: {
@@ -37,7 +37,7 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <div className='App'>
+    <div className="App">
       <Router>
         <AuthProvider>
           <Route component={SignInOutContainer} path="/" exact />
