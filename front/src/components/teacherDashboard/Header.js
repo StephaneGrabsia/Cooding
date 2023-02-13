@@ -38,13 +38,13 @@ function Header(props) {
             </Grid>
             <Grid item xs />
             <Grid item>
-              <Box sx={{flexGrow: 0, mr: '15px', mt: '5px'}}>
+              <Box sx={{flexGrow: 0, m: '20px'}}>
                 <Typography variant="h6" noWrap component="p" href="/">
                   {user.user_info.first_name} {user.user_info.last_name}
                 </Typography>
               </Box>
             </Grid>
-            <Box sx={{flexGrow: 0, mr: '15px', mt: '15px'}}>
+            <Box sx={{flexGrow: 0}}>
               <ProfileAvatar
                 user={user}
                 settings={settings}
@@ -64,8 +64,8 @@ function Header(props) {
         <Toolbar>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
-              <Typography color="inherit" variant="h5" component="h1">
-                Authentication
+              <Typography color="inherit" variant="h4" component="h1">
+                {props.title}
               </Typography>
             </Grid>
           </Grid>

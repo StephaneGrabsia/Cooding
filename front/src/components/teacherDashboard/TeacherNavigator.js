@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useHistory} from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -28,14 +29,17 @@ const categories = [
         id: 'Catalogue d\'exercices',
         icon: <FontAwesomeIcon icon={faBook} />,
         active: true,
+        path: '/teacher',
       },
       {
         id: 'Mes exercices',
         icon: <FontAwesomeIcon icon={faBookmark} />,
+        path: '/teacher',
       },
       {
         id: 'Créer un exercice',
         icon: <FontAwesomeIcon icon={faPenToSquare} />,
+        path: '/teacher',
       },
     ],
   },
@@ -46,14 +50,17 @@ const categories = [
       {
         id: 'Classes actives',
         icon: <FontAwesomeIcon icon={faCircleCheck} />,
+        path: '/teacher',
       },
       {
         id: 'Mes classes',
         icon: <FontAwesomeIcon icon={faBookmark} />,
+        path: '/teacher',
       },
       {
         id: 'Créer une classe',
         icon: <FontAwesomeIcon icon={faPenToSquare} />,
+        path: '/',
       },
     ],
   },
@@ -82,6 +89,7 @@ const itemCategory = {
  */
 export default function TeacherNavigator(props) {
   const {...other} = props;
+  const history = useHistory();
 
   return (
     <Drawer variant="permanent" {...other}>
@@ -97,9 +105,13 @@ export default function TeacherNavigator(props) {
               <ListItemText sx={{color: '#fff'}}> {icon}</ListItemText>
               <ListItemText sx={{color: '#fff'}}> {id}</ListItemText>
             </ListItem>
-            {children.map(({id: childId, icon, active}) => (
+            {children.map(({id: childId, icon, active, path}) => (
               <ListItem disablePadding key={childId}>
-                <ListItemButton selected={active} sx={item}>
+                <ListItemButton
+                  selected={active}
+                  sx={item}
+                  onClick={() => history.push(path)}
+                >
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText>{childId}</ListItemText>
                 </ListItemButton>
