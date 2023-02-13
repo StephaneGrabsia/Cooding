@@ -112,7 +112,8 @@ function ResponsiveAppBar({
                 }}
               >
                 {listExercises.map((page, index) => (
-                  <MenuItem key={index} onClick={handleCloseNavMenu}>
+                  // eslint-disable-next-line max-len
+                  <MenuItem key={index} onClick={(event) => handleSelection(event, index)}>
                     <Typography textAlign="center">Exo {index + 1}</Typography>
                   </MenuItem>
                 ))}
