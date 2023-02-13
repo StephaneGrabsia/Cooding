@@ -12,8 +12,6 @@ import AuthContext from '../context/AuthContext';
 const paperStyle = {
   padding: 20,
   height: '45vh',
-  minHeight: 350,
-  width: 450,
   margin: '0',
 };
 

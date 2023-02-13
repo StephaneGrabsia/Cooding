@@ -18,13 +18,12 @@ const statementSize = {
 
 const outputSize = {
   height: '3vh',
-  width: '55vw',
+  width: '100%',
   overflow: 'scroll',
 };
 
 const tracebackSize = {
-  height: '13vh',
-  width: '55vw',
+  width: '100%',
   overflow: 'scroll',
 };
 
@@ -35,13 +34,13 @@ const rightPartSize = {
 
 const codeEditorSize = {
   width: '58.3vw',
-  height: '61.3vh',
+  height: '53.6vh',
   paddingTop: '10px',
 };
 
 const terminalSize = {
   width: '58.3vw',
-  height: '30.6vh',
+  height: '38.3vh',
 };
 
 
@@ -64,6 +63,7 @@ function StudentPage() {
   );
   const [listExercises, setListExercises] = useState([{statement: ''}]);
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
+  const [activeExerciseID, setActiveExerciseID] = useState(0);
   const [activeExerciseStatement, setActiveExerciseStatement]= useState('');
   const [results, setResults] = useState([[], [], []]);
 
@@ -95,6 +95,7 @@ function StudentPage() {
 
   useEffect(() => {
     setActiveExerciseStatement(listExercises[activeExerciseIndex].statement);
+    setActiveExerciseID(listExercises[activeExerciseIndex].id);
   }, [activeExerciseIndex, listExercises]);
 
   useEffect(() => {
@@ -115,7 +116,6 @@ function StudentPage() {
   };
 
   const onClickSubmit = async (event) => {
-    console.log(user.user_info);
     const response = await fetch(
         'http://localhost:8000/solution/create/',
         {
@@ -126,7 +126,7 @@ function StudentPage() {
           },
           body: JSON.stringify({
             'student': user.user_id,
-            'exercise': 1,
+            'exercise': activeExerciseID,
             'source': code,
           }),
         },
@@ -157,10 +157,13 @@ function StudentPage() {
         <Grid2 xs={5}>
           <Paper elevation={3} style={statementSize}
             sx={{backgroundColor: 'secondary.main'}}>
-            <ReactMarkdown
-              children={activeExerciseStatement}
-              className='reactMarkdown'>
-            </ReactMarkdown>
+            <Container sx={{padding: '20px'}}>
+              <ReactMarkdown
+                children={activeExerciseStatement}
+                className='reactMarkdown'
+              >
+              </ReactMarkdown>
+            </Container>
           </Paper>
         </Grid2>
         <Grid2 xs={7}>
@@ -182,8 +185,9 @@ function StudentPage() {
             >
               <OutputSectionBar onClickSubmit={onClickSubmit}/>
               <Container sx={{
-                height: '68%',
+                height: '78%',
                 padding: '0px',
+                marginBottom: '2px',
               }}>
                 <Typography
                   variant="p"
@@ -244,28 +248,35 @@ function StudentPage() {
                 >
                     Traceback:
                 </Typography>
-                <Paper
-                  elevation={3}
-                  style={tracebackSize}
-                  sx={{backgroundColor: 'primary.main'}}
-                >
-                  <Typography
-                    variant="p"
-                    component="p"
-                    href="/"
-                    color="black"
-                    sx={{
-                      fontFamily: 'Roboto',
-                      fontWeight: 200,
-                      letterSpacing: '.3rem',
-                      textDecoration: 'none',
-                      textAlign: 'Left',
-                      marginLeft: '3px',
-                    }}
+                <Container disableGutters sx={{
+                  height: '60%',
+                  paddingRight: '0px',
+                  paddingLeft: '0px',
+                  marginBottom: '2px',
+                }}>
+                  <Paper
+                    elevation={3}
+                    style={tracebackSize}
+                    sx={{backgroundColor: 'primary.main', height: '100%'}}
                   >
-                    {results[1]}
-                  </Typography>
-                </Paper>
+                    <Typography
+                      variant="p"
+                      component="p"
+                      href="/"
+                      color="black"
+                      sx={{
+                        fontFamily: 'Roboto',
+                        fontWeight: 200,
+                        letterSpacing: '.3rem',
+                        textDecoration: 'none',
+                        textAlign: 'Left',
+                        marginLeft: '3px',
+                      }}
+                    >
+                      {results[1]}
+                    </Typography>
+                  </Paper>
+                </Container>
               </Container>
             </Grid2>
           </Grid2>
