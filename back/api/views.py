@@ -294,6 +294,20 @@ class ExerciseView(APIView):
         content = {"detail": "Type d'utilisateur non autorisé"}
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
+    def get(selt, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = []
+            try:
+                exo = Exercise.objects.all()
+                for exercise in exo:
+                    response.append(ExerciseSerializer(exercise).data)
+            except ObjectDoesNotExist:
+                response.append({"message": "No exercise found"})
+            return Response(response)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @permission_classes([IsAuthenticated])
 class ExerciseDeleteView(APIView):
