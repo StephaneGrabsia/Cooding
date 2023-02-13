@@ -91,6 +91,7 @@ export default function Content() {
             title="Les moindres carrés"
             subtitle="Python"
             content="toto"
+            exercise={exercise}
           />
         </Grid>
       ))}

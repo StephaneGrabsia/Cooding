@@ -42,7 +42,7 @@ const App = () => {
         <AuthProvider>
           <Route component={SignInOutContainer} path="/" exact />
           <Route component={RegisterContainer} path="/register" />
-          <PrivateRoute component={TeacherIndex} path="/teacher" />
+          <PrivateRoute component={TeacherPage} path="/teacher" />
           <PrivateRoute path="/student">
             <ThemeProvider theme={theme}>
               <StudentPage />
