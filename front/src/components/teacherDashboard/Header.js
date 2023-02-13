@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import AuthContext from '../../context/AuthContext';
-import ProfileAvatar from '../avatar';
+import ProfileAvatar from '../Avatar';
 
 const settings = ['Mon Profil', 'Logout'];
 

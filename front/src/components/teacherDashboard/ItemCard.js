@@ -17,7 +17,7 @@ import {Button, Typography} from '@mui/material';
  */
 export default function ItemCard({title, subtitle, content}) {
   return (
-    <Card>
+    <Card elevation={3}>
       <CardHeader
         action={
           <IconButton aria-label="settings">

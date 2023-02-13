@@ -14,7 +14,7 @@ import Icon from '../assets/icon.svg';
 import Coin from '../assets/coin.png';
 import Surf from '../assets/surf.png';
 import PropTypes from 'prop-types';
-import ProfileAvatar from './avatar';
+import ProfileAvatar from './Avatar';
 
 const settings = ['Change Username', 'Leaderboard', 'Logout'];
 
