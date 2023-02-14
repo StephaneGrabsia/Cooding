@@ -14,6 +14,7 @@ from api.views import (
     StudentView,
     RoomCreateView,
     RoomView,
+    AllRoomView,
     RoomDeleteView,
     ExerciseCreateView,
     ExerciseView,
@@ -42,6 +43,7 @@ student_endpoints = [
 room_endpoints = [
     path("room/create/", RoomCreateView.as_view()),
     path("room/", RoomView.as_view()),
+    path("allrooms/", AllRoomView.as_view()),
     path("room/delete/", RoomDeleteView.as_view()),
 ]
 
