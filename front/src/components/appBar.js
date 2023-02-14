@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -14,7 +16,6 @@ import Icon from '../assets/icon.svg';
 import Coin from '../assets/coin.png';
 import Surf from '../assets/surf.png';
 import PropTypes from 'prop-types';
-import ProfileAvatar from './Avatar';
 
 const settings = ['Change Username', 'Leaderboard', 'Logout'];
 
@@ -29,7 +30,6 @@ const coinStyle = {
   height: '6vh',
   margin: '20px auto',
   verticalAlign: 'middle',
-  display: 'inline-flex',
 };
 
 const toolBarStyle = {
@@ -46,22 +46,35 @@ const toolBarStyle = {
 function ResponsiveAppBar({
   user,
   fixedUserInfos,
-  session,
+  listExercises,
   logoutUserStudent,
+  activeExercise,
+  setActiveExercise,
 }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [activeExercice, setActiveExercice] = React.useState(0);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleSelection = (event, newExercice) => {
-    setActiveExercice(newExercice);
+  const handleChooseMenuItem = () => {
+    alert('EROOR TODO');
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleSelection = (event, newExercise) => {
+    setActiveExercise(newExercise);
   };
 
   return (
@@ -98,9 +111,9 @@ function ResponsiveAppBar({
                   display: {xs: 'block', md: 'none'},
                 }}
               >
-                {session.pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
+                {listExercises.map((page, index) => (
+                  <MenuItem key={index} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">Exo {index + 1}</Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -110,7 +123,7 @@ function ResponsiveAppBar({
               sx={{ml: 7, flexGrow: 1, display: {xs: 'none', md: 'flex'}}}
             >
               <Tabs
-                value={activeExercice}
+                value={activeExercise}
                 onChange={handleSelection}
                 indicatorColor="secondary"
                 textColor="secondary"
@@ -118,12 +131,11 @@ function ResponsiveAppBar({
                   sx: {
                     top: '60px',
                   },
-                }}
-              >
-                {session.pages.map((page) => (
+                }}>
+                {listExercises.map((page, index) => (
                   <Tab
-                    key={page}
-                    label={page}
+                    key={index}
+                    label={'Exo ' + (index + 1)}
                     sx={{my: 2, color: 'black', display: 'block'}}
                   />
                 ))}
@@ -134,7 +146,7 @@ function ResponsiveAppBar({
               sx={{
                 flexGrow: 0,
                 mr: '15px',
-                display: 'inline-flex',
+                display: {xs: 'none', md: 'flex'},
                 alignItems: 'center',
               }}
             >
@@ -145,7 +157,6 @@ function ResponsiveAppBar({
                 href="/"
                 color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
                   fontWeight: 200,
                   letterSpacing: '.3rem',
@@ -161,7 +172,7 @@ function ResponsiveAppBar({
               sx={{
                 flexGrow: 0,
                 mr: '15px',
-                display: 'inline-flex',
+                display: {xs: 'none', md: 'flex'},
                 alignItems: 'center',
               }}
             >
@@ -172,7 +183,6 @@ function ResponsiveAppBar({
                 href="/"
                 color="black"
                 sx={{
-                  display: {xs: 'none', md: 'flex'},
                   fontFamily: 'Roboto',
                   fontWeight: 200,
                   letterSpacing: '.3rem',
@@ -184,6 +194,7 @@ function ResponsiveAppBar({
               </Typography>
               <img src={Coin} style={coinStyle} />
             </Box>
+
             <Box sx={{flexGrow: 0, mr: '15px'}}>
               <Typography
                 variant="h5"
@@ -203,11 +214,50 @@ function ResponsiveAppBar({
                 {user.username}
               </Typography>
             </Box>
-            <ProfileAvatar
-              user={user}
-              settings={settings}
-              logoutFunction={logoutUserStudent}
-            />
+            <Box sx={{flexGrow: 0}}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                  <Avatar
+                    sx={{
+                      width: '6vh',
+                      height: '6vh',
+                      backgroundColor: 'red',
+                    }}
+                  >
+                    {user.username[0]}
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{mt: '45px'}}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting}
+                    onClick={
+                      setting === 'Logout' ?
+                        logoutUserStudent :
+                        handleChooseMenuItem
+                    }
+                  >
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>
@@ -218,7 +268,6 @@ function ResponsiveAppBar({
 
 ResponsiveAppBar.propTypes = {
   user: PropTypes.object.isRequired,
-  session: PropTypes.object.isRequired,
 };
 
 export default ResponsiveAppBar;

@@ -7,6 +7,7 @@ import Background from '../assets/background.svg';
 const paperStyle = {
   minHeight: 620,
   width: 490,
+  height: '80vh',
   margin: '10vh auto',
 };
 

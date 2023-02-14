@@ -9,8 +9,20 @@ import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPenToSquare, faClose} from '@fortawesome/free-solid-svg-icons';
 import ReactMarkdown from 'react-markdown';
-import {Button, DialogContent, DialogTitle, Grid} from '@mui/material';
+import {
+  AppBar,
+  Button,
+  CardHeader,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Slide,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import ExerciseForm from './ExerciseForm';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import PreviewPage from './PreviewPage';
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
   '& .MuiDialogContent-root': {
@@ -20,6 +32,38 @@ const BootstrapDialog = styled(Dialog)(({theme}) => ({
     padding: theme.spacing(1),
   },
 }));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const toolBarStyle = {
+  height: '8vh',
+  minHeight: '8vh',
+};
+
+const theme = createTheme({
+  palette: {
+    tertianary: {
+      light: '#ADE6FF',
+      main: '#1698f9',
+      dark: '#1670F9',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#FFD290',
+      main: '#f9a429',
+      dark: '#D78E32',
+      contrastText: '#fff',
+    },
+    primary: {
+      light: '#fff',
+      main: '#fff',
+      dark: '#fff',
+      contrastText: '#000',
+    },
+  },
+});
 
 /**
  * Component coding the dialog title.
@@ -61,19 +105,28 @@ BootstrapDialogTitle.propTypes = {
  * @param {props} props properties
  * @return {Component} A component
  */
-export default function ItemCard({title, subtitle, content}) {
-  const [open, setOpen] = React.useState(false);
+export default function ItemCard({title, subtitle, content, exercise}) {
+  const [openEditor, setOpenEditor] = React.useState(false);
+  const [openPreviw, setOpenPreview] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpenEditor = () => {
+    setOpenEditor(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseEditor = () => {
+    setOpenEditor(false);
+  };
+
+  const handleClickOpenPreview = () => {
+    setOpenPreview(true);
+  };
+  const handleClosePreview = () => {
+    setOpenPreview(false);
   };
 
   return (
     <div>
       <Card elevation={3}>
+        <CardHeader title={title} subheader={subtitle} />
         <CardContent>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs>
@@ -83,25 +136,56 @@ export default function ItemCard({title, subtitle, content}) {
               </ReactMarkdown>
             </Grid>
             <Grid item>
-              <IconButton aria-label="settings" onClick={handleClickOpen}>
+              <IconButton aria-label="settings" onClick={handleClickOpenEditor}>
                 <FontAwesomeIcon icon={faPenToSquare} />
               </IconButton>
             </Grid>
           </Grid>
         </CardContent>
         <CardActions>
-          <Button size="small">Voir l'exercice</Button>
+          <Button size="small" onClick={handleClickOpenPreview}>
+            Voir l'exercice
+          </Button>
+          <Dialog
+            fullScreen
+            open={openPreviw}
+            onClose={handleClosePreview}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{position: 'relative'}} style={toolBarStyle}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleClosePreview}
+                  aria-label="close"
+                >
+                  <FontAwesomeIcon icon={faClose} />
+                </IconButton>
+                <Typography
+                  sx={{ml: 2, flex: 1}}
+                  variant="h6"
+                  component="div"
+                >
+                  Preview
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <ThemeProvider theme={theme}>
+              <PreviewPage exercise={exercise}></PreviewPage>
+            </ThemeProvider>
+          </Dialog>
         </CardActions>
       </Card>
       <BootstrapDialog
-        onClose={handleClose}
+        onClose={handleCloseEditor}
         aria-labelledby="customized-dialog-title"
-        open={open}
+        open={openEditor}
         fullWidth
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
-          onClose={handleClose}
+          onClose={handleCloseEditor}
         >
           Éditer un exercice
         </BootstrapDialogTitle>

@@ -87,7 +87,11 @@ export default function Content() {
       </AppBar>
       {exercises.map((exercise) => (
         <Grid item key={exercise.id} xs={12} m={6} lg={4}>
-          <ItemCard content={exercise.statement} />
+          <ItemCard
+            subtitle="Python"
+            content={exercise.statement}
+            exercise={exercise}
+          />
         </Grid>
       ))}
     </Paper>

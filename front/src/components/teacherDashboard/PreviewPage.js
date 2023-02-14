@@ -1,13 +1,11 @@
 /* eslint-disable react/no-children-prop */
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import Grid2 from '@mui/material/Unstable_Grid2';
-import ResponsiveAppBar from '../components/appBar';
 import ReactMarkdown from 'react-markdown';
 import {Paper, Typography} from '@mui/material';
 import {Container} from '@mui/system';
-import OutputSectionBar from '../components/outputSectionBar';
-import AuthContext from '../context/AuthContext';
-import CodeEditorWindow from '../components/CodeEditorWindow';
+import OutputSectionBar from '../outputSectionBar';
+import CodeEditorWindow from '../CodeEditorWindow';
 // import style from '../styles/style.css';
 
 const statementSize = {
@@ -18,13 +16,12 @@ const statementSize = {
 
 const outputSize = {
   height: '3vh',
-  width: '55vw',
+  width: '100%',
   overflow: 'scroll',
 };
 
 const tracebackSize = {
-  height: '13vh',
-  width: '55vw',
+  width: '100%',
   overflow: 'scroll',
 };
 
@@ -35,13 +32,13 @@ const rightPartSize = {
 
 const codeEditorSize = {
   width: '58.3vw',
-  height: '61.3vh',
+  height: '53.6vh',
   paddingTop: '10px',
 };
 
 const terminalSize = {
   width: '58.3vw',
-  height: '30.6vh',
+  height: '38.3vh',
 };
 
 
@@ -50,57 +47,11 @@ const terminalSize = {
  * Render the appBar
  * @return {Component} A component
  */
-function StudentPage() {
-  const userInfos = {
-    score: 5893,
-    rank: 2,
-  };
+function PreviewPage({
+  exercise,
+}) {
+  const [code, setCode] = useState(exercise.solution);
 
-  const {user, logoutUser, authTokens} = useContext(AuthContext);
-
-  const [code, setCode] = useState(
-      '# Enter your code here! \n# Your'+
-      ' function have to be named f \n \n# def f():',
-  );
-  const [listExercises, setListExercises] = useState([{statement: ''}]);
-  const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
-  const [activeExerciseStatement, setActiveExerciseStatement]= useState('');
-  const [results, setResults] = useState([[], [], []]);
-
-  const fetchExercises = async () => {
-    const response = await fetch(
-        'http://localhost:8000/exercise/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + String(authTokens.access),
-          },
-          body: JSON.stringify({
-            'classroom': user.user_info.classroom,
-          }),
-        },
-    );
-    if (response.status === 200) {
-      const content = await response.json();
-      setListExercises(content);
-    } else {
-      alert('Didn\'t work');
-    }
-  };
-
-  useEffect(() => {
-    fetchExercises();
-  }, []);
-
-  useEffect(() => {
-    setActiveExerciseStatement(listExercises[activeExerciseIndex].statement);
-  }, [activeExerciseIndex, listExercises]);
-
-  useEffect(() => {
-    const interval = setInterval(fetchExercises, 10000);
-    return () => clearInterval(interval);
-  }, [listExercises]);
 
   const onChange = (action, data) => {
     switch (action) {
@@ -115,40 +66,11 @@ function StudentPage() {
   };
 
   const onClickSubmit = async (event) => {
-    console.log(user.user_info);
-    const response = await fetch(
-        'http://localhost:8000/solution/create/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + String(authTokens.access),
-          },
-          body: JSON.stringify({
-            'student': user.user_id,
-            'exercise': 1,
-            'source': code,
-          }),
-        },
-    );
-    if (response.status === 200) {
-      const content = await response.json();
-      setResults(content);
-    } else {
-      alert('Didn\'t work');
-    }
+    alert('Error T0DO');
   };
 
   return (
     <div>
-      <ResponsiveAppBar
-        user={user}
-        fixedUserInfos={userInfos}
-        listExercises={listExercises}
-        logoutUserStudent={logoutUser}
-        activeExercise={activeExerciseIndex}
-        setActiveExercise={setActiveExerciseIndex}
-      />
       <Grid2 container
         direction="row"
         justifyContent="center"
@@ -157,10 +79,12 @@ function StudentPage() {
         <Grid2 xs={5}>
           <Paper elevation={3} style={statementSize}
             sx={{backgroundColor: 'secondary.main'}}>
-            <ReactMarkdown
-              children={activeExerciseStatement}
-              className='reactMarkdown'>
-            </ReactMarkdown>
+            <Container sx={{padding: '20px'}}>
+              <ReactMarkdown
+                children={exercise.statement}
+                className='reactMarkdown'>
+              </ReactMarkdown>
+            </Container>
           </Paper>
         </Grid2>
         <Grid2 xs={7}>
@@ -182,8 +106,9 @@ function StudentPage() {
             >
               <OutputSectionBar onClickSubmit={onClickSubmit}/>
               <Container sx={{
-                height: '68%',
+                height: '78%',
                 padding: '0px',
+                marginBottom: '2px',
               }}>
                 <Typography
                   variant="p"
@@ -206,7 +131,6 @@ function StudentPage() {
                 <Paper
                   elevation={3}
                   style={outputSize}
-                  sx={{backgroundColor: results[2]==true ? 'green' : 'red'}}
                 >
                   <Typography
                     variant="p"
@@ -222,8 +146,6 @@ function StudentPage() {
                       marginLeft: '3px',
                     }}
                   >
-                    {results[2]==true ? 'Congratulations !! ': 'Bad output :' }
-                    {results[0]}
                   </Typography>
                 </Paper>
                 <Typography
@@ -244,28 +166,35 @@ function StudentPage() {
                 >
                     Traceback:
                 </Typography>
-                <Paper
-                  elevation={3}
-                  style={tracebackSize}
-                  sx={{backgroundColor: 'primary.main'}}
-                >
-                  <Typography
-                    variant="p"
-                    component="p"
-                    href="/"
-                    color="black"
-                    sx={{
-                      fontFamily: 'Roboto',
-                      fontWeight: 200,
-                      letterSpacing: '.3rem',
-                      textDecoration: 'none',
-                      textAlign: 'Left',
-                      marginLeft: '3px',
-                    }}
+                <Container disableGutters sx={{
+                  height: '60%',
+                  paddingRight: '0px',
+                  paddingLeft: '0px',
+                  marginBottom: '2px',
+                }}>
+                  <Paper
+                    elevation={3}
+                    style={tracebackSize}
+                    sx={{backgroundColor: 'primary.main', height: '80%'}}
                   >
-                    {results[1]}
-                  </Typography>
-                </Paper>
+                    <Typography
+                      variant="p"
+                      component="p"
+                      href="/"
+                      color="black"
+                      sx={{
+                        fontFamily: 'Roboto',
+                        fontWeight: 200,
+                        letterSpacing: '.3rem',
+                        textDecoration: 'none',
+                        textAlign: 'Left',
+                        marginLeft: '3px',
+                      }}
+                    >
+
+                    </Typography>
+                  </Paper>
+                </Container>
               </Container>
             </Grid2>
           </Grid2>
@@ -274,4 +203,4 @@ function StudentPage() {
     </div>
   );
 };
-export default StudentPage;
+export default PreviewPage;
