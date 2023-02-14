@@ -64,7 +64,7 @@ export default function Content() {
             <Grid item xs>
               <TextField
                 fullWidth
-                placeholder="Search by email address, phone number, or user UID"
+                placeholder="Rechercher un exercice"
                 InputProps={{
                   disableUnderline: true,
                   sx: {fontSize: 'default'},
@@ -87,11 +87,7 @@ export default function Content() {
       </AppBar>
       {exercises.map((exercise) => (
         <Grid item key={exercise.id} xs={12} m={6} lg={4}>
-          <ItemCard
-            title="Les moindres carrés"
-            subtitle="Python"
-            content="toto"
-          />
+          <ItemCard content={exercise.statement} />
         </Grid>
       ))}
     </Paper>
