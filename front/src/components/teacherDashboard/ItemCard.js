@@ -190,7 +190,7 @@ export default function ItemCard({title, subtitle, content, exercise}) {
           Éditer un exercice
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <ExerciseForm />
+          <ExerciseForm exercise={exercise} />
         </DialogContent>
       </BootstrapDialog>
     </div>

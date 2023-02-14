@@ -1,6 +1,16 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
-import {Grid, Paper, TextField, Button, Typography} from '@mui/material';
+import {
+  Grid,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import AuthContext from '../../context/AuthContext';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import {Stack} from '@mui/system';
@@ -19,26 +29,55 @@ const codeEditorSize = {
  */
 class ExerciseForm extends React.Component {
   static contextType = AuthContext;
+
+  /**
+   * To execute before the component mounting
+   * Fetch to get available classrooms
+   */
+  componentDidMount() {
+    this.fetchClassroom();
+  }
   /**
    * Constructor of the component
    * Setting up the state, and utils functions
+   * @param {props} props props
    */
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       fields: {
-        statment: this.props.statment,
-        solution: 'bobo\n\nbibi',
-        test_input: '[1,2,3]',
-        correct_output: '[1,2,3]',
-        classroom: '',
+        statment: this.props.exercise ? this.props.exercise.statement : '',
+        solution: this.props.exercise ? this.props.exercise.solution : '',
+        test_input: this.props.exercise ? this.props.exercise.test_input : '',
+        correct_output: this.props.exercise ?
+          this.props.exercise.correct_output :
+          '',
+        classroom: this.props.exercise ? this.props.exercise.classroom : -1,
       },
-      errors: {},
-      mainError: '',
+      rooms: [],
     };
     this.handleChange = this.handleChange.bind(this);
     this.submitForm = this.submitForm.bind(this);
   }
+
+  fetchClassroom = async () => {
+    const {authTokens} = this.context;
+    const response = await fetch('http://localhost:8000/allrooms/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
+      },
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      const state = this.state;
+      state['rooms'] = content;
+      this.setState(state);
+    } else {
+      alert('Cannot get rooms');
+    }
+  };
 
   /**
    * handleChange function
@@ -69,7 +108,19 @@ class ExerciseForm extends React.Component {
    */
   submitForm(e) {
     e.preventDefault();
+    console.log(this.state.rooms);
     console.log('toto');
+  }
+
+  /**
+   * submitForm function
+   * called at the submition of the form
+   * check if the form is valid and return the error message if there is one
+   * @return {Component} the toogle list of classroom
+   */
+  classroomList() {
+    this.fetchClassroom();
+    return <div>hello</div>;
   }
 
   /**
@@ -137,13 +188,37 @@ class ExerciseForm extends React.Component {
                 onChange={this.handleChange}
                 fullWidth
               />
+              <br />
+              <br />
+              <FormControl fullWidth>
+                <InputLabel id="standard-basic">Salle de classe</InputLabel>
+                <Select
+                  id="standard-basic"
+                  variant="filled"
+                  value={this.state.fields['classroom']}
+                  onChange={this.handleChange}
+                  name="classroom"
+                >
+                  {this.state.rooms.map((room) => (
+                    <MenuItem key={room.room_id} value={room.room_id}>
+                      Classe numéro {room.room_id}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <Stack direction="row" spacing={2} mt={2}>
                 <Button type="submit" color="primary" variant="contained">
-                  Créer l'exercice
+                  {this.props.exercise ?
+                    'Modifier l\'exercice' :
+                    'Créer l\'exercice'}
                 </Button>
-                <Button variant="outlined" color="error">
-                  Supprimer l'exercice
-                </Button>
+                {this.props.exercise ? (
+                  <Button variant="outlined" color="error">
+                    Supprimer l'exercice
+                  </Button>
+                ) : (
+                  ''
+                )}
               </Stack>
             </form>
           </Grid>

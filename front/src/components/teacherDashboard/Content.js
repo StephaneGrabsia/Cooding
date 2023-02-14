@@ -9,9 +9,14 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
-
+import PropTypes from 'prop-types';
 import ItemCard from './ItemCard';
-
+import {DialogContent, DialogTitle} from '@mui/material';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faClose} from '@fortawesome/free-solid-svg-icons';
+import ExerciseForm from './ExerciseForm';
+import {styled} from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
 const exercises = [
   {
     id: 1,
@@ -41,6 +46,49 @@ const exercises = [
   },
 ];
 
+const BootstrapDialog = styled(Dialog)(({theme}) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
+
+/**
+ * Component coding the dialog title.
+ * @param {props} props properties
+ * @return {Component} A component
+ */
+function BootstrapDialogTitle(props) {
+  const {children, onClose, ...other} = props;
+
+  return (
+    <DialogTitle sx={{m: 0, p: 2}} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <FontAwesomeIcon icon={faClose} />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
+}
+
+BootstrapDialogTitle.propTypes = {
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
+};
+
 /**
  * Component coding the exercises list.
  * Render the list of exercises
@@ -48,6 +96,13 @@ const exercises = [
  * @return {Component} A component
  */
 export default function Content() {
+  const [openEditor, setOpenEditor] = React.useState(false);
+  const handleClickOpenEditor = () => {
+    setOpenEditor(true);
+  };
+  const handleCloseEditor = () => {
+    setOpenEditor(false);
+  };
   return (
     <Paper sx={{maxWidth: 936, margin: 'auto', overflow: 'hidden'}}>
       <AppBar
@@ -73,7 +128,11 @@ export default function Content() {
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" sx={{mr: 1}}>
+              <Button
+                variant="contained"
+                sx={{mr: 1}}
+                onClick={handleClickOpenEditor}
+              >
                 Créer un exercice
               </Button>
               <Tooltip title="Reload">
@@ -94,6 +153,22 @@ export default function Content() {
           />
         </Grid>
       ))}
+      <BootstrapDialog
+        onClose={handleCloseEditor}
+        aria-labelledby="customized-dialog-title"
+        open={openEditor}
+        fullWidth
+      >
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          onClose={handleCloseEditor}
+        >
+          Éditer un exercice
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <ExerciseForm />
+        </DialogContent>
+      </BootstrapDialog>
     </Paper>
   );
 }
