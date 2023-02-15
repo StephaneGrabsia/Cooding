@@ -99,11 +99,10 @@ export class StudentLogin extends React.Component {
     }
 
     if (typeof fields['classroom_id'] !== 'undefined') {
-      if (!fields['classroom_id'].match(/^([1-9][0-9]{0,2}|1000)$/)) {
+      if (!fields['classroom_id'].match(/^[0-9]+$/)) {
         formIsValid = false;
         errors['classroom_id'] =
-          '*Merci d\'utiliser uniquement un identifiant' +
-          ' compris entre 1 et 1000';
+          '*Merci d\'utiliser uniquement un entier naturel';
       }
     }
 
