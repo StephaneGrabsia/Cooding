@@ -99,7 +99,7 @@ class Exercise(models.Model):
     test_input = models.CharField(null=True, max_length=255)
     correct_output = models.TextField(null=True)
     classroom = models.ForeignKey(
-        Classroom, on_delete=models.PROTECT, related_name="subjects_of_classroom"
+        Classroom, on_delete=models.CASCADE, related_name="subjects_of_classroom"
     )
 
     def __str__(self) -> str:
