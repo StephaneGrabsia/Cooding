@@ -34,7 +34,6 @@ export default function ItemCardClassroom({classroom}) {
         user_id: classroom.teacher,
       }),
     });
-    console.log(response);
     if (response.status === 200) {
       const content = await response.json();
       setclassroomTeacher(content);
@@ -65,8 +64,6 @@ export default function ItemCardClassroom({classroom}) {
   React.useEffect(() => {
     fetchclassroomTeacher();
   }, []);
-
-  console.log(classroomTeacher);
 
   return (
     <div>

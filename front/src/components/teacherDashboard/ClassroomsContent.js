@@ -145,7 +145,6 @@ export default function ClassroomsContent() {
         </Toolbar>
       </AppBar>
       <Grid item xs={12} m={6} lg={4}>
-        {console.log(listClassrooms)}
         {listClassrooms.map((classroom) => (
           <Grid
             item
