@@ -185,6 +185,20 @@ class TeacherView(APIView):
         content = {"detail": "Type d'utilisateur non autorisé"}
         return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
+    def post(self, request):
+        response = Response()
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            try:
+                my_user = Teacher.objects.get(id=request.data["user_id"])
+                serializer = TeacherSerializer(my_user)
+                response.data = serializer.data
+            except ObjectDoesNotExist:
+                response.data = {"message": "No teacher found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+
 
 # =========== STUDENT ===========
 
@@ -388,7 +402,11 @@ class SolutionCreateView(APIView):
             serializer = SolutionSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            solution = Solution.objects.filter(source=request.data["source"]).filter(exercise=request.data["exercise"]).first()
+            solution = (
+                Solution.objects.filter(source=request.data["source"])
+                .filter(exercise=request.data["exercise"])
+                .first()
+            )
             test_output, test_error = solution.run()
             isTrue = solution.check_sol(test_output)
             return Response([test_output, test_error, isTrue])
