@@ -20,52 +20,6 @@ import {
 
 import Logo from '../../assets/logo.svg';
 
-const categories = [
-  {
-    id: 'Exercices',
-    icon: <FontAwesomeIcon icon={faBars} />,
-    children: [
-      {
-        id: 'Catalogue d\'exercices',
-        icon: <FontAwesomeIcon icon={faBook} />,
-        active: true,
-        path: '/teacher',
-      },
-      {
-        id: 'Mes exercices',
-        icon: <FontAwesomeIcon icon={faBookmark} />,
-        path: '/teacher',
-      },
-      {
-        id: 'Créer un exercice',
-        icon: <FontAwesomeIcon icon={faPenToSquare} />,
-        path: '/teacher',
-      },
-    ],
-  },
-  {
-    id: 'Salles de classe',
-    icon: <FontAwesomeIcon icon={faChalkboardTeacher} />,
-    children: [
-      {
-        id: 'Classes actives',
-        icon: <FontAwesomeIcon icon={faCircleCheck} />,
-        path: '/teacher',
-      },
-      {
-        id: 'Mes classes',
-        icon: <FontAwesomeIcon icon={faBookmark} />,
-        path: '/teacher',
-      },
-      {
-        id: 'Créer une classe',
-        icon: <FontAwesomeIcon icon={faPenToSquare} />,
-        path: '/',
-      },
-    ],
-  },
-];
-
 const item = {
   'py': '2px',
   'px': 3,
@@ -90,7 +44,51 @@ const itemCategory = {
 export default function TeacherNavigator(props) {
   const {...other} = props;
   const history = useHistory();
-
+  const categories = [
+    {
+      id: 'Exercices',
+      icon: <FontAwesomeIcon icon={faBars} />,
+      children: [
+        {
+          id: 'Catalogue d\'exercices',
+          icon: <FontAwesomeIcon icon={faBook} />,
+          path: '/teacher/exercises',
+        },
+        {
+          id: 'Mes exercices',
+          icon: <FontAwesomeIcon icon={faBookmark} />,
+          path: '/teacher/exercises',
+        },
+        {
+          id: 'Créer un exercice',
+          icon: <FontAwesomeIcon icon={faPenToSquare} />,
+          path: '/teacher/exercises',
+        },
+      ],
+    },
+    {
+      id: 'Salles de classe',
+      icon: <FontAwesomeIcon icon={faChalkboardTeacher} />,
+      children: [
+        {
+          id: 'Classes actives',
+          icon: <FontAwesomeIcon icon={faCircleCheck} />,
+          path: '/teacher/classrooms',
+        },
+        {
+          id: 'Mes classes',
+          icon: <FontAwesomeIcon icon={faBookmark} />,
+          path: '/teacher/classrooms',
+        },
+        {
+          id: 'Créer une classe',
+          icon: <FontAwesomeIcon icon={faPenToSquare} />,
+          path: '/teacher/classrooms',
+        },
+      ],
+    },
+  ];
+  categories[props.father].children[props.id]['active'] = true;
   return (
     <Drawer variant="permanent" {...other}>
       <List disablePadding>

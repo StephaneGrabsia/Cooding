@@ -10,11 +10,10 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PropTypes from 'prop-types';
-import ItemCard from './ItemCard';
+import ItemCardClassroom from './ItemCardClassroom';
 import {DialogContent, DialogTitle} from '@mui/material';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClose} from '@fortawesome/free-solid-svg-icons';
-import ExerciseForm from './ExerciseForm';
 import {styled} from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import AuthContext from '../../context/AuthContext';
@@ -67,10 +66,12 @@ BootstrapDialogTitle.propTypes = {
  * @param {props} props properties
  * @return {Component} A component
  */
-export default function Content() {
+export default function ClassroomsContent() {
   const {authTokens} = React.useContext(AuthContext);
   const [openEditor, setOpenEditor] = React.useState(false);
-  const [listExercises, setListExercises] = React.useState([{statement: ''}]);
+  const [listClassrooms, setListClassrooms] = React.useState([
+    {statement: ''},
+  ]);
 
   const handleClickOpenEditor = () => {
     setOpenEditor(true);
@@ -79,8 +80,8 @@ export default function Content() {
     setOpenEditor(false);
   };
 
-  const fetchExercises = async () => {
-    const response = await fetch('http://localhost:8000/exercise/', {
+  const fetchClassroom = async () => {
+    const response = await fetch('http://localhost:8000/allrooms/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -89,20 +90,20 @@ export default function Content() {
     });
     if (response.status === 200) {
       const content = await response.json();
-      setListExercises(content);
+      setListClassrooms(content);
     } else {
       alert('Didn\'t work');
     }
   };
 
   React.useEffect(() => {
-    fetchExercises();
+    fetchClassroom();
   }, []);
 
   React.useEffect(() => {
-    const interval = setInterval(fetchExercises, 10000);
+    const interval = setInterval(fetchClassroom, 10000);
     return () => clearInterval(interval);
-  }, [listExercises]);
+  }, [listClassrooms]);
 
   return (
     <Paper sx={{maxWidth: 936, margin: 'auto', overflow: 'hidden'}}>
@@ -120,7 +121,7 @@ export default function Content() {
             <Grid item xs>
               <TextField
                 fullWidth
-                placeholder="Rechercher un exercice"
+                placeholder="Rechercher une classe"
                 InputProps={{
                   disableUnderline: true,
                   sx: {fontSize: 'default'},
@@ -134,7 +135,7 @@ export default function Content() {
                 sx={{mr: 1}}
                 onClick={handleClickOpenEditor}
               >
-                Créer un exercice
+                Créer une classe
               </Button>
               <Tooltip title="Reload">
                 <IconButton>
@@ -145,15 +146,20 @@ export default function Content() {
           </Grid>
         </Toolbar>
       </AppBar>
-      {listExercises.map((exercise) => (
-        <Grid item key={'exercise-' + exercise.id} xs={12} m={6} lg={4}>
-          <ItemCard
-            subtitle="Python"
-            content={exercise.statement}
-            exercise={exercise}
-          />
-        </Grid>
-      ))}
+      <Grid item xs={12} m={6} lg={4}>
+        {console.log(listClassrooms)}
+        {listClassrooms.map((classroom) => (
+          <Grid
+            item
+            key={'classroom-' + classroom.room_id}
+            xs={12}
+            m={6}
+            lg={4}
+          >
+            <ItemCardClassroom classroom={classroom} />
+          </Grid>
+        ))}
+      </Grid>
       <BootstrapDialog
         onClose={handleCloseEditor}
         aria-labelledby="customized-dialog-title"
@@ -166,9 +172,7 @@ export default function Content() {
         >
           Créer un exercice
         </BootstrapDialogTitle>
-        <DialogContent dividers>
-          <ExerciseForm />
-        </DialogContent>
+        <DialogContent dividers></DialogContent>
       </BootstrapDialog>
     </Paper>
   );

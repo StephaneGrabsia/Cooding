@@ -35,7 +35,7 @@ function ProfileAvatar({user, settings, logoutFunction}) {
               sx={{
                 width: '6vh',
                 height: '6vh',
-                backgroundColor: 'red',
+                backgroundColor: '#f9a429',
               }}
             >
               {user.username[0]}

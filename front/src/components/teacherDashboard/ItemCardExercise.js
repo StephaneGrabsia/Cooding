@@ -105,7 +105,12 @@ BootstrapDialogTitle.propTypes = {
  * @param {props} props properties
  * @return {Component} A component
  */
-export default function ItemCard({title, subtitle, content, exercise}) {
+export default function ItemCardExercise({
+  title,
+  subtitle,
+  content,
+  exercise,
+}) {
   const [openEditor, setOpenEditor] = React.useState(false);
   const [openPreviw, setOpenPreview] = React.useState(false);
 

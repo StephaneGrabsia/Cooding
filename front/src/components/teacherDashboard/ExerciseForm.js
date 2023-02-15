@@ -77,6 +77,7 @@ class ExerciseForm extends React.Component {
       const state = this.state;
       state['rooms'] = content;
       this.setState(state);
+      console.log(content);
     } else {
       alert('Cannot get rooms');
     }
@@ -91,7 +92,6 @@ class ExerciseForm extends React.Component {
     const fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({fields});
-    console.log(fields);
   }
 
   /**
@@ -121,7 +121,6 @@ class ExerciseForm extends React.Component {
     };
     if (this.props.exercise) {
       myBody['exo_id'] = this.props.exercise.id;
-      console.log(myBody['exo_id']);
       const response = await fetch('http://localhost:8000/exercise/update/', {
         method: 'POST',
         headers: {

@@ -10,7 +10,8 @@ import StudentPage from './containers/studentPage';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
 import './styles/style.css';
-import TeacherPage from './containers/TeacherPage';
+import ExercisesTeacherPage from './containers/ExercisesTeacherPage';
+import ClassroomsTeacherPage from './containers/ClassroomsTeacherPage';
 
 const theme = createTheme({
   palette: {
@@ -42,8 +43,17 @@ const App = () => {
         <AuthProvider>
           <Route component={SignInOutContainer} path="/" exact />
           <Route component={RegisterContainer} path="/register" />
-          <PrivateRoute component={TeacherPage} path="/teacher" />
-          <PrivateRoute path="/student">
+          <PrivateRoute
+            component={ExercisesTeacherPage}
+            userType="TEACHER"
+            path="/teacher/exercises"
+          />
+          <PrivateRoute
+            component={ClassroomsTeacherPage}
+            userType="TEACHER"
+            path="/teacher/classrooms"
+          />
+          <PrivateRoute userType="STUDENT" path="/student">
             <ThemeProvider theme={theme}>
               <StudentPage />
             </ThemeProvider>

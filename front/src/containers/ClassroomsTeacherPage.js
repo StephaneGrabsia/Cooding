@@ -4,7 +4,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import TeacherNavigator from '../components/teacherDashboard/TeacherNavigator';
-import Content from '../components/teacherDashboard/Content';
+// eslint-disable-next-line max-len
+import ClassroomsContent from '../components/teacherDashboard/ClassroomsContent';
 import Header from '../components/teacherDashboard/Header';
 
 import AuthContext from '../context/AuthContext';
@@ -159,7 +160,7 @@ const drawerWidth = 256;
  * Render the appBar
  * @return {Component} A component
  */
-export default function TeacherPage() {
+export default function ClassroomsTeacherPage() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
   const {user, logoutUser} = React.useContext(AuthContext);
@@ -181,17 +182,21 @@ export default function TeacherPage() {
               variant="temporary"
               open={mobileOpen}
               onClose={handleDrawerToggle}
+              father={1}
+              id={0}
             />
           )}
 
           <TeacherNavigator
             PaperProps={{style: {width: drawerWidth}}}
             sx={{display: {sm: 'block', xs: 'none'}}}
+            father={1}
+            id={0}
           />
         </Box>
         <Box sx={{flex: 1, display: 'flex', flexDirection: 'column'}}>
           <Header
-            title="Exercices"
+            title="Salles de classe"
             user={user}
             logoutUser={logoutUser}
             onDrawerToggle={handleDrawerToggle}
@@ -200,7 +205,7 @@ export default function TeacherPage() {
             component="main"
             sx={{flex: 1, py: 6, px: 4, bgcolor: '#eaeff1'}}
           >
-            <Content />
+            <ClassroomsContent />
           </Box>
         </Box>
       </Box>
