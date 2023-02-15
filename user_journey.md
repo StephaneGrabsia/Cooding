@@ -16,7 +16,7 @@ _User journeys describe what steps different users can take to explore our websi
 
 ## For a student (once a teacher created a classroom)
 
-1. Register as a student by submitting personnal informations and the classroom tou want to join as a password
+1. Register as a student by submitting personnal informations and the classroom you want to join as a password
 
 2. Log in using the same information
 
