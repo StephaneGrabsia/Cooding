@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useLayoutEffect} from 'react';
 import {Grid, Paper, Tabs, Tab, Box} from '@mui/material';
 
 import {StudentLogin, TeacherLogin} from '../components/login_forms';
@@ -10,6 +10,7 @@ import {
   faGraduationCap,
   faPersonChalkboard,
 } from '@fortawesome/free-solid-svg-icons';
+import AuthContext from '../context/AuthContext';
 
 /**
  * Component coding the index tabs
@@ -55,50 +56,65 @@ const imgStyle = {
  */
 const SignInOutContainer = ({message}) => {
   const [value, setValue] = React.useState(0);
+
+  const {user} = useContext(AuthContext);
+
+  useLayoutEffect(() => {
+    if (user) {
+      if (user.role === 'TEACHER') {
+        window.location.replace('/teacher/');
+      } else if (user.role === 'STUDENT') {
+        window.location.replace('/student/');
+      }
+    }
+  }, [user]);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  return (
-    <div style={{
-      overflow: 'auto',
-      backgroundImage: `url(${Background})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      height: '100vh',
-    }}>
-      <Paper elevation={10} style={paperStyle}>
-        <Grid align="center">
-          <img src={Logo} style={imgStyle} />
-        </Grid>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          centered
-        >
-          <Tab
-            icon={<FontAwesomeIcon
-              icon={faGraduationCap}
-            />}
-            iconPosition="start"
-            label="Etudiants"
-          />
-          <Tab
-            icon={<FontAwesomeIcon
-              icon={faPersonChalkboard}
-            />}
-            iconPosition="start"
-            label="Professeur"
-          />
-        </Tabs>
-        <TabPanel value={value} index={0}>
-          <StudentLogin />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <TeacherLogin />
-        </TabPanel>
-      </Paper>
-    </div>
-  );
+  if (!user) {
+    return (
+      <div style={{
+        overflow: 'auto',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+      }}>
+        <Paper elevation={10} style={paperStyle}>
+          <Grid align="center">
+            <img src={Logo} style={imgStyle} />
+          </Grid>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            centered
+          >
+            <Tab
+              icon={<FontAwesomeIcon
+                icon={faGraduationCap}
+              />}
+              iconPosition="start"
+              label="Etudiants"
+            />
+            <Tab
+              icon={<FontAwesomeIcon
+                icon={faPersonChalkboard}
+              />}
+              iconPosition="start"
+              label="Professeur"
+            />
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            <StudentLogin />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <TeacherLogin />
+          </TabPanel>
+        </Paper>
+      </div>
+    );
+  };
 };
 
 export default SignInOutContainer;
