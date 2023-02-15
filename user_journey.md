@@ -20,7 +20,7 @@ _User journeys describe what steps different users can take to explore our websi
 
 2. Log in using the same information
 
-3. Access an exercice, and submit a solution for that exercise
+3. Access an exercice, and submit a solution for that exercise /!\ Your submitted function shoulb be named f /!\
 
 4. Check if the solution is valid in the section below
 
