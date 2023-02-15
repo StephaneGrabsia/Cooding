@@ -195,7 +195,7 @@ export default function ClassroomsTeacherPage() {
         </Box>
         <Box sx={{flex: 1, display: 'flex', flexDirection: 'column'}}>
           <Header
-            title="Salles de classes"
+            title="Salles de classe"
             user={user}
             logoutUser={logoutUser}
             onDrawerToggle={handleDrawerToggle}

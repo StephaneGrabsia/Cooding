@@ -44,7 +44,6 @@ const itemCategory = {
 export default function TeacherNavigator(props) {
   const {...other} = props;
   const history = useHistory();
-  // categories[props.father][props.children];
   const categories = [
     {
       id: 'Exercices',
@@ -90,7 +89,6 @@ export default function TeacherNavigator(props) {
     },
   ];
   categories[props.father].children[props.id]['active'] = true;
-  // console.log(props);
   return (
     <Drawer variant="permanent" {...other}>
       <List disablePadding>

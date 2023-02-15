@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PropTypes from 'prop-types';
-import ItemCard from './ItemCard';
+import ItemCardExercise from './ItemCardExercise';
 import {DialogContent, DialogTitle} from '@mui/material';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClose} from '@fortawesome/free-solid-svg-icons';
@@ -147,7 +147,7 @@ export default function ExerciseContent() {
       </AppBar>
       {listExercises.map((exercise) => (
         <Grid item key={'exercise-' + exercise.id} xs={12} m={6} lg={4}>
-          <ItemCard
+          <ItemCardExercise
             subtitle="Python"
             content={exercise.statement}
             exercise={exercise}
