@@ -45,13 +45,15 @@ const App = () => {
           <Route component={RegisterContainer} path="/register" />
           <PrivateRoute
             component={ExercisesTeacherPage}
+            userType="TEACHER"
             path="/teacher/exercises"
           />
           <PrivateRoute
             component={ClassroomsTeacherPage}
+            userType="TEACHER"
             path="/teacher/classrooms"
           />
-          <PrivateRoute path="/student">
+          <PrivateRoute userType="STUDENT" path="/student">
             <ThemeProvider theme={theme}>
               <StudentPage />
             </ThemeProvider>
