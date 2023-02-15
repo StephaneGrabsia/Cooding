@@ -68,8 +68,7 @@ def getRoutes(request):
                 "password": "<your room_id>",
             },
         },
-        {"Endpoint": "/student/", "method": "GET", "description": "get users"},
-        {"Endpoint": "/logout/", "method": "GET", "description": "To logout"},
+        {"Endpoint": "/student/", "method": "GET", "description": "get student"},
         {
             "Endpoint": "/room/create/",
             "method": "POST",
@@ -83,6 +82,11 @@ def getRoutes(request):
             "Endpoint": "/room/?id=<room_id>",
             "method": "GET",
             "description": "To see a room",
+        },
+        {
+            "Endpoint": "/allrooms/",
+            "method": "GET",
+            "description": "To see all rooms",
         },
         {
             "Endpoint": "/room/delete/",
@@ -104,9 +108,8 @@ def getRoutes(request):
         },
         {
             "Endpoint": "/exercise/",
-            "method": "POST",
-            "description": "To see an exercise",
-            "Format of the request:": {"classroom": "<the room_id>"},
+            "method": "GET",
+            "description": "To see all exercises as a teacher",
         },
         {
             "Endpoint": "/exercise/delete/",
