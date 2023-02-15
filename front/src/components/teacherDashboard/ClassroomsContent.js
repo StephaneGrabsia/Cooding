@@ -17,6 +17,7 @@ import {faClose} from '@fortawesome/free-solid-svg-icons';
 import {styled} from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import AuthContext from '../../context/AuthContext';
+import ClassroomForm from './ClassroomForm';
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
   '& .MuiDialogContent-root': {
@@ -170,9 +171,11 @@ export default function ClassroomsContent() {
           id="customized-dialog-title"
           onClose={handleCloseEditor}
         >
-          Créer un exercice
+          Créer une classroom
         </BootstrapDialogTitle>
-        <DialogContent dividers></DialogContent>
+        <DialogContent dividers>
+          <ClassroomForm/>
+        </DialogContent>
       </BootstrapDialog>
     </Paper>
   );

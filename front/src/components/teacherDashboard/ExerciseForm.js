@@ -171,16 +171,6 @@ class ExerciseForm extends React.Component {
     }
   };
 
-  /**
-   * submitForm function
-   * called at the submition of the form
-   * check if the form is valid and return the error message if there is one
-   * @return {Component} the toogle list of classroom
-   */
-  classroomList() {
-    this.fetchClassroom();
-    return <div>hello</div>;
-  }
 
   /**
    * render function
