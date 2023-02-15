@@ -67,7 +67,7 @@ BootstrapDialogTitle.propTypes = {
  * @param {props} props properties
  * @return {Component} A component
  */
-export default function Content() {
+export default function ExerciseContent() {
   const {authTokens} = React.useContext(AuthContext);
   const [openEditor, setOpenEditor] = React.useState(false);
   const [listExercises, setListExercises] = React.useState([{statement: ''}]);
