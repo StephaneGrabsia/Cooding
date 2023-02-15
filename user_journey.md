@@ -8,9 +8,9 @@ _User journeys describe what steps different users can take to explore our websi
 
 2. Log in using the same informations 
 
-3. Create a classroom with your session by giving it an id.
+3. Create a classroom with your session by giving it an id (/!\ ! the classroom id should be a positive integer) 
 
-4. Create an exercice within this classroom 
+4. Create an exercise within this classroom : /!\ The input should be a list of instance that will be tested (e.g. : [1, 2]) and the test_output should be the list of the correct results, formatted as if it was a python list. The blankspace are importants!!! (e.g [1, 4])
 
 5. Log out
 
@@ -20,7 +20,7 @@ _User journeys describe what steps different users can take to explore our websi
 
 2. Log in using the same information
 
-3. Access an exercice, and submit a solution for that exercice
+3. Access an exercice, and submit a solution for that exercise
 
 4. Check if the solution is valid in the section below
 
