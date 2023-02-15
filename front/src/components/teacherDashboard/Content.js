@@ -17,34 +17,7 @@ import {faClose} from '@fortawesome/free-solid-svg-icons';
 import ExerciseForm from './ExerciseForm';
 import {styled} from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
-const exercises = [
-  {
-    id: 1,
-    statement:
-      '# Exo 1\r\n\r\nEcrire une fonction qui renvoie le carré d\'un entier.',
-    solution: 'def f(x):\r\n    return x*x',
-    test_input: '[1, 2]',
-    correct_output: '[1, 4]',
-    classroom: 10,
-  },
-  {
-    id: 2,
-    statement: '# Exo 2',
-    solution: '1',
-    test_input: '[1]',
-    correct_output: '[1]',
-    classroom: 10,
-  },
-  {
-    id: 3,
-    statement:
-      '## Ceci est un test\r\n### last part\r\n\r\nTOTOTOTOTOTO `def f();`',
-    solution: 'toto',
-    test_input: 'toto',
-    correct_output: 'toto',
-    classroom: 10,
-  },
-];
+import AuthContext from '../../context/AuthContext';
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
   '& .MuiDialogContent-root': {
@@ -62,7 +35,6 @@ const BootstrapDialog = styled(Dialog)(({theme}) => ({
  */
 function BootstrapDialogTitle(props) {
   const {children, onClose, ...other} = props;
-
   return (
     <DialogTitle sx={{m: 0, p: 2}} {...other}>
       {children}
@@ -96,13 +68,43 @@ BootstrapDialogTitle.propTypes = {
  * @return {Component} A component
  */
 export default function Content() {
+  const {authTokens} = React.useContext(AuthContext);
   const [openEditor, setOpenEditor] = React.useState(false);
+  const [listExercises, setListExercises] = React.useState([{statement: ''}]);
+
   const handleClickOpenEditor = () => {
     setOpenEditor(true);
   };
   const handleCloseEditor = () => {
     setOpenEditor(false);
   };
+
+  const fetchExercises = async () => {
+    const response = await fetch('http://localhost:8000/exercise/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
+      },
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      console.log(content);
+      setListExercises(content);
+    } else {
+      alert('Didn\'t work');
+    }
+  };
+
+  React.useEffect(() => {
+    fetchExercises();
+  }, []);
+
+  React.useEffect(() => {
+    const interval = setInterval(fetchExercises, 10000);
+    return () => clearInterval(interval);
+  }, [listExercises]);
+
   return (
     <Paper sx={{maxWidth: 936, margin: 'auto', overflow: 'hidden'}}>
       <AppBar
@@ -144,7 +146,7 @@ export default function Content() {
           </Grid>
         </Toolbar>
       </AppBar>
-      {exercises.map((exercise) => (
+      {listExercises.map((exercise) => (
         <Grid item key={exercise.id} xs={12} m={6} lg={4}>
           <ItemCard
             subtitle="Python"
@@ -163,7 +165,7 @@ export default function Content() {
           id="customized-dialog-title"
           onClose={handleCloseEditor}
         >
-          Éditer un exercice
+          Créer un exercice
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <ExerciseForm />

@@ -106,11 +106,33 @@ class ExerciseForm extends React.Component {
    * check if the form is valid and return the error message if there is one
    * @argument {Event} e : event called onSubmit
    */
-  submitForm(e) {
+  submitForm = async (e) => {
+    const {authTokens} = this.context;
     e.preventDefault();
-    console.log(this.state.rooms);
-    console.log('toto');
-  }
+    if (this.props.exercise) {
+      console.log('toto');
+    } else {
+      const response = await fetch('http://localhost:8000/exercise/create/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + String(authTokens.access),
+        },
+        body: JSON.stringify({
+          statement: this.state.fields['statment'],
+          solution: this.state.fields['solution'],
+          test_input: this.state.fields['test_input'],
+          correct_output: this.state.fields['correct_output'],
+          classroom: this.state.fields['classroom'],
+        }),
+      });
+      if (response.status === 200) {
+        window.location.reload(false);
+      } else {
+        alert('A problem occure, check your classroom');
+      }
+    }
+  };
 
   /**
    * submitForm function
