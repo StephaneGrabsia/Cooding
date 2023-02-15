@@ -44,7 +44,6 @@ const terminalSize = {
   height: '30.6vh',
 };
 
-
 /**
  * Component coding the main page of the student.
  * Render the appBar
@@ -59,28 +58,25 @@ function StudentPage() {
   const {user, logoutUser, authTokens} = useContext(AuthContext);
 
   const [code, setCode] = useState(
-      '# Enter your code here! \n# Your'+
+      '# Enter your code here! \n# Your' +
       ' function have to be named f \n \n# def f():',
   );
   const [listExercises, setListExercises] = useState([{statement: ''}]);
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
-  const [activeExerciseStatement, setActiveExerciseStatement]= useState('');
+  const [activeExerciseStatement, setActiveExerciseStatement] = useState('');
   const [results, setResults] = useState([[], [], []]);
 
   const fetchExercises = async () => {
-    const response = await fetch(
-        'http://localhost:8000/exercise/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + String(authTokens.access),
-          },
-          body: JSON.stringify({
-            'classroom': user.user_info.classroom,
-          }),
-        },
-    );
+    const response = await fetch('http://localhost:8000/exercise/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
+      },
+      body: JSON.stringify({
+        classroom: user.user_info.classroom,
+      }),
+    });
     if (response.status === 200) {
       const content = await response.json();
       setListExercises(content);
@@ -115,22 +111,18 @@ function StudentPage() {
   };
 
   const onClickSubmit = async (event) => {
-    console.log(user.user_info);
-    const response = await fetch(
-        'http://localhost:8000/solution/create/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + String(authTokens.access),
-          },
-          body: JSON.stringify({
-            'student': user.user_id,
-            'exercise': 1,
-            'source': code,
-          }),
-        },
-    );
+    const response = await fetch('http://localhost:8000/solution/create/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
+      },
+      body: JSON.stringify({
+        student: user.user_id,
+        exercise: 1,
+        source: code,
+      }),
+    });
     if (response.status === 200) {
       const content = await response.json();
       setResults(content);
@@ -149,42 +141,48 @@ function StudentPage() {
         activeExercise={activeExerciseIndex}
         setActiveExercise={setActiveExerciseIndex}
       />
-      <Grid2 container
+      <Grid2
+        container
         direction="row"
         justifyContent="center"
         alignItems="center"
-        spacing={0}>
+        spacing={0}
+      >
         <Grid2 xs={5}>
-          <Paper elevation={3} style={statementSize}
-            sx={{backgroundColor: 'secondary.main'}}>
+          <Paper
+            elevation={3}
+            style={statementSize}
+            sx={{backgroundColor: 'secondary.main'}}
+          >
             <ReactMarkdown
               children={activeExerciseStatement}
-              className='reactMarkdown'>
-            </ReactMarkdown>
+              className="reactMarkdown"
+            ></ReactMarkdown>
           </Paper>
         </Grid2>
         <Grid2 xs={7}>
-          <Grid2 container
-            direction='column'
+          <Grid2
+            container
+            direction="column"
             justifyContent="center"
             alignItems="stretch"
             style={rightPartSize}
           >
             <Grid2 xs={8} style={codeEditorSize}>
-              <CodeEditorWindow
-                code={code}
-                onChange={onChange}
-              />
+              <CodeEditorWindow code={code} onChange={onChange} />
             </Grid2>
-            <Grid2 xs={4}
+            <Grid2
+              xs={4}
               style={terminalSize}
               sx={{backgroundColor: 'tertianary.main'}}
             >
-              <OutputSectionBar onClickSubmit={onClickSubmit}/>
-              <Container sx={{
-                height: '68%',
-                padding: '0px',
-              }}>
+              <OutputSectionBar onClickSubmit={onClickSubmit} />
+              <Container
+                sx={{
+                  height: '68%',
+                  padding: '0px',
+                }}
+              >
                 <Typography
                   variant="p"
                   noWrap
@@ -201,12 +199,12 @@ function StudentPage() {
                     marginBottom: '3px',
                   }}
                 >
-                    Output:
+                  Output:
                 </Typography>
                 <Paper
                   elevation={3}
                   style={outputSize}
-                  sx={{backgroundColor: results[2]==true ? 'green' : 'red'}}
+                  sx={{backgroundColor: results[2] == true ? 'green' : 'red'}}
                 >
                   <Typography
                     variant="p"
@@ -222,7 +220,9 @@ function StudentPage() {
                       marginLeft: '3px',
                     }}
                   >
-                    {results[2]==true ? 'Congratulations !! ': 'Bad output :' }
+                    {results[2] == true ?
+                      'Congratulations !! ' :
+                      'Bad output :'}
                     {results[0]}
                   </Typography>
                 </Paper>
@@ -242,7 +242,7 @@ function StudentPage() {
                     marginBottom: '3px',
                   }}
                 >
-                    Traceback:
+                  Traceback:
                 </Typography>
                 <Paper
                   elevation={3}
@@ -273,5 +273,5 @@ function StudentPage() {
       </Grid2>
     </div>
   );
-};
+}
 export default StudentPage;
