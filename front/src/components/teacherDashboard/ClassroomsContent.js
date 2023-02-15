@@ -69,9 +69,7 @@ BootstrapDialogTitle.propTypes = {
 export default function ClassroomsContent() {
   const {authTokens} = React.useContext(AuthContext);
   const [openEditor, setOpenEditor] = React.useState(false);
-  const [listClassrooms, setListClassrooms] = React.useState([
-    {statement: ''},
-  ]);
+  const [listClassrooms, setListClassrooms] = React.useState([]);
 
   const handleClickOpenEditor = () => {
     setOpenEditor(true);
@@ -96,11 +94,11 @@ export default function ClassroomsContent() {
     }
   };
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     fetchClassroom();
   }, []);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const interval = setInterval(fetchClassroom, 10000);
     return () => clearInterval(interval);
   }, [listClassrooms]);
