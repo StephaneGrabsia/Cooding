@@ -42,7 +42,6 @@ const paperStyle = {
   minHeight: 500,
   width: 500,
   margin: '10vh auto',
-
 };
 const imgStyle = {
   width: '70%',
@@ -62,7 +61,7 @@ const SignInOutContainer = ({message}) => {
   useLayoutEffect(() => {
     if (user) {
       if (user.role === 'TEACHER') {
-        window.location.replace('/teacher/');
+        window.location.replace('/teacher/exercises');
       } else if (user.role === 'STUDENT') {
         window.location.replace('/student/');
       }
@@ -74,33 +73,27 @@ const SignInOutContainer = ({message}) => {
   };
   if (!user) {
     return (
-      <div style={{
-        overflow: 'auto',
-        backgroundImage: `url(${Background})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '100vh',
-      }}>
+      <div
+        style={{
+          overflow: 'auto',
+          backgroundImage: `url(${Background})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          height: '100vh',
+        }}
+      >
         <Paper elevation={10} style={paperStyle}>
           <Grid align="center">
             <img src={Logo} style={imgStyle} />
           </Grid>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            centered
-          >
+          <Tabs value={value} onChange={handleChange} centered>
             <Tab
-              icon={<FontAwesomeIcon
-                icon={faGraduationCap}
-              />}
+              icon={<FontAwesomeIcon icon={faGraduationCap} />}
               iconPosition="start"
               label="Etudiants"
             />
             <Tab
-              icon={<FontAwesomeIcon
-                icon={faPersonChalkboard}
-              />}
+              icon={<FontAwesomeIcon icon={faPersonChalkboard} />}
               iconPosition="start"
               label="Professeur"
             />
@@ -114,7 +107,7 @@ const SignInOutContainer = ({message}) => {
         </Paper>
       </div>
     );
-  };
+  }
 };
 
 export default SignInOutContainer;
