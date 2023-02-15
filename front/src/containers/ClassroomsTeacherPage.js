@@ -4,6 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import TeacherNavigator from '../components/teacherDashboard/TeacherNavigator';
+// eslint-disable-next-line max-len
 import ClassroomsContent from '../components/teacherDashboard/ClassroomsContent';
 import Header from '../components/teacherDashboard/Header';
 
