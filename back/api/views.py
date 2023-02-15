@@ -344,7 +344,7 @@ class ExerciseDeleteView(APIView):
         if user.role == User.Role.TEACHER:
             response = Response()
             try:
-                Exercise.objects.get(statement=request.data["statement"]).delete()
+                Exercise.objects.get(id=request.data["exo_id"]).delete()
                 response.data = {"message": "success"}
             except ObjectDoesNotExist:
                 response.data = {"message": "No exercise found"}

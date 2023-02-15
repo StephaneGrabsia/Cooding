@@ -57,7 +57,9 @@ class ExerciseForm extends React.Component {
       rooms: [],
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleEditorChange = this.handleEditorChange.bind(this);
     this.submitForm = this.submitForm.bind(this);
+    this.deleteExercise = this.deleteExercise.bind(this);
   }
 
   fetchClassroom = async () => {
@@ -131,6 +133,26 @@ class ExerciseForm extends React.Component {
       } else {
         alert('A problem occure, check your classroom');
       }
+    }
+  };
+
+  deleteExercise = async (e) => {
+    const {authTokens} = this.context;
+    e.preventDefault();
+    const response = await fetch('http://localhost:8000/exercise/delete/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
+      },
+      body: JSON.stringify({
+        exo_id: this.props.exercise.id,
+      }),
+    });
+    if (response.status === 200) {
+      window.location.reload(false);
+    } else {
+      alert('A problem occure');
     }
   };
 
@@ -235,7 +257,11 @@ class ExerciseForm extends React.Component {
                     'Créer l\'exercice'}
                 </Button>
                 {this.props.exercise ? (
-                  <Button variant="outlined" color="error">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={this.deleteExercise}
+                  >
                     Supprimer l'exercice
                   </Button>
                 ) : (
