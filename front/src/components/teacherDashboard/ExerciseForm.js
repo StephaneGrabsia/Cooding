@@ -22,6 +22,7 @@ const codeEditorSize = {
   border: '2px solid',
 };
 
+// eslint-disable-next-line valid-jsdoc
 /**
  * Component coding the teacher register form.
  * Render the form
