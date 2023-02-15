@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   Typography,
+  Box,
 } from '@mui/material';
 import AuthContext from '../../context/AuthContext';
 import {Stack} from '@mui/system';
@@ -30,6 +31,7 @@ class ClassroomForm extends React.Component {
       fields: {
         room_id: '',
       },
+      errors: {},
     };
     this.handleChange = this.handleChange.bind(this);
     this.submitForm = this.submitForm.bind(this);
@@ -55,23 +57,54 @@ class ClassroomForm extends React.Component {
   submitForm = async (e) => {
     const {user, authTokens} = this.context;
     e.preventDefault();
-    const myBody = {
-      room_id: this.state.fields['room_id'],
-      teacher: user.user_id,
-    };
-    const response = await fetch('http://localhost:8000/room/create/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + String(authTokens.access),
-      },
-      body: JSON.stringify(myBody),
-    });
-    if (response.status === 200) {
-      window.location.reload(false);
-    } else {
-      alert('A problem occure, check your classroom');
+    if (this.validateForm()) {
+      const myBody = {
+        room_id: this.state.fields['room_id'],
+        teacher: user.user_id,
+      };
+      const response = await fetch('http://localhost:8000/room/create/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + String(authTokens.access),
+        },
+        body: JSON.stringify(myBody),
+      });
+      if (response.status === 200) {
+        window.location.reload(false);
+      } else {
+        alert('A problem occure, check your classroom');
+      }
     }
+  };
+
+  /**
+   * validateForm function
+   * Called when onSubmit and check if the form is valid
+   * @return {boolean} true if its valid, false else
+   */
+  validateForm() {
+    const fields = this.state.fields;
+    const errors = {};
+    let formIsValid = true;
+
+    if (!fields['room_id']) {
+      formIsValid = false;
+      errors['room_id'] = '*Merci de préciser l\'id de la classroom';
+    }
+
+    if (typeof fields['room_id'] !== 'undefined') {
+      if (!fields['room_id'].match(/^[0-9]+$/)) {
+        formIsValid = false;
+        errors['classroom_id'] =
+          '*Merci d\'utiliser uniquement un entier naturel';
+      }
+    }
+
+    this.setState({
+      errors: errors,
+    });
+    return formIsValid;
   };
 
   /**
@@ -90,18 +123,28 @@ class ClassroomForm extends React.Component {
           <Grid>
             <form onSubmit={this.submitForm}>
               <Typography>
-                Indiquer le numéro de la classroom (entier entre 1 et 1000) :
+                Indiquer le numéro de la classroom (entier naturel):
               </Typography>
-              <TextField
-                id="outlined-number"
-                label="Number"
-                type="number"
-                name="room_id"
-                onChange={this.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <TextField
+                  id="outlined-number"
+                  label="Number"
+                  type="number"
+                  name="room_id"
+                  onChange={this.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  error={this.state.errors.classroom_id ? true : false}
+                  helperText={this.state.errors.classroom_id}
+                  sx={{marginTop: '30px'}}
+                />
+              </Box>
+
               <br />
               <br />
               <Stack direction="row" spacing={2} mt={2}>
