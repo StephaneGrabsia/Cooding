@@ -167,7 +167,7 @@ export default function ItemCard({title, subtitle, content, exercise}) {
                   variant="h6"
                   component="div"
                 >
-                  Preview
+                  Aperçu de l'exercice
                 </Typography>
               </Toolbar>
             </AppBar>

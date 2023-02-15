@@ -148,7 +148,7 @@ class Solution(models.Model):
     is the source output in JSON."""
 
     exercise = models.ForeignKey(
-        Exercise, on_delete=models.PROTECT, default=None, related_name="exercise_done"
+        Exercise, on_delete=models.CASCADE, default=None, related_name="exercise_done"
     )
     source = models.TextField(null=True)
     student = models.ForeignKey(
@@ -174,7 +174,7 @@ class Solution(models.Model):
         return test_output, test_errors
 
     def check_sol(self, test_output):
-        return test_output == self.exercise.correct_output + '\n'
+        return test_output == self.exercise.correct_output + "\n"
 
     def __str__(self) -> str:
         return self.source

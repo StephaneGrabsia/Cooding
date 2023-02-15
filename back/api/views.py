@@ -344,7 +344,31 @@ class ExerciseDeleteView(APIView):
         if user.role == User.Role.TEACHER:
             response = Response()
             try:
-                Exercise.objects.get(statement=request.data["statement"]).delete()
+                Exercise.objects.get(id=request.data["exo_id"]).delete()
+                response.data = {"message": "success"}
+            except ObjectDoesNotExist:
+                response.data = {"message": "No exercise found"}
+            return response
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@permission_classes([IsAuthenticated])
+class ExerciseUpdateView(APIView):
+    def post(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = Response()
+            try:
+                exercise = Exercise.objects.get(id=request.data["exo_id"])
+                exercise.statement = request.data["statement"]
+                exercise.solution = request.data["solution"]
+                exercise.test_input = request.data["test_input"]
+                exercise.correct_output = request.data["correct_output"]
+                exercise.classroom = Classroom.objects.get(
+                    room_id=request.data["classroom"]
+                )
+                exercise.save()
                 response.data = {"message": "success"}
             except ObjectDoesNotExist:
                 response.data = {"message": "No exercise found"}

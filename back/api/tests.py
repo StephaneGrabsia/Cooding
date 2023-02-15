@@ -230,7 +230,7 @@ class ExerciseTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         response = c.post(
             "/exercise/delete/",
-            {"statement": "Fonction double"},
+            {"exo_id": 1},
             content_type="application/json",
             **auth_headers
         )
