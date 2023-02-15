@@ -5,13 +5,17 @@ import ShibaNeedHelp from '../assets/needHelp.svg';
 
 
 const buttonStyle = {
-  paddingTop: '2px',
-  paddingBottom: '2px',
+  height: '7vh',
+};
+
+const toolBarStyle = {
+  height: '8vh',
+  minHeight: '8vh',
 };
 
 const avatarStyle = {
-  width: '40px',
-  height: '40px',
+  width: '6vh',
+  height: '6vh',
 };
 
 /**
@@ -29,7 +33,7 @@ function OutputSectionBar({onClickSubmit}) {
 
   return (
     <div>
-      <Toolbar disableGutters>
+      <Toolbar disableGutters style={toolBarStyle}>
         <Box sx={{marginLeft: '20px'}}>
           <Button
             variant="contained"
@@ -62,7 +66,7 @@ function OutputSectionBar({onClickSubmit}) {
         <Box sx={{marginRight: '20px'}}>
           <Button
             variant="contained"
-            sx = {{height: '44px'}}
+            style = {buttonStyle}
             onClick={onClickSubmit}>
               Submit
           </Button>
