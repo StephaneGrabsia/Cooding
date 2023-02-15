@@ -87,7 +87,7 @@ export const AuthProvider = ({children}) => {
       } else {
         return 'Une erreur s\'est produite, etes vous bien étudiant ?';
       }
-    // eslint-disable-next-line brace-style
+      // eslint-disable-next-line brace-style
     }
     // Else need to check if the classroom exists and if the user already exist
     else if (response.status === 400) {
