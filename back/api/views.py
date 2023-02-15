@@ -261,6 +261,23 @@ class RoomView(APIView):
 
 
 @permission_classes([IsAuthenticated])
+class AllRoomView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.role == User.Role.TEACHER:
+            response = []
+            try:
+                rooms = Classroom.objects.all()
+                for room in rooms:
+                    response.append(ClassroomSerializer(room).data)
+            except ObjectDoesNotExist:
+                response.append({"message": "No room found"})
+            return Response(response)
+        content = {"detail": "Type d'utilisateur non autorisé"}
+        return Response(content, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@permission_classes([IsAuthenticated])
 class RoomDeleteView(APIView):
     def post(self, request):
         user = request.user

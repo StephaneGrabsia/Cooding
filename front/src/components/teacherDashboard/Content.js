@@ -9,37 +9,57 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
-
+import PropTypes from 'prop-types';
 import ItemCard from './ItemCard';
+import {DialogContent, DialogTitle} from '@mui/material';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faClose} from '@fortawesome/free-solid-svg-icons';
+import ExerciseForm from './ExerciseForm';
+import {styled} from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import AuthContext from '../../context/AuthContext';
 
-const exercises = [
-  {
-    id: 1,
-    statement:
-      '# Exo 1\r\n\r\nEcrire une fonction qui renvoie le carré d\'un entier.',
-    solution: 'def f(x):\r\n    return x*x',
-    test_input: '[1, 2]',
-    correct_output: '[1, 4]',
-    classroom: 10,
+const BootstrapDialog = styled(Dialog)(({theme}) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
   },
-  {
-    id: 2,
-    statement: '# Exo 2',
-    solution: '1',
-    test_input: '[1]',
-    correct_output: '[1]',
-    classroom: 10,
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
   },
-  {
-    id: 3,
-    statement:
-      '## Ceci est un test\r\n### last part\r\n\r\nTOTOTOTOTOTO `def f();`',
-    solution: 'toto',
-    test_input: 'toto',
-    correct_output: 'toto',
-    classroom: 10,
-  },
-];
+}));
+
+/**
+ * Component coding the dialog title.
+ * @param {props} props properties
+ * @return {Component} A component
+ */
+function BootstrapDialogTitle(props) {
+  const {children, onClose, ...other} = props;
+  return (
+    <DialogTitle sx={{m: 0, p: 2}} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <FontAwesomeIcon icon={faClose} />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
+}
+
+BootstrapDialogTitle.propTypes = {
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
+};
 
 /**
  * Component coding the exercises list.
@@ -48,6 +68,43 @@ const exercises = [
  * @return {Component} A component
  */
 export default function Content() {
+  const {authTokens} = React.useContext(AuthContext);
+  const [openEditor, setOpenEditor] = React.useState(false);
+  const [listExercises, setListExercises] = React.useState([{statement: ''}]);
+
+  const handleClickOpenEditor = () => {
+    setOpenEditor(true);
+  };
+  const handleCloseEditor = () => {
+    setOpenEditor(false);
+  };
+
+  const fetchExercises = async () => {
+    const response = await fetch('http://localhost:8000/exercise/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + String(authTokens.access),
+      },
+    });
+    if (response.status === 200) {
+      const content = await response.json();
+      console.log(content);
+      setListExercises(content);
+    } else {
+      alert('Didn\'t work');
+    }
+  };
+
+  React.useEffect(() => {
+    fetchExercises();
+  }, []);
+
+  React.useEffect(() => {
+    const interval = setInterval(fetchExercises, 10000);
+    return () => clearInterval(interval);
+  }, [listExercises]);
+
   return (
     <Paper sx={{maxWidth: 936, margin: 'auto', overflow: 'hidden'}}>
       <AppBar
@@ -64,7 +121,7 @@ export default function Content() {
             <Grid item xs>
               <TextField
                 fullWidth
-                placeholder="Search by email address, phone number, or user UID"
+                placeholder="Rechercher un exercice"
                 InputProps={{
                   disableUnderline: true,
                   sx: {fontSize: 'default'},
@@ -73,7 +130,11 @@ export default function Content() {
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" sx={{mr: 1}}>
+              <Button
+                variant="contained"
+                sx={{mr: 1}}
+                onClick={handleClickOpenEditor}
+              >
                 Créer un exercice
               </Button>
               <Tooltip title="Reload">
@@ -85,16 +146,31 @@ export default function Content() {
           </Grid>
         </Toolbar>
       </AppBar>
-      {exercises.map((exercise) => (
+      {listExercises.map((exercise) => (
         <Grid item key={exercise.id} xs={12} m={6} lg={4}>
           <ItemCard
-            title="Les moindres carrés"
             subtitle="Python"
-            content="toto"
+            content={exercise.statement}
             exercise={exercise}
           />
         </Grid>
       ))}
+      <BootstrapDialog
+        onClose={handleCloseEditor}
+        aria-labelledby="customized-dialog-title"
+        open={openEditor}
+        fullWidth
+      >
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          onClose={handleCloseEditor}
+        >
+          Créer un exercice
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <ExerciseForm />
+        </DialogContent>
+      </BootstrapDialog>
     </Paper>
   );
 }

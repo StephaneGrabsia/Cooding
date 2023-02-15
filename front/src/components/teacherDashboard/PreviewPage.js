@@ -41,17 +41,13 @@ const terminalSize = {
   height: '38.3vh',
 };
 
-
 /**
  * Component coding the main page of the student.
  * Render the appBar
  * @return {Component} A component
  */
-function PreviewPage({
-  exercise,
-}) {
+function PreviewPage({exercise}) {
   const [code, setCode] = useState(exercise.solution);
-
 
   const onChange = (action, data) => {
     switch (action) {
@@ -71,45 +67,51 @@ function PreviewPage({
 
   return (
     <div>
-      <Grid2 container
+      <Grid2
+        container
         direction="row"
         justifyContent="center"
         alignItems="center"
-        spacing={0}>
+        spacing={0}
+      >
         <Grid2 xs={5}>
-          <Paper elevation={3} style={statementSize}
-            sx={{backgroundColor: 'secondary.main'}}>
+          <Paper
+            elevation={3}
+            style={statementSize}
+            sx={{backgroundColor: 'secondary.main'}}
+          >
             <Container sx={{padding: '20px'}}>
               <ReactMarkdown
                 children={exercise.statement}
-                className='reactMarkdown'>
-              </ReactMarkdown>
+                className="reactMarkdown"
+              ></ReactMarkdown>
             </Container>
           </Paper>
         </Grid2>
         <Grid2 xs={7}>
-          <Grid2 container
-            direction='column'
+          <Grid2
+            container
+            direction="column"
             justifyContent="center"
             alignItems="stretch"
             style={rightPartSize}
           >
             <Grid2 xs={8} style={codeEditorSize}>
-              <CodeEditorWindow
-                code={code}
-                onChange={onChange}
-              />
+              <CodeEditorWindow code={code} onChange={onChange} />
             </Grid2>
-            <Grid2 xs={4}
+            <Grid2
+              xs={4}
               style={terminalSize}
               sx={{backgroundColor: 'tertianary.main'}}
             >
-              <OutputSectionBar onClickSubmit={onClickSubmit}/>
-              <Container sx={{
-                height: '78%',
-                padding: '0px',
-                marginBottom: '2px',
-              }}>
+              <OutputSectionBar onClickSubmit={onClickSubmit} />
+              <Container
+                sx={{
+                  height: '78%',
+                  padding: '0px',
+                  marginBottom: '2px',
+                }}
+              >
                 <Typography
                   variant="p"
                   noWrap
@@ -126,12 +128,9 @@ function PreviewPage({
                     marginBottom: '3px',
                   }}
                 >
-                    Output:
+                  Output:
                 </Typography>
-                <Paper
-                  elevation={3}
-                  style={outputSize}
-                >
+                <Paper elevation={3} style={outputSize}>
                   <Typography
                     variant="p"
                     component="p"
@@ -145,8 +144,7 @@ function PreviewPage({
                       textAlign: 'Left',
                       marginLeft: '3px',
                     }}
-                  >
-                  </Typography>
+                  ></Typography>
                 </Paper>
                 <Typography
                   variant="p"
@@ -164,14 +162,17 @@ function PreviewPage({
                     marginBottom: '3px',
                   }}
                 >
-                    Traceback:
+                  Traceback:
                 </Typography>
-                <Container disableGutters sx={{
-                  height: '60%',
-                  paddingRight: '0px',
-                  paddingLeft: '0px',
-                  marginBottom: '2px',
-                }}>
+                <Container
+                  disableGutters
+                  sx={{
+                    height: '60%',
+                    paddingRight: '0px',
+                    paddingLeft: '0px',
+                    marginBottom: '2px',
+                  }}
+                >
                   <Paper
                     elevation={3}
                     style={tracebackSize}
@@ -190,9 +191,7 @@ function PreviewPage({
                         textAlign: 'Left',
                         marginLeft: '3px',
                       }}
-                    >
-
-                    </Typography>
+                    ></Typography>
                   </Paper>
                 </Container>
               </Container>
@@ -202,5 +201,5 @@ function PreviewPage({
       </Grid2>
     </div>
   );
-};
+}
 export default PreviewPage;
