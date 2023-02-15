@@ -89,7 +89,6 @@ export default function Content() {
     });
     if (response.status === 200) {
       const content = await response.json();
-      console.log(content);
       setListExercises(content);
     } else {
       alert('Didn\'t work');
@@ -147,7 +146,7 @@ export default function Content() {
         </Toolbar>
       </AppBar>
       {listExercises.map((exercise) => (
-        <Grid item key={exercise.id} xs={12} m={6} lg={4}>
+        <Grid item key={'exercise-' + exercise.id} xs={12} m={6} lg={4}>
           <ItemCard
             subtitle="Python"
             content={exercise.statement}

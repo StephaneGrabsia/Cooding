@@ -19,6 +19,7 @@ from api.views import (
     ExerciseCreateView,
     ExerciseView,
     ExerciseDeleteView,
+    ExerciseUpdateView,
     SolutionCreateView,
     SolutionDeleteView,
 )
@@ -51,6 +52,7 @@ exercise_endpoints = [
     path("exercise/create/", ExerciseCreateView.as_view()),
     path("exercise/", ExerciseView.as_view()),
     path("exercise/delete/", ExerciseDeleteView.as_view()),
+    path("exercise/update/", ExerciseUpdateView.as_view()),
 ]
 
 solution_endpoints = [

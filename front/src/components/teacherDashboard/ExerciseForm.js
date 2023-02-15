@@ -52,7 +52,7 @@ class ExerciseForm extends React.Component {
         correct_output: this.props.exercise ?
           this.props.exercise.correct_output :
           '',
-        classroom: this.props.exercise ? this.props.exercise.classroom : -1,
+        classroom: this.props.exercise ? this.props.exercise.classroom : '',
       },
       rooms: [],
     };
@@ -111,8 +111,29 @@ class ExerciseForm extends React.Component {
   submitForm = async (e) => {
     const {authTokens} = this.context;
     e.preventDefault();
+    const myBody = {
+      statement: this.state.fields['statment'],
+      solution: this.state.fields['solution'],
+      test_input: this.state.fields['test_input'],
+      correct_output: this.state.fields['correct_output'],
+      classroom: this.state.fields['classroom'],
+    };
     if (this.props.exercise) {
-      console.log('toto');
+      myBody['exo_id'] = this.props.exercise.id;
+      console.log(myBody['exo_id']);
+      const response = await fetch('http://localhost:8000/exercise/update/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + String(authTokens.access),
+        },
+        body: JSON.stringify(myBody),
+      });
+      if (response.status === 200) {
+        window.location.reload(false);
+      } else {
+        alert('A problem occure');
+      }
     } else {
       const response = await fetch('http://localhost:8000/exercise/create/', {
         method: 'POST',
@@ -120,13 +141,7 @@ class ExerciseForm extends React.Component {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + String(authTokens.access),
         },
-        body: JSON.stringify({
-          statement: this.state.fields['statment'],
-          solution: this.state.fields['solution'],
-          test_input: this.state.fields['test_input'],
-          correct_output: this.state.fields['correct_output'],
-          classroom: this.state.fields['classroom'],
-        }),
+        body: JSON.stringify(myBody),
       });
       if (response.status === 200) {
         window.location.reload(false);
