@@ -1,4 +1,4 @@
-import os, sys, subprocess
+import os, sys, epicbox
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -164,13 +164,17 @@ class Solution(models.Model):
             f.write("for input in test_input:\n")
             f.write("   output.append(f(input))\n")
             f.write("print(output)")
-        result = subprocess.run(
-            ["python", "test_file.py"], capture_output=True, text=True
-        )
+        epicbox.configure(
+            profiles=[epicbox.Profile('python', 'python:3.6.5-alpine')]
+            )
+        files = [{'name': 'test_file.py', 'content': b''}]
+        limits = {'cputime': 1, 'memory': 64}
+        result = epicbox.run('python', 'docker ps -a')
+        print(result.stdout, result.stderr)
+        result = epicbox.run('python', 'python test_file.py', files=files, limits=limits)
         test_output = result.stdout
         test_errors = result.stderr
         os.remove("test_file.py")
-
         return test_output, test_errors
 
     def check_sol(self, test_output):
